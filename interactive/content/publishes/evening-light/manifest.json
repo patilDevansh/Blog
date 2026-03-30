@@ -1,40 +1,41 @@
 {
   "slug": "evening-light",
-  "title": "Letting the day soften",
-  "summary": "Before sleep, three small releases: the jaw, the story, the need to finish everything tonight.",
-  "createdAt": "2026-03-20T12:00:00.000Z",
-  "category": "Rest",
+  "title": "Letting the season change you",
+  "summary": "Nature doesn't resist transformation. It surrenders to it. Neither should we.",
+  "createdAt": "2026-05-28T12:00:00.000Z",
+  "category": "Healing",
   "cardVariant": "teal",
   "readTimeMinutes": 4,
   "tiles": [
     {
-      "id": "open",
-      "label": "Arriving",
+      "id": "release",
+      "label": "Healing is seasonal",
       "blocks": [
         {
+          "type": "heading",
+          "level": 2,
+          "text": "Let what ends be allowed"
+        },
+        {
           "type": "paragraph",
-          "text": "You do not owe the night a summary of the day. You can arrive empty-handed."
+          "text": "You don't need to force transformation. You can wait for it to arrive—and receive it when it does."
         }
       ]
     },
     {
-      "id": "body",
-      "label": "The body first",
+      "id": "ritual",
+      "label": "A ritual of surrender",
       "blocks": [
         {
+          "type": "heading",
+          "level": 2,
+          "text": "One thing you stop holding"
+        },
+        {
           "type": "paragraph",
-          "text": "Unclench. Widen the exhale. Let the bed hold you without you having to hold the world."
+          "text": "Name the single thing you're gripping today. Exhale. Loosen your hand—symbolically or literally. Then choose one kinder next action."
         }
-      ],
-      "interaction": {
-        "type": "reveal",
-        "pairs": [
-          {
-            "prompt": "One sentence for tonight",
-            "hidden": "I am allowed to stop proving I deserved this rest."
-          }
-        ]
-      }
+      ]
     }
   ]
 }

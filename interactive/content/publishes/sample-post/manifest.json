@@ -1,198 +1,41 @@
 {
   "slug": "sample-post",
-  "title": "Returning to the breath",
-  "summary": "A gentle walk through presence, small rituals, and the quiet that was never gone — written in the same spirit as the Stillwater journal.",
-  "createdAt": "2026-03-29T12:00:00.000Z",
-  "category": "Presence",
+  "title": "The art of doing nothing",
+  "summary": "What happens when we stop filling every silence and let stillness speak for itself.",
+  "createdAt": "2026-06-03T12:00:00.000Z",
+  "category": "Meditation",
   "cardVariant": "purple",
-  "readTimeMinutes": 8,
-  "theme": {
-    "accent": "#3C3489",
-    "background": "#faf9f7",
-    "surface": "#ffffff",
-    "text": "#1a1a2e",
-    "motion": "playful"
-  },
+  "readTimeMinutes": 5,
   "tiles": [
     {
-      "id": "arrival",
-      "label": "Arrival",
+      "id": "stillness",
+      "label": "Stillness as a practice",
       "blocks": [
         {
           "type": "heading",
           "level": 2,
-          "text": "You are already here"
+          "text": "Stillness is the first teacher"
         },
         {
           "type": "paragraph",
-          "text": "Nothing about this practice asks you to become someone new. The journal is only a frame: a little structure so your own words can land without having to be perfect."
-        },
-        {
-          "type": "paragraph",
-          "text": "Below, each part of this entry scrolls in order — one gentle section after another."
+          "text": "When you stop reaching for an outcome, the mind has room to tell the truth. You don't lose time—you meet it."
         }
       ]
     },
     {
-      "id": "tension",
-      "label": "The noise",
+      "id": "begin",
+      "label": "A gentle way to begin",
       "blocks": [
         {
           "type": "heading",
           "level": 2,
-          "text": "What pulls you away"
+          "text": "Two minutes, no goal"
         },
         {
           "type": "paragraph",
-          "text": "The mind loves a problem to solve. Sometimes the kindest thing is not to solve — only to notice."
-        },
-        {
-          "type": "quote",
-          "text": "The quieter you become, the more you are able to hear.",
-          "attribution": "Rumi"
+          "text": "Sit comfortably. Inhale. Exhale. Let the next thought pass like a visitor who doesn't need a conversation. When you drift, return gently—without punishment."
         }
-      ],
-      "interaction": {
-        "type": "reveal",
-        "pairs": [
-          {
-            "prompt": "What does “coming back” mean?",
-            "hidden": "Not fixing your life in one breath — simply choosing the next kind, honest moment."
-          },
-          {
-            "prompt": "What is the risk of waiting for calm first?",
-            "hidden": "Calm often arrives after we stop demanding it as a precondition."
-          }
-        ]
-      }
-    },
-    {
-      "id": "practice",
-      "label": "A small rhythm",
-      "blocks": [
-        {
-          "type": "heading",
-          "level": 2,
-          "text": "Three beats you can borrow"
-        },
-        {
-          "type": "paragraph",
-          "text": "Keep them small. Small is how they survive busy days."
-        }
-      ],
-      "interaction": {
-        "type": "accordion",
-        "sections": [
-          {
-            "title": "Arrive",
-            "body": "Feel feet on the floor, or hands on the page. One sentence about what is true right now."
-          },
-          {
-            "title": "Listen",
-            "body": "Name one sound or sensation without judging it. Let it pass."
-          },
-          {
-            "title": "Release",
-            "body": "Exhale a little longer than the inhale. Once is enough to count."
-          }
-        ]
-      }
-    },
-    {
-      "id": "lens",
-      "label": "Two lenses",
-      "blocks": [
-        {
-          "type": "heading",
-          "level": 2,
-          "text": "Same day, different light"
-        },
-        {
-          "type": "paragraph",
-          "text": "When you are tender, you might need warmth. When you are scattered, you might need clarity. Both can be true."
-        }
-      ],
-      "interaction": {
-        "type": "tabs",
-        "tabs": [
-          {
-            "label": "Heart",
-            "content": "You are not behind. You are in motion — even rest is motion when chosen with care."
-          },
-          {
-            "label": "Mind",
-            "content": "Name one variable you control today: a single breath, a single line of writing, one boundary kept kindly."
-          },
-          {
-            "label": "Body",
-            "content": "Drop your shoulders. Unclench the jaw. The body often believes the story first."
-          }
-        ]
-      }
-    },
-    {
-      "id": "order",
-      "label": "What comes first",
-      "blocks": [
-        {
-          "type": "heading",
-          "level": 2,
-          "text": "Order is kindness"
-        },
-        {
-          "type": "paragraph",
-          "text": "Put these in an order that feels honest for a heavy day — then tap Check."
-        }
-      ],
-      "interaction": {
-        "type": "dragOrder",
-        "prompt": "Arrange from what you’d do first to last:",
-        "items": [
-          "Name that you are struggling",
-          "Ask for one small help or pause",
-          "Do the next gentle action",
-          "Let the rest be unfinished"
-        ],
-        "correctOrder": [
-          "Name that you are struggling",
-          "Ask for one small help or pause",
-          "Do the next gentle action",
-          "Let the rest be unfinished"
-        ]
-      }
-    },
-    {
-      "id": "close",
-      "label": "Carry this",
-      "blocks": [
-        {
-          "type": "heading",
-          "level": 2,
-          "text": "Closing without closing off"
-        },
-        {
-          "type": "paragraph",
-          "text": "Endings can be soft. Swipe through a few — one may be enough for today."
-        }
-      ],
-      "interaction": {
-        "type": "sliderReveal",
-        "slides": [
-          {
-            "title": "A line to keep",
-            "body": "I do not have to earn rest. I can choose a gentler next minute."
-          },
-          {
-            "title": "A question",
-            "body": "What would I say to a friend who felt exactly like this?"
-          },
-          {
-            "title": "A promise",
-            "body": "I will return to the page without needing to fix everything first."
-          }
-        ],
-        "autoAdvanceMs": 12000
-      }
+      ]
     }
   ]
 }

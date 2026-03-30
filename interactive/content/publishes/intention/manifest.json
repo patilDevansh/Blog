@@ -1,0 +1,41 @@
+{
+  "slug": "intention",
+  "title": "Morning rituals that ground you",
+  "summary": "How the first ten minutes of your day can shift everything that follows after.",
+  "createdAt": "2026-05-19T12:00:00.000Z",
+  "category": "Intention",
+  "cardVariant": "amber",
+  "readTimeMinutes": 6,
+  "tiles": [
+    {
+      "id": "anchor",
+      "label": "Start with one truth",
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Before you think, breathe"
+        },
+        {
+          "type": "paragraph",
+          "text": "Give your morning a single anchor: a breath, a sentence, or a sip of water with attention. Keep it small enough to be repeatable."
+        }
+      ]
+    },
+    {
+      "id": "ten-minutes",
+      "label": "The ten-minute anchor",
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "A ritual you can keep"
+        },
+        {
+          "type": "paragraph",
+          "text": "For ten minutes, do one grounded thing: stretch gently, read a page, write one honest line. Then let the rest of the day meet you on your terms."
+        }
+      ]
+    }
+  ]
+}

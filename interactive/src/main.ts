@@ -128,13 +128,29 @@ function buildShell(): {
   const footer = document.createElement("footer");
   footer.className = "sw-footer";
   const footLogo = document.createElement("div");
-  footLogo.className = "sw-footer-logo";
+  footLogo.className = "footer-logo";
   footLogo.textContent = "Stillwater";
+  const footerLinks = document.createElement("ul");
+  footerLinks.className = "footer-links";
+  const links: [string, string][] = [
+    ["Journal", `${baseUrl}`],
+    ["About", "#"],
+    ["Contact", "#"],
+  ];
+  for (const [label, href] of links) {
+    const li = document.createElement("li");
+    const a = document.createElement("a");
+    a.href = href;
+    a.textContent = label;
+    li.appendChild(a);
+    footerLinks.appendChild(li);
+  }
   const footCopy = document.createElement("div");
-  footCopy.className = "sw-footer-copy";
+  footCopy.className = "footer-copy";
   footCopy.textContent =
     "© " + new Date().getFullYear() + " Stillwater. Made with intention.";
   footer.appendChild(footLogo);
+  footer.appendChild(footerLinks);
   footer.appendChild(footCopy);
 
   shell.appendChild(topNav);
@@ -246,6 +262,45 @@ function mountJournalGrid(
   mainEl.appendChild(hero);
   mainEl.appendChild(sectionHead);
   mainEl.appendChild(grid);
+
+  // Quote band (same spirit as `index 2.html`)
+  const quoteBand = document.createElement("div");
+  quoteBand.className = "quote-band";
+  const quote = document.createElement("blockquote");
+  quote.textContent = "The quieter you become, the more you are able to hear.";
+  const cite = document.createElement("cite");
+  cite.textContent = "— Rumi";
+  quoteBand.appendChild(quote);
+  quoteBand.appendChild(cite);
+  mainEl.appendChild(quoteBand);
+
+  // Newsletter (static UI; no backend yet)
+  const newsletter = document.createElement("div");
+  newsletter.className = "newsletter";
+  const nwEyebrow = document.createElement("p");
+  nwEyebrow.className = "eyebrow";
+  nwEyebrow.textContent = "Stay connected";
+  const nwH3 = document.createElement("h3");
+  nwH3.textContent = "Wisdom in your inbox";
+  const nwP = document.createElement("p");
+  nwP.textContent =
+    "New reflections delivered gently, twice a month. No noise. Just soul.";
+  const form = document.createElement("div");
+  form.className = "newsletter-form";
+  const input = document.createElement("input");
+  input.type = "email";
+  input.placeholder = "your@email.com";
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.textContent = "Subscribe";
+  form.appendChild(input);
+  form.appendChild(btn);
+  newsletter.appendChild(nwEyebrow);
+  newsletter.appendChild(nwH3);
+  newsletter.appendChild(nwP);
+  newsletter.appendChild(form);
+  mainEl.appendChild(newsletter);
+
   root.appendChild(shell);
   document.title = "Stillwater — A Spiritual Journal";
 }
