@@ -105,13 +105,13 @@ function buildShell(): {
   logo.textContent = "Stillwater";
   const ul = document.createElement("ul");
   ul.className = "sw-nav-links";
-  const links: [string, string][] = [
+  const topNavLinks: [string, string][] = [
     ["Home", `${baseUrl}stillwater.html`],
     ["Journal", `${baseUrl}`],
     ["About", "#"],
     ["Contact", "#"],
   ];
-  for (const [label, href] of links) {
+  for (const [label, href] of topNavLinks) {
     const li = document.createElement("li");
     const a = document.createElement("a");
     a.href = href;
@@ -132,12 +132,12 @@ function buildShell(): {
   footLogo.textContent = "Stillwater";
   const footerLinks = document.createElement("ul");
   footerLinks.className = "footer-links";
-  const links: [string, string][] = [
+  const footerLinkItems: [string, string][] = [
     ["Journal", `${baseUrl}`],
     ["About", "#"],
     ["Contact", "#"],
   ];
-  for (const [label, href] of links) {
+  for (const [label, href] of footerLinkItems) {
     const li = document.createElement("li");
     const a = document.createElement("a");
     a.href = href;
