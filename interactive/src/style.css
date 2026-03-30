@@ -1,0 +1,366 @@
+:root {
+  --color-accent: #c45c26;
+  --color-bg: #f4efe6;
+  --color-surface: #fffdf8;
+  --color-text: #1a1614;
+  --font-body: "Fraunces", "Source Serif 4", Georgia, serif;
+  --radius: 14px;
+  --shadow: 0 12px 40px rgba(26, 22, 20, 0.08);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 18px;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--font-body);
+  background: radial-gradient(
+      1200px 800px at 10% -10%,
+      color-mix(in srgb, var(--color-accent) 18%, transparent),
+      transparent 55%
+    ),
+    var(--color-bg);
+  color: var(--color-text);
+  line-height: 1.55;
+}
+
+.app-root {
+  max-width: 44rem;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 4rem;
+}
+
+.app-header {
+  margin-bottom: 1.75rem;
+}
+
+.app-title {
+  font-size: clamp(1.75rem, 4vw, 2.35rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin: 0 0 0.5rem;
+}
+
+.app-summary {
+  margin: 0 0 0.75rem;
+  opacity: 0.88;
+  font-size: 1.05rem;
+}
+
+.app-meta {
+  font-size: 0.9rem;
+  opacity: 0.65;
+}
+
+.tile-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.tile-button {
+  font: inherit;
+  cursor: pointer;
+  border: 1px solid color-mix(in srgb, var(--color-text) 18%, transparent);
+  background: var(--color-surface);
+  color: var(--color-text);
+  padding: 0.45rem 0.85rem;
+  border-radius: 999px;
+  box-shadow: var(--shadow);
+  transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s;
+}
+
+.tile-button:hover {
+  border-color: color-mix(in srgb, var(--color-accent) 55%, transparent);
+  transform: translateY(-2px);
+}
+
+.tile-button.is-active {
+  background: color-mix(in srgb, var(--color-accent) 16%, var(--color-surface));
+  border-color: color-mix(in srgb, var(--color-accent) 45%, transparent);
+  font-weight: 600;
+}
+
+.app-root[data-motion="playful"] .tile-button:not(.is-active):hover {
+  animation: wiggle 0.5s ease;
+}
+
+.app-root[data-reduced-motion="1"] .tile-button,
+.app-root[data-motion="none"] .tile-button {
+  transition: none;
+}
+
+.app-root[data-reduced-motion="1"] .tile-button:hover,
+.app-root[data-motion="none"] .tile-button:hover {
+  transform: none;
+  animation: none;
+}
+
+@keyframes wiggle {
+  0%,
+  100% {
+    transform: translateY(-2px) rotate(0);
+  }
+  33% {
+    transform: translateY(-2px) rotate(-2deg);
+  }
+  66% {
+    transform: translateY(-2px) rotate(2deg);
+  }
+}
+
+.tile-mount {
+  outline: none;
+}
+
+.tile-article {
+  background: var(--color-surface);
+  border-radius: var(--radius);
+  padding: 1.35rem 1.5rem 1.6rem;
+  box-shadow: var(--shadow);
+  border: 1px solid color-mix(in srgb, var(--color-text) 10%, transparent);
+}
+
+.tile-blocks .block-heading {
+  margin: 1rem 0 0.5rem;
+  font-weight: 600;
+}
+
+.tile-blocks .block-heading:first-child {
+  margin-top: 0;
+}
+
+.tile-blocks .block-paragraph {
+  margin: 0.65rem 0;
+}
+
+.tile-blocks .block-list {
+  margin: 0.65rem 0;
+  padding-left: 1.25rem;
+}
+
+.tile-blocks .block-quote {
+  margin: 1rem 0;
+  padding-left: 1rem;
+  border-left: 3px solid var(--color-accent);
+  font-style: italic;
+}
+
+.tile-blocks .block-quote cite {
+  display: block;
+  margin-top: 0.5rem;
+  font-style: normal;
+  font-size: 0.9rem;
+  opacity: 0.75;
+}
+
+.tile-blocks .block-code {
+  margin: 1rem 0;
+  padding: 0.85rem 1rem;
+  overflow: auto;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--color-text) 6%, var(--color-surface));
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 0.88rem;
+}
+
+.tile-interaction {
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px dashed color-mix(in srgb, var(--color-text) 15%, transparent);
+}
+
+.widget {
+  font-size: 0.98rem;
+}
+
+.widget-reveal .reveal-row {
+  margin-bottom: 0.75rem;
+}
+
+.reveal-prompt {
+  font: inherit;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  padding: 0.65rem 0.85rem;
+  border-radius: 10px;
+  border: 1px solid color-mix(in srgb, var(--color-accent) 35%, transparent);
+  background: color-mix(in srgb, var(--color-accent) 10%, var(--color-surface));
+  color: inherit;
+}
+
+.reveal-hidden {
+  margin-top: 0.5rem;
+  padding: 0.65rem 0.85rem;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--color-text) 5%, var(--color-surface));
+}
+
+.app-root[data-motion="playful"] .reveal-hidden {
+  animation: fadeIn 0.35s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.widget-accordion .accordion-header {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.accordion-trigger {
+  font: inherit;
+  width: 100%;
+  text-align: left;
+  padding: 0.6rem 0.75rem;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-text) 12%, transparent);
+  color: inherit;
+}
+
+.accordion-panel {
+  padding: 0.5rem 0.75rem 0.85rem;
+}
+
+.widget-tabs .tabs-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-bottom: 0.75rem;
+}
+
+.tabs-tab {
+  font: inherit;
+  cursor: pointer;
+  padding: 0.35rem 0.65rem;
+  border-radius: 8px;
+  border: 1px solid color-mix(in srgb, var(--color-text) 15%, transparent);
+  background: var(--color-bg);
+  color: inherit;
+}
+
+.tabs-tab[aria-selected="true"] {
+  background: color-mix(in srgb, var(--color-accent) 18%, var(--color-surface));
+  border-color: color-mix(in srgb, var(--color-accent) 40%, transparent);
+}
+
+.tabs-panel {
+  padding: 0.25rem 0;
+}
+
+.drag-prompt {
+  margin-top: 0;
+  font-weight: 600;
+}
+
+.drag-list {
+  margin: 0.75rem 0;
+  padding-left: 0;
+  list-style: none;
+  counter-reset: drag;
+}
+
+.drag-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.5rem 0.65rem;
+  margin-bottom: 0.4rem;
+  border-radius: 10px;
+  border: 1px solid color-mix(in srgb, var(--color-text) 12%, transparent);
+  background: var(--color-bg);
+  cursor: grab;
+}
+
+.drag-item.dragging {
+  opacity: 0.65;
+}
+
+.drag-controls {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.drag-nudge {
+  font: inherit;
+  cursor: pointer;
+  border: none;
+  background: color-mix(in srgb, var(--color-text) 8%, transparent);
+  border-radius: 6px;
+  padding: 0.15rem 0.4rem;
+  line-height: 1;
+}
+
+.drag-check {
+  font: inherit;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
+  border: none;
+  background: var(--color-accent);
+  color: var(--color-surface);
+}
+
+.drag-feedback {
+  margin-top: 0.65rem;
+  font-weight: 600;
+}
+
+.widget-slider .slider-slide h4 {
+  margin: 0 0 0.5rem;
+  font-size: 1.1rem;
+}
+
+.widget-slider .slider-slide p {
+  margin: 0;
+}
+
+.slider-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 1rem;
+  gap: 0.75rem;
+}
+
+.slider-nav button {
+  font: inherit;
+  cursor: pointer;
+  border-radius: 10px;
+  border: 1px solid color-mix(in srgb, var(--color-text) 18%, transparent);
+  padding: 0.35rem 0.75rem;
+  background: var(--color-bg);
+}
+
+.slider-indicator {
+  font-size: 0.9rem;
+  opacity: 0.75;
+}
+
+@media (max-width: 520px) {
+  .app-root {
+    padding: 1.25rem 1rem 3rem;
+  }
+}

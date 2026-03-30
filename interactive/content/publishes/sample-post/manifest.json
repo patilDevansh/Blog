@@ -1,0 +1,204 @@
+{
+  "slug": "sample-post",
+  "title": "Small steps beat perfect plans",
+  "summary": "Why iterative shipping beats waiting for the ideal design — with a few ways to play with the ideas below.",
+  "createdAt": "2026-03-29T12:00:00.000Z",
+  "navigation": [
+    "hook",
+    "tension",
+    "practice",
+    "compare",
+    "order",
+    "next"
+  ],
+  "theme": {
+    "accent": "#b84518",
+    "background": "#f2ebe3",
+    "surface": "#fffaf4",
+    "text": "#1c1916",
+    "fontPreset": "editorial",
+    "motion": "playful"
+  },
+  "tiles": [
+    {
+      "id": "hook",
+      "label": "The hook",
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "You already know the plan"
+        },
+        {
+          "type": "paragraph",
+          "text": "Most essays about productivity start with a confession. Here is mine: I have abandoned more perfect outlines than I have published articles. The gap between intention and shipping is not laziness — it is fear dressed as standards."
+        },
+        {
+          "type": "paragraph",
+          "text": "This page is both a short essay and a demo: each section is a tile, and each tile can carry its own interactive layer. Use the buttons above or arrow keys to move around."
+        }
+      ]
+    },
+    {
+      "id": "tension",
+      "label": "Tension",
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Two voices in your head"
+        },
+        {
+          "type": "paragraph",
+          "text": "One voice wants a flawless narrative arc. The other wants to learn something from real readers. They rarely agree on timing."
+        },
+        {
+          "type": "quote",
+          "text": "The first draft is just you telling yourself the story.",
+          "attribution": "Terry Pratchett (often paraphrased)"
+        }
+      ],
+      "interaction": {
+        "type": "reveal",
+        "pairs": [
+          {
+            "prompt": "What does “iterate” really mean here?",
+            "hidden": "It means changing the artifact in public view — notes, prototypes, posts — instead of only changing the plan in private."
+          },
+          {
+            "prompt": "What is the risk of waiting?",
+            "hidden": "You optimize for a fantasy audience. Feedback arrives when the cost of change is higher."
+          }
+        ]
+      }
+    },
+    {
+      "id": "practice",
+      "label": "In practice",
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "A rhythm that fits humans"
+        },
+        {
+          "type": "paragraph",
+          "text": "Below is the same idea in three modes: compact steps, a checklist, and a slower narrative. Pick what matches your energy today."
+        }
+      ],
+      "interaction": {
+        "type": "accordion",
+        "sections": [
+          {
+            "title": "Step 1 — Capture",
+            "body": "Write the messy thesis in one screen. No links, no research rabbit holes."
+          },
+          {
+            "title": "Step 2 — Separate",
+            "body": "Move supporting facts into a second section so the spine stays readable."
+          },
+          {
+            "title": "Step 3 — Share",
+            "body": "Publish to a trusted circle before you polish the prose for strangers."
+          }
+        ]
+      }
+    },
+    {
+      "id": "compare",
+      "label": "Compare",
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Same story, different lens"
+        },
+        {
+          "type": "paragraph",
+          "text": "Tabs are useful when two perspectives are both true — for example, emotional versus analytical framing."
+        }
+      ],
+      "interaction": {
+        "type": "tabs",
+        "tabs": [
+          {
+            "label": "Emotional",
+            "content": "Iteration soothes anxiety because motion beats rumination. Each small release proves you are allowed to exist in the conversation."
+          },
+          {
+            "label": "Analytical",
+            "content": "Iteration reduces variance. Early feedback tightens the loop between hypothesis and evidence, which is the core of any learning system."
+          },
+          {
+            "label": "Practical",
+            "content": "Ship a draft, note one confusion, fix that confusion, repeat. Complexity is deferred until the structure earns it."
+          }
+        ]
+      }
+    },
+    {
+      "id": "order",
+      "label": "Order",
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Sequence matters"
+        },
+        {
+          "type": "paragraph",
+          "text": "Some steps look interchangeable until you try them in the wrong order. Drag items or use the arrows, then check."
+        }
+      ],
+      "interaction": {
+        "type": "dragOrder",
+        "prompt": "Put these in a sensible order for a first blog post:",
+        "items": [
+          "Draft the spine in plain language",
+          "Add one example or story",
+          "Cut the clever sentence that repeats the headline",
+          "Publish and read reactions"
+        ],
+        "correctOrder": [
+          "Draft the spine in plain language",
+          "Add one example or story",
+          "Cut the clever sentence that repeats the headline",
+          "Publish and read reactions"
+        ]
+      }
+    },
+    {
+      "id": "next",
+      "label": "What next",
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Close the loop"
+        },
+        {
+          "type": "paragraph",
+          "text": "If this were your post, you would end with one concrete action. Here is a tiny carousel of endings — swipe mentally with the arrows."
+        }
+      ],
+      "interaction": {
+        "type": "sliderReveal",
+        "slides": [
+          {
+            "title": "Soft ending",
+            "body": "Try one imperfect paragraph tomorrow morning. Delete nothing for the first fifteen minutes."
+          },
+          {
+            "title": "Direct ending",
+            "body": "Pick a single reader. Write the last paragraph as an email to them."
+          },
+          {
+            "title": "Playful ending",
+            "body": "Reward yourself with a nicer heading font only after the second draft is live."
+          }
+        ],
+        "autoAdvanceMs": 9000
+      }
+    }
+  ]
+}
