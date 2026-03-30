@@ -1,0 +1,2 @@
+# SPA fallback: unknown paths serve index.html (real files like /stillwater.html win first)
+/*    /index.html   200

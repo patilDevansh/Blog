@@ -1,0 +1,40 @@
+{
+  "slug": "evening-light",
+  "title": "Letting the day soften",
+  "summary": "Before sleep, three small releases: the jaw, the story, the need to finish everything tonight.",
+  "createdAt": "2026-03-20T12:00:00.000Z",
+  "category": "Rest",
+  "cardVariant": "teal",
+  "readTimeMinutes": 4,
+  "tiles": [
+    {
+      "id": "open",
+      "label": "Arriving",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "You do not owe the night a summary of the day. You can arrive empty-handed."
+        }
+      ]
+    },
+    {
+      "id": "body",
+      "label": "The body first",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Unclench. Widen the exhale. Let the bed hold you without you having to hold the world."
+        }
+      ],
+      "interaction": {
+        "type": "reveal",
+        "pairs": [
+          {
+            "prompt": "One sentence for tonight",
+            "hidden": "I am allowed to stop proving I deserved this rest."
+          }
+        ]
+      }
+    }
+  ]
+}

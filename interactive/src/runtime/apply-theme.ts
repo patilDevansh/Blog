@@ -1,20 +1,13 @@
-import type { FontPreset, MotionLevel, ThemeTokens } from "@schema/theme";
+import type { MotionLevel, ThemeTokens } from "@schema/theme";
 
-const defaults: ThemeTokens = {
-  accent: "#c45c26",
-  background: "#f4efe6",
-  surface: "#fffdf8",
-  text: "#1a1614",
-  fontPreset: "editorial",
-  motion: "subtle",
-};
-
-const fontStacks: Record<FontPreset, string> = {
-  editorial:
-    '"Fraunces", "Source Serif 4", Georgia, "Times New Roman", serif',
-  mono: '"IBM Plex Mono", ui-monospace, monospace',
-  rounded: '"Nunito", system-ui, sans-serif',
-  "serif-warm": '"Source Serif 4", Georgia, serif',
+/** Stillwater palette — matches `index 2.html` / spiritual journal UI */
+const base: Required<
+  Pick<ThemeTokens, "accent" | "background" | "surface" | "text">
+> = {
+  accent: "#3C3489",
+  background: "#faf9f7",
+  surface: "#ffffff",
+  text: "#1a1a2e",
 };
 
 export function applyTheme(
@@ -22,17 +15,16 @@ export function applyTheme(
   theme: ThemeTokens | undefined,
   prefersReducedMotion: boolean
 ): void {
-  const t = { ...defaults, ...theme };
+  const t = { ...base, ...theme };
   const motion: MotionLevel =
-    prefersReducedMotion && t.motion !== "none"
+    prefersReducedMotion && theme?.motion !== "none"
       ? "subtle"
-      : (t.motion ?? defaults.motion)!;
+      : theme?.motion ?? "subtle";
 
-  root.style.setProperty("--color-accent", t.accent);
-  root.style.setProperty("--color-bg", t.background);
-  root.style.setProperty("--color-surface", t.surface ?? defaults.surface!);
-  root.style.setProperty("--color-text", t.text ?? defaults.text!);
-  root.style.setProperty("--font-body", fontStacks[t.fontPreset ?? "editorial"]);
+  root.style.setProperty("--sw-accent", t.accent);
+  root.style.setProperty("--sw-bg", t.background);
+  root.style.setProperty("--sw-surface", t.surface ?? base.surface);
+  root.style.setProperty("--sw-text", t.text ?? base.text);
   root.dataset.motion = motion;
   if (prefersReducedMotion) {
     root.dataset.reducedMotion = "1";

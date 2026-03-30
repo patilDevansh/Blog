@@ -10,4 +10,12 @@ export default defineConfig({
     },
   },
   publicDir: "public",
+  build: {
+    rollupOptions: {
+      input: {
+        main: resolve(__dirname, "index.html"),
+        creator: resolve(__dirname, "creator.html"),
+      },
+    },
+  },
 });

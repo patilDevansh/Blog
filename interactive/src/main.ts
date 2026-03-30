@@ -1,17 +1,21 @@
 import "./style.css";
 import {
   parseManifest,
+  orderedTiles,
   type PublishManifest,
   type Tile,
 } from "@schema/manifest";
 import { applyTheme, readPrefersReducedMotion } from "@runtime/apply-theme";
 import { renderBlocks } from "@runtime/render-blocks";
-import { clearSliderTimers, mountInteraction } from "@widgets/index";
+import { pickVariant, svgForVariant, type CardVariant } from "@runtime/grid-svgs";
+import { mountInteraction } from "@widgets/index";
 
 const manifestGlob = import.meta.glob<{ default: unknown }>(
   "../content/publishes/*/manifest.json",
   { eager: true }
 );
+
+const baseUrl = import.meta.env.BASE_URL ?? "/";
 
 function slugFromKey(key: string): string {
   const m = key.match(/publishes\/([^/]+)\/manifest\.json$/);
@@ -40,49 +44,213 @@ function loadAllManifests(): Map<string, PublishManifest> {
   return map;
 }
 
-function getInitialSlug(
-  manifests: Map<string, PublishManifest>,
-  requested: string | null
-): string {
-  if (requested && manifests.has(requested)) return requested;
-  const first = [...manifests.keys()][0];
-  if (!first) throw new Error("No valid manifests in content/publishes/");
-  return first;
+function formatJournalDate(iso: string): string {
+  return new Date(iso).toLocaleDateString(undefined, {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
 }
 
-function disposeTileMount(el: HTMLElement): void {
-  clearSliderTimers(el);
-  el.replaceChildren();
+function formatMetaLine(manifest: PublishManifest): string {
+  const date = formatJournalDate(manifest.createdAt);
+  if (manifest.readTimeMinutes != null) {
+    return `${date} · ${manifest.readTimeMinutes} min read`;
+  }
+  return date;
 }
 
-function renderTile(
-  mount: HTMLElement,
+function renderTileSection(
+  container: HTMLElement,
   tile: Tile,
   reducedMotion: boolean
 ): void {
-  disposeTileMount(mount);
-  const article = document.createElement("article");
-  article.className = "tile-article";
-  article.setAttribute("aria-label", tile.label);
+  const section = document.createElement("section");
+  section.className = "sw-entry-section";
+  section.id = tile.id;
+  const h = document.createElement("h2");
+  h.className = "sw-entry-section-title";
+  h.textContent = tile.label;
+  section.appendChild(h);
 
   const blocksWrap = document.createElement("div");
   blocksWrap.className = "tile-blocks";
   blocksWrap.appendChild(renderBlocks(tile.blocks));
-  article.appendChild(blocksWrap);
+  section.appendChild(blocksWrap);
 
   if (tile.interaction) {
     const interMount = document.createElement("div");
     interMount.className = "tile-interaction";
     mountInteraction(interMount, tile.interaction, { reducedMotion });
-    article.appendChild(interMount);
+    section.appendChild(interMount);
   }
 
-  mount.appendChild(article);
+  container.appendChild(section);
 }
 
-function mountApp(root: HTMLElement, manifest: PublishManifest): void {
-  let tileIndex = 0;
+function buildShell(): {
+  shell: HTMLElement;
+  topNav: HTMLElement;
+  mainEl: HTMLElement;
+  footer: HTMLElement;
+} {
+  const shell = document.createElement("div");
+  shell.className = "sw-shell";
 
+  const topNav = document.createElement("nav");
+  topNav.className = "sw-top-nav";
+  const logo = document.createElement("a");
+  logo.className = "sw-logo";
+  logo.href = `${baseUrl}stillwater.html`;
+  logo.textContent = "Stillwater";
+  const ul = document.createElement("ul");
+  ul.className = "sw-nav-links";
+  const links: [string, string][] = [
+    ["Home", `${baseUrl}stillwater.html`],
+    ["Journal", `${baseUrl}`],
+    ["About", "#"],
+    ["Contact", "#"],
+  ];
+  for (const [label, href] of links) {
+    const li = document.createElement("li");
+    const a = document.createElement("a");
+    a.href = href;
+    a.textContent = label;
+    li.appendChild(a);
+    ul.appendChild(li);
+  }
+  topNav.appendChild(logo);
+  topNav.appendChild(ul);
+
+  const mainEl = document.createElement("main");
+  mainEl.className = "sw-main sw-main--fluid";
+
+  const footer = document.createElement("footer");
+  footer.className = "sw-footer";
+  const footLogo = document.createElement("div");
+  footLogo.className = "sw-footer-logo";
+  footLogo.textContent = "Stillwater";
+  const footCopy = document.createElement("div");
+  footCopy.className = "sw-footer-copy";
+  footCopy.textContent =
+    "© " + new Date().getFullYear() + " Stillwater. Made with intention.";
+  footer.appendChild(footLogo);
+  footer.appendChild(footCopy);
+
+  shell.appendChild(topNav);
+  shell.appendChild(mainEl);
+  shell.appendChild(footer);
+
+  return { shell, topNav, mainEl, footer };
+}
+
+function mountJournalGrid(
+  root: HTMLElement,
+  manifests: Map<string, PublishManifest>
+): void {
+  applyTheme(root, undefined, readPrefersReducedMotion());
+  root.innerHTML = "";
+  root.className = "app-root";
+
+  const { shell, mainEl } = buildShell();
+
+  const hero = document.createElement("section");
+  hero.className = "journal-hero";
+  const heroBg = document.createElement("div");
+  heroBg.className = "journal-hero-bg";
+  const orb1 = document.createElement("div");
+  orb1.className = "hero-orb hero-orb-1";
+  const orb2 = document.createElement("div");
+  orb2.className = "hero-orb hero-orb-2";
+  const orb3 = document.createElement("div");
+  orb3.className = "hero-orb hero-orb-3";
+  const heroInner = document.createElement("div");
+  heroInner.className = "journal-hero-inner";
+  const eyebrow = document.createElement("p");
+  eyebrow.className = "hero-eyebrow";
+  eyebrow.textContent = "A space for the soul";
+  const h1 = document.createElement("h1");
+  h1.innerHTML = "Words to still<br>the <em>wandering</em> mind";
+  const sub = document.createElement("p");
+  sub.className = "journal-hero-sub";
+  sub.textContent =
+    "Reflections on presence, healing, and the quiet wisdom that lives within you.";
+  const cta = document.createElement("a");
+  cta.className = "hero-cta";
+  cta.href = "#posts";
+  cta.textContent = "Read the journal";
+  heroInner.appendChild(eyebrow);
+  heroInner.appendChild(h1);
+  heroInner.appendChild(sub);
+  heroInner.appendChild(cta);
+  hero.appendChild(heroBg);
+  hero.appendChild(orb1);
+  hero.appendChild(orb2);
+  hero.appendChild(orb3);
+  hero.appendChild(heroInner);
+
+  const sectionHead = document.createElement("div");
+  sectionHead.className = "section-header";
+  sectionHead.id = "posts";
+  const shEyebrow = document.createElement("p");
+  shEyebrow.className = "eyebrow";
+  shEyebrow.textContent = "Latest posts";
+  const shH2 = document.createElement("h2");
+  shH2.textContent = "From the journal";
+  sectionHead.appendChild(shEyebrow);
+  sectionHead.appendChild(shH2);
+
+  const grid = document.createElement("div");
+  grid.className = "blog-grid";
+
+  const list = [...manifests.entries()].sort(
+    (a, b) =>
+      new Date(b[1].createdAt).getTime() -
+      new Date(a[1].createdAt).getTime()
+  );
+
+  list.forEach(([slug, m], index) => {
+    const variant = pickVariant(m.cardVariant as CardVariant | undefined, index);
+    const a = document.createElement("a");
+    a.className = "blog-tile";
+    a.href = `${baseUrl}?slug=${encodeURIComponent(slug)}`;
+
+    const head = document.createElement("div");
+    head.className = `tile-header ${variant}`;
+    head.innerHTML = svgForVariant(variant);
+
+    const body = document.createElement("div");
+    body.className = "tile-body";
+    const cat = document.createElement("div");
+    cat.className = "tile-cat";
+    cat.textContent = m.category ?? "Journal";
+    const title = document.createElement("div");
+    title.className = "tile-title";
+    title.textContent = m.title;
+    const excerpt = document.createElement("div");
+    excerpt.className = "tile-excerpt";
+    excerpt.textContent = m.summary;
+    const meta = document.createElement("div");
+    meta.className = "tile-meta";
+    meta.textContent = formatMetaLine(m);
+
+    body.appendChild(cat);
+    body.appendChild(title);
+    body.appendChild(excerpt);
+    body.appendChild(meta);
+    a.appendChild(head);
+    a.appendChild(body);
+    grid.appendChild(a);
+  });
+
+  mainEl.appendChild(hero);
+  mainEl.appendChild(sectionHead);
+  mainEl.appendChild(grid);
+  root.appendChild(shell);
+  document.title = "Stillwater — A Spiritual Journal";
+}
+
+function mountPostView(root: HTMLElement, manifest: PublishManifest): void {
   applyTheme(root, manifest.theme, readPrefersReducedMotion());
 
   const prefersMq = globalThis.matchMedia?.("(prefers-reduced-motion: reduce)");
@@ -93,116 +261,81 @@ function mountApp(root: HTMLElement, manifest: PublishManifest): void {
   root.innerHTML = "";
   root.className = "app-root";
 
+  const { shell, mainEl } = buildShell();
+
+  const back = document.createElement("a");
+  back.className = "sw-back";
+  back.href = `${baseUrl}`;
+  back.textContent = "← Back to journal";
+
+  const article = document.createElement("article");
+  article.className = "sw-post-article";
+
   const header = document.createElement("header");
-  header.className = "app-header";
-  const title = document.createElement("h1");
-  title.className = "app-title";
-  title.textContent = manifest.title;
+  header.className = "sw-post-head";
+  const hEyebrow = document.createElement("p");
+  hEyebrow.className = "sw-hero-eyebrow";
+  hEyebrow.textContent = manifest.category ?? "Journal";
+  const h1 = document.createElement("h1");
+  h1.className = "sw-post-title";
+  h1.textContent = manifest.title;
   const summary = document.createElement("p");
-  summary.className = "app-summary";
+  summary.className = "sw-post-summary";
   summary.textContent = manifest.summary;
-  const meta = document.createElement("time");
-  meta.className = "app-meta";
-  meta.dateTime = manifest.createdAt;
-  meta.textContent = new Date(manifest.createdAt).toLocaleDateString(undefined, {
-    dateStyle: "long",
-  });
-  header.appendChild(title);
+  const meta = document.createElement("p");
+  meta.className = "sw-post-meta";
+  meta.textContent = formatMetaLine(manifest);
+  header.appendChild(hEyebrow);
+  header.appendChild(h1);
   header.appendChild(summary);
   header.appendChild(meta);
 
-  const nav = document.createElement("nav");
-  nav.className = "tile-nav";
-  nav.setAttribute("aria-label", "Sections");
+  const body = document.createElement("div");
+  body.className = "sw-post-body";
 
-  const tileMount = document.createElement("div");
-  tileMount.className = "tile-mount";
+  const tiles = orderedTiles(manifest);
+  const rm =
+    readPrefersReducedMotion() || manifest.theme?.motion === "none";
 
-  const tilesOrdered = manifest.navigation
-    .map((id) => manifest.tiles.find((t) => t.id === id))
-    .filter((t): t is Tile => Boolean(t));
-
-  const buttons: HTMLButtonElement[] = [];
-
-  function updateNav(): void {
-    buttons.forEach((btn, i) => {
-      const active = i === tileIndex;
-      btn.classList.toggle("is-active", active);
-      btn.setAttribute("aria-current", active ? "true" : "false");
-    });
+  for (const tile of tiles) {
+    renderTileSection(body, tile, rm);
   }
 
-  function showTile(i: number): void {
-    if (i < 0 || i >= tilesOrdered.length) return;
-    tileIndex = i;
-    const tile = tilesOrdered[tileIndex]!;
-    const rm =
-      readPrefersReducedMotion() || manifest.theme?.motion === "none";
-    renderTile(tileMount, tile, rm);
-    updateNav();
-    tileMount.focus?.();
-  }
-
-  tilesOrdered.forEach((tile, i) => {
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "tile-button";
-    btn.textContent = tile.label;
-    btn.addEventListener("click", () => showTile(i));
-    nav.appendChild(btn);
-    buttons.push(btn);
-  });
-
-  root.appendChild(header);
-  root.appendChild(nav);
-  root.appendChild(tileMount);
-  tileMount.tabIndex = -1;
-
-  showTile(0);
-
-  globalThis.addEventListener("keydown", (e) => {
-    if (e.key === "ArrowRight" || e.key === "ArrowDown") {
-      e.preventDefault();
-      showTile(Math.min(tileIndex + 1, tilesOrdered.length - 1));
-    }
-    if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
-      e.preventDefault();
-      showTile(Math.max(tileIndex - 1, 0));
-    }
-    if (e.key === "Home") {
-      e.preventDefault();
-      showTile(0);
-    }
-    if (e.key === "End") {
-      e.preventDefault();
-      showTile(tilesOrdered.length - 1);
-    }
-  });
+  article.appendChild(back);
+  article.appendChild(header);
+  article.appendChild(body);
+  mainEl.appendChild(article);
+  root.appendChild(shell);
 }
 
 function main(): void {
   const manifests = loadAllManifests();
-  const params = new URLSearchParams(globalThis.location.search);
-  const slug = getInitialSlug(manifests, params.get("slug"));
-  const manifest = manifests.get(slug);
-  if (!manifest) {
+  if (manifests.size === 0) {
     document.body.innerHTML =
-      "<p>No manifest found. Add content/publishes/&lt;slug&gt;/manifest.json</p>";
+      "<p>No posts found. Add content/publishes/&lt;slug&gt;/manifest.json</p>";
     return;
   }
 
-  if (params.get("slug") !== slug) {
-    params.set("slug", slug);
-    globalThis.history.replaceState(
-      null,
-      "",
-      `${globalThis.location.pathname}?${params}`
-    );
-  }
+  const params = new URLSearchParams(globalThis.location.search);
+  const slugParam = params.get("slug");
 
   const app = document.getElementById("app");
   if (!app) return;
-  mountApp(app, manifest);
+
+  if (!slugParam) {
+    mountJournalGrid(app, manifests);
+    return;
+  }
+
+  const manifest = manifests.get(slugParam);
+  if (!manifest) {
+    app.innerHTML = `<p class="sw-error">No post “${slugParam}”. <a href="${baseUrl}">Back to journal</a></p>`;
+    document.title = "Not found — Stillwater";
+    return;
+  }
+
+  document.title = `${manifest.title} — Stillwater`;
+  mountPostView(app, manifest);
 }
 
 main();

@@ -1,0 +1,142 @@
+/* Creator — Stillwater tokens, private page */
+
+:root {
+  --purple-deep: #26215c;
+  --purple-dark: #3c3489;
+  --text-muted: #6b6b8a;
+  --border: rgba(80, 70, 140, 0.12);
+  --bg: #faf9f7;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Jost", sans-serif;
+  font-weight: 300;
+  background: var(--bg);
+  color: #1a1a2e;
+  line-height: 1.6;
+}
+
+.creator-wrap {
+  max-width: 40rem;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 4rem;
+}
+
+.creator-wrap h1 {
+  font-family: "Cormorant Garamond", serif;
+  font-weight: 400;
+  font-size: 1.85rem;
+  color: var(--purple-deep);
+  margin: 0 0 0.5rem;
+}
+
+.creator-lede {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  margin: 0 0 1.75rem;
+}
+
+.creator-note {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+  background: #fff;
+}
+
+.creator-field {
+  margin-bottom: 1.1rem;
+}
+
+.creator-field label {
+  display: block;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 0.35rem;
+}
+
+.creator-field input,
+.creator-field textarea {
+  width: 100%;
+  font: inherit;
+  padding: 0.6rem 0.85rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: #fff;
+}
+
+.creator-field textarea {
+  min-height: 12rem;
+  resize: vertical;
+}
+
+.creator-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin: 1.25rem 0;
+}
+
+.creator-actions button {
+  font: inherit;
+  cursor: pointer;
+  padding: 0.55rem 1.2rem;
+  border-radius: 999px;
+  border: none;
+  background: var(--purple-deep);
+  color: #fff;
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.creator-actions button.secondary {
+  background: #fff;
+  color: var(--purple-dark);
+  border: 1px solid var(--border);
+}
+
+.creator-actions button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.creator-error {
+  color: #a33;
+  font-size: 0.9rem;
+  margin: 0.5rem 0 0;
+}
+
+.creator-out label {
+  margin-top: 1.5rem;
+}
+
+#out-json {
+  min-height: 10rem;
+  font-family: ui-monospace, "IBM Plex Mono", monospace;
+  font-size: 0.8rem;
+}
+
+.creator-footer {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.creator-footer a {
+  color: var(--purple-dark);
+}

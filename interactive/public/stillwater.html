@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stillwater — A Spiritual Journal</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --purple-light: #EEEDFE;
+    --purple-mid: #AFA9EC;
+    --purple-dark: #3C3489;
+    --purple-deep: #26215C;
+    --teal-light: #E1F5EE;
+    --teal-mid: #5DCAA5;
+    --amber-light: #FAEEDA;
+    --amber-mid: #EF9F27;
+    --pink-light: #FBEAF0;
+    --pink-mid: #ED93B1;
+    --text: #1a1a2e;
+    --text-muted: #6b6b8a;
+    --bg: #faf9f7;
+    --border: rgba(80, 70, 140, 0.12);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Jost', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    font-weight: 300;
+  }
+
+  /* NAV */
+  nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 3rem;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    background: rgba(250, 249, 247, 0.92);
+    backdrop-filter: blur(8px);
+    z-index: 100;
+  }
+
+  .logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.6rem;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--purple-deep);
+    letter-spacing: 0.02em;
+    text-decoration: none;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2.5rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    text-decoration: none;
+    font-size: 0.8rem;
+    letter-spacing: 0.12em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--purple-dark); }
+
+  /* HERO */
+  .hero {
+    min-height: 88vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 5rem 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 40%, #EEEDFE 0%, #faf9f7 70%);
+    z-index: 0;
+  }
+
+  .hero-orb {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.25;
+    animation: drift 12s ease-in-out infinite alternate;
+  }
+
+  .hero-orb-1 {
+    width: 320px; height: 320px;
+    background: var(--purple-mid);
+    top: -80px; right: 5%;
+    animation-delay: 0s;
+  }
+
+  .hero-orb-2 {
+    width: 200px; height: 200px;
+    background: var(--teal-mid);
+    bottom: 5%; left: 8%;
+    animation-delay: -4s;
+  }
+
+  .hero-orb-3 {
+    width: 140px; height: 140px;
+    background: var(--amber-mid);
+    top: 20%; left: 3%;
+    animation-delay: -8s;
+  }
+
+  @keyframes drift {
+    from { transform: translate(0, 0) scale(1); }
+    to { transform: translate(20px, 30px) scale(1.05); }
+  }
+
+  .hero-content { position: relative; z-index: 1; max-width: 680px; }
+
+  .hero-eyebrow {
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--purple-dark);
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.2s forwards;
+  }
+
+  .hero h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.8rem, 6vw, 5rem);
+    font-weight: 300;
+    line-height: 1.15;
+    color: var(--purple-deep);
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.4s forwards;
+  }
+
+  .hero h1 em {
+    font-style: italic;
+    color: var(--purple-dark);
+  }
+
+  .hero p {
+    font-size: 1.05rem;
+    color: var(--text-muted);
+    max-width: 480px;
+    margin: 0 auto 2.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.6s forwards;
+  }
+
+  .hero-cta {
+    display: inline-block;
+    padding: 0.85rem 2.4rem;
+    border: 1px solid var(--purple-dark);
+    border-radius: 999px;
+    color: var(--purple-deep);
+    text-decoration: none;
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: background 0.25s, color 0.25s;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.8s forwards;
+  }
+
+  .hero-cta:hover {
+    background: var(--purple-deep);
+    color: #fff;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* SECTION */
+  .section-header {
+    text-align: center;
+    padding: 4rem 2rem 2rem;
+  }
+
+  .section-header .eyebrow {
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+  }
+
+  .section-header h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.2rem;
+    font-weight: 300;
+    color: var(--purple-deep);
+  }
+
+  /* BLOG GRID */
+  .blog-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    padding: 1rem 3rem 5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .blog-tile {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
+
+  .blog-tile:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(80, 70, 140, 0.1);
+    border-color: var(--purple-mid);
+  }
+
+  .tile-header {
+    height: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .tile-header svg { position: relative; z-index: 1; }
+
+  .tile-header.purple { background: var(--purple-light); }
+  .tile-header.teal { background: var(--teal-light); }
+  .tile-header.amber { background: var(--amber-light); }
+  .tile-header.pink { background: var(--pink-light); }
+
+  .tile-body { padding: 1.25rem 1.5rem 1.5rem; }
+
+  .tile-cat {
+    font-size: 0.68rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+  }
+
+  .tile-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.35rem;
+    font-weight: 400;
+    color: var(--purple-deep);
+    line-height: 1.3;
+    margin-bottom: 0.6rem;
+  }
+
+  .tile-excerpt {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+  }
+
+  .tile-meta {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    opacity: 0.7;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .tile-meta::before {
+    content: '';
+    display: inline-block;
+    width: 20px;
+    height: 1px;
+    background: var(--purple-mid);
+  }
+
+  /* QUOTE BAND */
+  .quote-band {
+    background: var(--purple-deep);
+    color: #fff;
+    text-align: center;
+    padding: 4rem 2rem;
+  }
+
+  .quote-band blockquote {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.5rem, 3vw, 2.2rem);
+    font-weight: 300;
+    font-style: italic;
+    max-width: 640px;
+    margin: 0 auto 1rem;
+    line-height: 1.5;
+    opacity: 0.95;
+  }
+
+  .quote-band cite {
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    opacity: 0.5;
+  }
+
+  /* NEWSLETTER */
+  .newsletter {
+    text-align: center;
+    padding: 5rem 2rem;
+    max-width: 540px;
+    margin: 0 auto;
+  }
+
+  .newsletter .eyebrow {
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+  }
+
+  .newsletter h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem;
+    font-weight: 300;
+    color: var(--purple-deep);
+    margin-bottom: 1rem;
+  }
+
+  .newsletter p {
+    font-size: 0.92rem;
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+  }
+
+  .newsletter-form {
+    display: flex;
+    gap: 10px;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  .newsletter-form input {
+    flex: 1;
+    padding: 0.75rem 1.2rem;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.88rem;
+    color: var(--text);
+    background: #fff;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .newsletter-form input:focus { border-color: var(--purple-mid); }
+
+  .newsletter-form button {
+    padding: 0.75rem 1.6rem;
+    background: var(--purple-deep);
+    color: #fff;
+    border: none;
+    border-radius: 999px;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .newsletter-form button:hover { background: var(--purple-dark); }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 2.5rem 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .footer-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+    font-style: italic;
+    color: var(--purple-deep);
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+  }
+
+  .footer-links a {
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+
+  .footer-links a:hover { color: var(--purple-dark); }
+
+  .footer-copy {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    opacity: 0.6;
+  }
+
+  @media (max-width: 640px) {
+    nav { padding: 1.2rem 1.5rem; }
+    .nav-links { gap: 1.5rem; }
+    .blog-grid { padding: 1rem 1.5rem 4rem; }
+    footer { flex-direction: column; text-align: center; padding: 2rem 1.5rem; }
+    .newsletter-form { flex-direction: column; }
+    .newsletter-form input, .newsletter-form button { width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="logo" href="/stillwater.html">Stillwater</a>
+  <ul class="nav-links">
+    <li><a href="/stillwater.html">Home</a></li>
+    <li><a href="/">Journal</a></li>
+    <li><a href="#">About</a></li>
+    <li><a href="#">Contact</a></li>
+  </ul>
+</nav>
+
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-orb hero-orb-1"></div>
+  <div class="hero-orb hero-orb-2"></div>
+  <div class="hero-orb hero-orb-3"></div>
+  <div class="hero-content">
+    <p class="hero-eyebrow">A space for the soul</p>
+    <h1>Words to still<br>the <em>wandering</em> mind</h1>
+    <p>Reflections on presence, healing, and the quiet wisdom that lives within you.</p>
+    <a href="/#posts" class="hero-cta">Read the journal</a>
+  </div>
+</section>
+
+<div class="section-header" id="posts">
+  <p class="eyebrow">Latest posts</p>
+  <h2>From the journal</h2>
+</div>
+
+<div class="blog-grid">
+
+  <a class="blog-tile" href="/?slug=sample-post">
+    <div class="tile-header purple">
+      <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+        <circle cx="28" cy="28" r="22" stroke="#AFA9EC" stroke-width="1.5"/>
+        <circle cx="28" cy="28" r="10" fill="#CECBF6"/>
+        <circle cx="28" cy="28" r="4" fill="#AFA9EC"/>
+      </svg>
+    </div>
+    <div class="tile-body">
+      <div class="tile-cat">Meditation</div>
+      <div class="tile-title">The art of doing nothing</div>
+      <div class="tile-excerpt">What happens when we stop filling every silence and let stillness speak for itself.</div>
+      <div class="tile-meta">June 3 · 5 min read</div>
+    </div>
+  </a>
+
+  <a class="blog-tile" href="/?slug=evening-light">
+    <div class="tile-header teal">
+      <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+        <path d="M28 8 C16 22 16 42 28 48 C40 42 40 22 28 8Z" stroke="#5DCAA5" stroke-width="1.5" fill="#9FE1CB"/>
+        <path d="M28 18 C22 28 22 40 28 44 C34 40 34 28 28 18Z" fill="#5DCAA5" opacity="0.5"/>
+      </svg>
+    </div>
+    <div class="tile-body">
+      <div class="tile-cat">Healing</div>
+      <div class="tile-title">Letting the season change you</div>
+      <div class="tile-excerpt">Nature doesn't resist transformation. It surrenders to it. Neither should we.</div>
+      <div class="tile-meta">May 28 · 4 min read</div>
+    </div>
+  </a>
+
+  <a class="blog-tile" href="/">
+    <div class="tile-header amber">
+      <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+        <path d="M28 10 L32 22 H46 L35 30 L39 43 L28 35 L17 43 L21 30 L10 22 H24Z" stroke="#EF9F27" stroke-width="1.5" fill="#FAC775"/>
+      </svg>
+    </div>
+    <div class="tile-body">
+      <div class="tile-cat">Intention</div>
+      <div class="tile-title">Morning rituals that ground you</div>
+      <div class="tile-excerpt">How the first ten minutes of your day can shift everything that follows after.</div>
+      <div class="tile-meta">May 19 · 6 min read</div>
+    </div>
+  </a>
+
+  <a class="blog-tile" href="/">
+    <div class="tile-header pink">
+      <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+        <path d="M28 46 C28 46 10 36 10 23 C10 16 15 11 21 11 C24.5 11 28 14 28 14 C28 14 31.5 11 35 11 C41 11 46 16 46 23 C46 36 28 46 28 46Z" stroke="#ED93B1" stroke-width="1.5" fill="#F4C0D1"/>
+      </svg>
+    </div>
+    <div class="tile-body">
+      <div class="tile-cat">Self-love</div>
+      <div class="tile-title">You are allowed to rest</div>
+      <div class="tile-excerpt">Rest is not earned through exhaustion. It is a birthright. A gentle reminder.</div>
+      <div class="tile-meta">May 12 · 3 min read</div>
+    </div>
+  </a>
+
+  <a class="blog-tile" href="/">
+    <div class="tile-header purple">
+      <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+        <path d="M28 12 Q40 28 28 44 Q16 28 28 12Z" fill="#CECBF6" stroke="#AFA9EC" stroke-width="1.5"/>
+        <circle cx="28" cy="28" r="5" fill="#534AB7" opacity="0.5"/>
+      </svg>
+    </div>
+    <div class="tile-body">
+      <div class="tile-cat">Breathwork</div>
+      <div class="tile-title">The breath as a homecoming</div>
+      <div class="tile-excerpt">Every inhale is an invitation to return. To your body. To this moment. To yourself.</div>
+      <div class="tile-meta">May 5 · 4 min read</div>
+    </div>
+  </a>
+
+  <a class="blog-tile" href="/">
+    <div class="tile-header teal">
+      <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+        <circle cx="28" cy="28" r="18" stroke="#5DCAA5" stroke-width="1.5" stroke-dasharray="4 3"/>
+        <circle cx="28" cy="28" r="8" fill="#9FE1CB"/>
+        <path d="M28 14 V42 M14 28 H42" stroke="#5DCAA5" stroke-width="1" opacity="0.4"/>
+      </svg>
+    </div>
+    <div class="tile-body">
+      <div class="tile-cat">Presence</div>
+      <div class="tile-title">Living without the why</div>
+      <div class="tile-excerpt">Not every moment needs meaning. Sometimes existence itself is enough.</div>
+      <div class="tile-meta">April 29 · 5 min read</div>
+    </div>
+  </a>
+
+</div>
+
+<div class="quote-band">
+  <blockquote>"The quieter you become, the more you are able to hear."</blockquote>
+  <cite>— Rumi</cite>
+</div>
+
+<div class="newsletter">
+  <p class="eyebrow">Stay connected</p>
+  <h3>Wisdom in your inbox</h3>
+  <p>New reflections delivered gently, twice a month. No noise. Just soul.</p>
+  <div class="newsletter-form">
+    <input type="email" placeholder="your@email.com">
+    <button type="button">Subscribe</button>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-logo">Stillwater</div>
+  <ul class="footer-links">
+    <li><a href="/">Journal</a></li>
+    <li><a href="#">About</a></li>
+    <li><a href="#">Contact</a></li>
+  </ul>
+  <div class="footer-copy">© 2026 Stillwater. Made with intention.</div>
+</footer>
+
+</body>
+</html>

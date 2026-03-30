@@ -1,23 +1,15 @@
-# Interactive agentic blog (Vite)
+# Stillwater journal (Vite)
 
-Tile-based posts driven by `content/publishes/<slug>/manifest.json`.
+- **`/`** — Blog **grid** (one card per manifest): same tile layout as `index 2.html`.
+- **`?slug=your-slug`** — Full **post**: sections stack vertically; interactions stay inline. No section pill nav.
+
+Each post is `content/publishes/<slug>/manifest.json`:
+
+- `title`, `summary`, `createdAt`, optional `category`, `cardVariant`, `readTimeMinutes`
+- `tiles[]` — parts of the article (`label` + `blocks` + optional `interaction`)
+- `navigation` — optional; if omitted, sections follow the order of `tiles`
 
 ```bash
 npm install
 npm run dev
 ```
-
-Open the printed URL (often `http://localhost:5173`). Sample: `sample-post`.
-
-```bash
-npm run validate-manifest
-npm run build
-```
-
-See `agent/prompts/` and `agent/checklist.md` for the compile workflow.
-
-## Adding a new interaction type
-
-1. Extend `src/schema/interactions.ts`
-2. Add `src/widgets/<name>.ts` and register in `src/widgets/index.ts`
-3. Document in `agent/prompts/system.md`

@@ -1,0 +1,24 @@
+# Netlify — build from repo root (do NOT set "Base directory" to `interactive` in the UI
+# unless you know what you're doing — it breaks publish paths below).
+
+[build]
+  # Uses root package.json "build" so `cd` is not required in Netlify's shell
+  command = "npm run build"
+  publish = "interactive/dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+[functions]
+  directory = "netlify/functions"
+
+[dev]
+  command = "cd interactive && npm run dev"
+  targetPort = 5173
+  port = 8888
+  publish = "interactive/dist"
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"

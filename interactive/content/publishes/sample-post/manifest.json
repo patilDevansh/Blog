@@ -1,203 +1,197 @@
 {
   "slug": "sample-post",
-  "title": "Small steps beat perfect plans",
-  "summary": "Why iterative shipping beats waiting for the ideal design — with a few ways to play with the ideas below.",
+  "title": "Returning to the breath",
+  "summary": "A gentle walk through presence, small rituals, and the quiet that was never gone — written in the same spirit as the Stillwater journal.",
   "createdAt": "2026-03-29T12:00:00.000Z",
-  "navigation": [
-    "hook",
-    "tension",
-    "practice",
-    "compare",
-    "order",
-    "next"
-  ],
+  "category": "Presence",
+  "cardVariant": "purple",
+  "readTimeMinutes": 8,
   "theme": {
-    "accent": "#b84518",
-    "background": "#f2ebe3",
-    "surface": "#fffaf4",
-    "text": "#1c1916",
-    "fontPreset": "editorial",
+    "accent": "#3C3489",
+    "background": "#faf9f7",
+    "surface": "#ffffff",
+    "text": "#1a1a2e",
     "motion": "playful"
   },
   "tiles": [
     {
-      "id": "hook",
-      "label": "The hook",
+      "id": "arrival",
+      "label": "Arrival",
       "blocks": [
         {
           "type": "heading",
           "level": 2,
-          "text": "You already know the plan"
+          "text": "You are already here"
         },
         {
           "type": "paragraph",
-          "text": "Most essays about productivity start with a confession. Here is mine: I have abandoned more perfect outlines than I have published articles. The gap between intention and shipping is not laziness — it is fear dressed as standards."
+          "text": "Nothing about this practice asks you to become someone new. The journal is only a frame: a little structure so your own words can land without having to be perfect."
         },
         {
           "type": "paragraph",
-          "text": "This page is both a short essay and a demo: each section is a tile, and each tile can carry its own interactive layer. Use the buttons above or arrow keys to move around."
+          "text": "Below, each part of this entry scrolls in order — one gentle section after another."
         }
       ]
     },
     {
       "id": "tension",
-      "label": "Tension",
+      "label": "The noise",
       "blocks": [
         {
           "type": "heading",
           "level": 2,
-          "text": "Two voices in your head"
+          "text": "What pulls you away"
         },
         {
           "type": "paragraph",
-          "text": "One voice wants a flawless narrative arc. The other wants to learn something from real readers. They rarely agree on timing."
+          "text": "The mind loves a problem to solve. Sometimes the kindest thing is not to solve — only to notice."
         },
         {
           "type": "quote",
-          "text": "The first draft is just you telling yourself the story.",
-          "attribution": "Terry Pratchett (often paraphrased)"
+          "text": "The quieter you become, the more you are able to hear.",
+          "attribution": "Rumi"
         }
       ],
       "interaction": {
         "type": "reveal",
         "pairs": [
           {
-            "prompt": "What does “iterate” really mean here?",
-            "hidden": "It means changing the artifact in public view — notes, prototypes, posts — instead of only changing the plan in private."
+            "prompt": "What does “coming back” mean?",
+            "hidden": "Not fixing your life in one breath — simply choosing the next kind, honest moment."
           },
           {
-            "prompt": "What is the risk of waiting?",
-            "hidden": "You optimize for a fantasy audience. Feedback arrives when the cost of change is higher."
+            "prompt": "What is the risk of waiting for calm first?",
+            "hidden": "Calm often arrives after we stop demanding it as a precondition."
           }
         ]
       }
     },
     {
       "id": "practice",
-      "label": "In practice",
+      "label": "A small rhythm",
       "blocks": [
         {
           "type": "heading",
           "level": 2,
-          "text": "A rhythm that fits humans"
+          "text": "Three beats you can borrow"
         },
         {
           "type": "paragraph",
-          "text": "Below is the same idea in three modes: compact steps, a checklist, and a slower narrative. Pick what matches your energy today."
+          "text": "Keep them small. Small is how they survive busy days."
         }
       ],
       "interaction": {
         "type": "accordion",
         "sections": [
           {
-            "title": "Step 1 — Capture",
-            "body": "Write the messy thesis in one screen. No links, no research rabbit holes."
+            "title": "Arrive",
+            "body": "Feel feet on the floor, or hands on the page. One sentence about what is true right now."
           },
           {
-            "title": "Step 2 — Separate",
-            "body": "Move supporting facts into a second section so the spine stays readable."
+            "title": "Listen",
+            "body": "Name one sound or sensation without judging it. Let it pass."
           },
           {
-            "title": "Step 3 — Share",
-            "body": "Publish to a trusted circle before you polish the prose for strangers."
+            "title": "Release",
+            "body": "Exhale a little longer than the inhale. Once is enough to count."
           }
         ]
       }
     },
     {
-      "id": "compare",
-      "label": "Compare",
+      "id": "lens",
+      "label": "Two lenses",
       "blocks": [
         {
           "type": "heading",
           "level": 2,
-          "text": "Same story, different lens"
+          "text": "Same day, different light"
         },
         {
           "type": "paragraph",
-          "text": "Tabs are useful when two perspectives are both true — for example, emotional versus analytical framing."
+          "text": "When you are tender, you might need warmth. When you are scattered, you might need clarity. Both can be true."
         }
       ],
       "interaction": {
         "type": "tabs",
         "tabs": [
           {
-            "label": "Emotional",
-            "content": "Iteration soothes anxiety because motion beats rumination. Each small release proves you are allowed to exist in the conversation."
+            "label": "Heart",
+            "content": "You are not behind. You are in motion — even rest is motion when chosen with care."
           },
           {
-            "label": "Analytical",
-            "content": "Iteration reduces variance. Early feedback tightens the loop between hypothesis and evidence, which is the core of any learning system."
+            "label": "Mind",
+            "content": "Name one variable you control today: a single breath, a single line of writing, one boundary kept kindly."
           },
           {
-            "label": "Practical",
-            "content": "Ship a draft, note one confusion, fix that confusion, repeat. Complexity is deferred until the structure earns it."
+            "label": "Body",
+            "content": "Drop your shoulders. Unclench the jaw. The body often believes the story first."
           }
         ]
       }
     },
     {
       "id": "order",
-      "label": "Order",
+      "label": "What comes first",
       "blocks": [
         {
           "type": "heading",
           "level": 2,
-          "text": "Sequence matters"
+          "text": "Order is kindness"
         },
         {
           "type": "paragraph",
-          "text": "Some steps look interchangeable until you try them in the wrong order. Drag items or use the arrows, then check."
+          "text": "Put these in an order that feels honest for a heavy day — then tap Check."
         }
       ],
       "interaction": {
         "type": "dragOrder",
-        "prompt": "Put these in a sensible order for a first blog post:",
+        "prompt": "Arrange from what you’d do first to last:",
         "items": [
-          "Draft the spine in plain language",
-          "Add one example or story",
-          "Cut the clever sentence that repeats the headline",
-          "Publish and read reactions"
+          "Name that you are struggling",
+          "Ask for one small help or pause",
+          "Do the next gentle action",
+          "Let the rest be unfinished"
         ],
         "correctOrder": [
-          "Draft the spine in plain language",
-          "Add one example or story",
-          "Cut the clever sentence that repeats the headline",
-          "Publish and read reactions"
+          "Name that you are struggling",
+          "Ask for one small help or pause",
+          "Do the next gentle action",
+          "Let the rest be unfinished"
         ]
       }
     },
     {
-      "id": "next",
-      "label": "What next",
+      "id": "close",
+      "label": "Carry this",
       "blocks": [
         {
           "type": "heading",
           "level": 2,
-          "text": "Close the loop"
+          "text": "Closing without closing off"
         },
         {
           "type": "paragraph",
-          "text": "If this were your post, you would end with one concrete action. Here is a tiny carousel of endings — swipe mentally with the arrows."
+          "text": "Endings can be soft. Swipe through a few — one may be enough for today."
         }
       ],
       "interaction": {
         "type": "sliderReveal",
         "slides": [
           {
-            "title": "Soft ending",
-            "body": "Try one imperfect paragraph tomorrow morning. Delete nothing for the first fifteen minutes."
+            "title": "A line to keep",
+            "body": "I do not have to earn rest. I can choose a gentler next minute."
           },
           {
-            "title": "Direct ending",
-            "body": "Pick a single reader. Write the last paragraph as an email to them."
+            "title": "A question",
+            "body": "What would I say to a friend who felt exactly like this?"
           },
           {
-            "title": "Playful ending",
-            "body": "Reward yourself with a nicer heading font only after the second draft is live."
+            "title": "A promise",
+            "body": "I will return to the page without needing to fix everything first."
           }
         ],
-        "autoAdvanceMs": 9000
+        "autoAdvanceMs": 12000
       }
     }
   ]

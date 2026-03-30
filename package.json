@@ -1,0 +1,7 @@
+{
+  "name": "stillwater-blog",
+  "private": true,
+  "scripts": {
+    "build": "npm --prefix interactive install --no-audit --no-fund && npm --prefix interactive run build"
+  }
+}
