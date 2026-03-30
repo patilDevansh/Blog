@@ -25,6 +25,16 @@ export const blockSchema = z.discriminatedUnion("type", [
     language: z.string().optional(),
     code: z.string(),
   }),
+  z.object({
+    type: z.literal("image"),
+    /** Unsplash CDN or other HTTPS image URL from a licensed source */
+    src: z.string().url(),
+    alt: z.string(),
+    /** Photographer name (Unsplash attribution) */
+    creditName: z.string().min(1),
+    /** Link to the photo on Unsplash (or photographer page), including UTM if required */
+    creditLink: z.string().url(),
+  }),
 ]);
 
 export type Block = z.infer<typeof blockSchema>;

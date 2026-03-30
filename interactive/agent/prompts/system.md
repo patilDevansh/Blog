@@ -18,7 +18,9 @@ You are a publishing agent. The user gives you **plain English blog prose** (and
 
 ## Block types
 
-`heading` (levels 1–3), `paragraph`, `list`, `quote`, `code`
+`heading` (levels 1–3), `paragraph`, `list`, `quote`, `code`, `image`
+
+For `image`: `{ "type": "image", "src": "https://...", "alt": "...", "creditName": "...", "creditLink": "https://unsplash.com/photos/..." }`. **Never invent URLs** — use only URLs returned by the Unsplash API (e.g. `npm run unsplash-search` in `interactive/`). If you have none, omit `image` blocks.
 
 ## IDs and slugs
 

@@ -64,10 +64,12 @@ function renderTileSection(
   container: HTMLElement,
   tile: Tile,
   reducedMotion: boolean
-): void {
+): HTMLElement {
   const section = document.createElement("section");
   section.className = "sw-entry-section";
   section.id = tile.id;
+  section.dataset.sectionId = tile.id;
+
   const h = document.createElement("h2");
   h.className = "sw-entry-section-title";
   h.textContent = tile.label;
@@ -86,6 +88,151 @@ function renderTileSection(
   }
 
   container.appendChild(section);
+  return section;
+}
+
+function buildPostJumpNav(
+  tiles: Tile[],
+  options: { reducedMotion: boolean }
+): { nav: HTMLElement; links: HTMLAnchorElement[] } {
+  const nav = document.createElement("nav");
+  nav.className = "sw-post-jump";
+  nav.setAttribute("aria-label", "Sections in this article");
+
+  const inner = document.createElement("div");
+  inner.className = "sw-post-jump-inner";
+
+  const links: HTMLAnchorElement[] = [];
+  tiles.forEach((tile, i) => {
+    if (i > 0) {
+      const sep = document.createElement("span");
+      sep.className = "sw-post-jump-sep";
+      sep.setAttribute("aria-hidden", "true");
+      sep.textContent = "·";
+      inner.appendChild(sep);
+    }
+    const a = document.createElement("a");
+    a.className = "sw-post-jump-link";
+    a.href = `#${tile.id}`;
+    a.textContent = tile.label;
+    a.addEventListener("click", (e) => {
+      e.preventDefault();
+      const target = document.getElementById(tile.id);
+      if (!target) return;
+      target.scrollIntoView({
+        behavior: options.reducedMotion ? "auto" : "smooth",
+        block: "start",
+      });
+      const { pathname, search } = globalThis.location;
+      globalThis.history.replaceState(
+        null,
+        "",
+        `${pathname}${search}#${tile.id}`
+      );
+    });
+    inner.appendChild(a);
+    links.push(a);
+  });
+
+  nav.appendChild(inner);
+  return { nav, links };
+}
+
+function updateReadingProgress(bar: HTMLElement): void {
+  const scrollTop =
+    globalThis.scrollY ?? document.documentElement.scrollTop ?? 0;
+  const scrollable =
+    document.documentElement.scrollHeight -
+    document.documentElement.clientHeight;
+  const p =
+    scrollable <= 0 ? 1 : Math.min(1, Math.max(0, scrollTop / scrollable));
+  bar.style.transform = `scaleX(${p})`;
+}
+
+let postViewTeardown: (() => void) | null = null;
+
+function teardownPostView(): void {
+  postViewTeardown?.();
+  postViewTeardown = null;
+}
+
+function attachPostReadingChrome(options: {
+  topNav: HTMLElement;
+  progressBar: HTMLElement;
+  sectionEls: HTMLElement[];
+  jumpLinks: HTMLAnchorElement[];
+  reducedMotion: boolean;
+}): void {
+  const ac = new AbortController();
+  const { signal } = ac;
+
+  const onScrollOrResize = (): void => {
+    updateReadingProgress(options.progressBar);
+  };
+  onScrollOrResize();
+  globalThis.addEventListener("scroll", onScrollOrResize, {
+    passive: true,
+    signal,
+  });
+  globalThis.addEventListener("resize", onScrollOrResize, {
+    passive: true,
+    signal,
+  });
+
+  const onHashChange = (): void => {
+    const id = globalThis.location.hash.slice(1);
+    if (!id) return;
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({
+        behavior: options.reducedMotion ? "auto" : "smooth",
+        block: "start",
+      });
+    }
+  };
+  globalThis.addEventListener("hashchange", onHashChange, { signal });
+
+  const setActiveLink = (id: string | null): void => {
+    for (const a of options.jumpLinks) {
+      const match = a.getAttribute("href") === `#${id}`;
+      if (match) {
+        a.classList.add("is-active");
+        a.setAttribute("aria-current", "location");
+      } else {
+        a.classList.remove("is-active");
+        a.removeAttribute("aria-current");
+      }
+    }
+  };
+
+  const io = new IntersectionObserver(
+    (entries) => {
+      const visible = entries
+        .filter((e) => e.isIntersecting)
+        .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+      if (visible?.target instanceof HTMLElement) {
+        const id = visible.target.dataset.sectionId ?? visible.target.id;
+        setActiveLink(id || null);
+      }
+    },
+    {
+      root: null,
+      rootMargin: "-12% 0px -60% 0px",
+      threshold: [0, 0.15, 0.35, 0.55],
+    }
+  );
+
+  for (const el of options.sectionEls) {
+    io.observe(el);
+  }
+
+  postViewTeardown = () => {
+    ac.abort();
+    io.disconnect();
+    options.topNav.classList.remove("sw-top-nav--with-progress");
+    const track = options.topNav.querySelector(".sw-read-progress-track");
+    track?.remove();
+  };
 }
 
 function buildShell(): {
@@ -164,6 +311,7 @@ function mountJournalGrid(
   root: HTMLElement,
   manifests: Map<string, PublishManifest>
 ): void {
+  teardownPostView();
   applyTheme(root, undefined, readPrefersReducedMotion());
   root.innerHTML = "";
   root.className = "app-root";
@@ -306,6 +454,7 @@ function mountJournalGrid(
 }
 
 function mountPostView(root: HTMLElement, manifest: PublishManifest): void {
+  teardownPostView();
   applyTheme(root, manifest.theme, readPrefersReducedMotion());
 
   const prefersMq = globalThis.matchMedia?.("(prefers-reduced-motion: reduce)");
@@ -316,7 +465,16 @@ function mountPostView(root: HTMLElement, manifest: PublishManifest): void {
   root.innerHTML = "";
   root.className = "app-root";
 
-  const { shell, mainEl } = buildShell();
+  const { shell, topNav, mainEl } = buildShell();
+
+  topNav.classList.add("sw-top-nav--with-progress");
+  const progressTrack = document.createElement("div");
+  progressTrack.className = "sw-read-progress-track";
+  progressTrack.setAttribute("aria-hidden", "true");
+  const progressBar = document.createElement("div");
+  progressBar.className = "sw-read-progress-bar";
+  progressTrack.appendChild(progressBar);
+  topNav.appendChild(progressTrack);
 
   const back = document.createElement("a");
   back.className = "sw-back";
@@ -352,15 +510,42 @@ function mountPostView(root: HTMLElement, manifest: PublishManifest): void {
   const rm =
     readPrefersReducedMotion() || manifest.theme?.motion === "none";
 
+  const { nav: jumpNav, links: jumpLinks } = buildPostJumpNav(tiles, {
+    reducedMotion: rm,
+  });
+
+  const sectionEls: HTMLElement[] = [];
   for (const tile of tiles) {
-    renderTileSection(body, tile, rm);
+    sectionEls.push(renderTileSection(body, tile, rm));
   }
 
   article.appendChild(back);
   article.appendChild(header);
+  article.appendChild(jumpNav);
   article.appendChild(body);
   mainEl.appendChild(article);
   root.appendChild(shell);
+
+  attachPostReadingChrome({
+    topNav,
+    progressBar,
+    sectionEls,
+    jumpLinks,
+    reducedMotion: rm,
+  });
+
+  const initialHash = globalThis.location.hash.slice(1);
+  if (initialHash) {
+    const target = document.getElementById(initialHash);
+    if (target) {
+      requestAnimationFrame(() => {
+        target.scrollIntoView({
+          behavior: rm ? "auto" : "smooth",
+          block: "start",
+        });
+      });
+    }
+  }
 }
 
 function main(): void {
@@ -384,6 +569,7 @@ function main(): void {
 
   const manifest = manifests.get(slugParam);
   if (!manifest) {
+    teardownPostView();
     app.innerHTML = `<p class="sw-error">No post “${slugParam}”. <a href="${baseUrl}">Back to journal</a></p>`;
     document.title = "Not found — Stillwater";
     return;

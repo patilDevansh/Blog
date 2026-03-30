@@ -57,5 +57,26 @@ function renderBlock(block: Block): HTMLElement {
       pre.appendChild(code);
       return pre;
     }
+    case "image": {
+      const figure = document.createElement("figure");
+      figure.className = "block-image";
+      const img = document.createElement("img");
+      img.src = block.src;
+      img.alt = block.alt;
+      img.loading = "lazy";
+      img.decoding = "async";
+      figure.appendChild(img);
+      const cap = document.createElement("figcaption");
+      const photoLink = document.createElement("a");
+      photoLink.href = block.creditLink;
+      photoLink.rel = "noopener noreferrer";
+      photoLink.target = "_blank";
+      photoLink.textContent = block.creditLink.includes("unsplash.com")
+        ? `Photo by ${block.creditName} on Unsplash`
+        : `Credit: ${block.creditName}`;
+      cap.appendChild(photoLink);
+      figure.appendChild(cap);
+      return figure;
+    }
   }
 }

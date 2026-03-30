@@ -62,6 +62,32 @@ body {
   z-index: 100;
 }
 
+.sw-top-nav--with-progress {
+  position: sticky;
+  padding-bottom: calc(1.5rem + 6px);
+}
+
+.sw-read-progress-track {
+  position: absolute;
+  left: 1.5rem;
+  right: 1.5rem;
+  bottom: 0;
+  height: 3px;
+  border-radius: 999px;
+  background: rgba(80, 70, 140, 0.12);
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.sw-read-progress-bar {
+  height: 100%;
+  width: 100%;
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+  background: linear-gradient(90deg, var(--purple-mid), var(--purple-dark));
+  will-change: transform;
+}
+
 .sw-logo {
   font-family: "Cormorant Garamond", serif;
   font-size: 1.6rem;
@@ -91,6 +117,13 @@ body {
 
 .sw-nav-links a:hover {
   color: var(--purple-dark);
+}
+
+.sw-nav-links a:focus-visible,
+.sw-logo:focus-visible,
+.sw-back:focus-visible {
+  outline: 2px solid var(--purple-dark);
+  outline-offset: 3px;
 }
 
 .sw-main {
@@ -291,6 +324,40 @@ body {
   border-radius: 10px;
   background: var(--purple-light);
   font-size: 0.88rem;
+}
+
+.tile-blocks .block-image {
+  margin: 1.35rem 0;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--purple-light);
+  box-shadow: 0 8px 28px rgba(80, 70, 140, 0.08);
+}
+
+.tile-blocks .block-image img {
+  display: block;
+  width: 100%;
+  height: auto;
+  vertical-align: middle;
+}
+
+.tile-blocks .block-image figcaption {
+  padding: 0.65rem 0.9rem 0.75rem;
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.85);
+}
+
+.tile-blocks .block-image figcaption a {
+  color: var(--purple-dark);
+  text-decoration: none;
+}
+
+.tile-blocks .block-image figcaption a:hover {
+  text-decoration: underline;
 }
 
 .tile-interaction {
@@ -705,6 +772,12 @@ body {
   border-color: var(--purple-mid);
 }
 
+.blog-tile:focus-visible {
+  outline: 2px solid var(--purple-dark);
+  outline-offset: 3px;
+  border-color: var(--purple-mid);
+}
+
 .tile-header {
   height: 140px;
   display: flex;
@@ -780,7 +853,59 @@ body {
   background: var(--purple-mid);
 }
 
-/* Single post (scroll) — no section pills */
+/* Jump strip — reads like subheads, scrolls to sections */
+.sw-post-jump {
+  max-width: 44rem;
+  margin: 0 auto 2.5rem;
+  padding: 0 0.5rem;
+}
+
+.sw-post-jump-inner {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: baseline;
+  gap: 0.35rem 0.55rem;
+  font-family: "Cormorant Garamond", serif;
+  font-size: clamp(1.05rem, 2.8vw, 1.28rem);
+  font-weight: 400;
+  line-height: 1.45;
+  text-align: center;
+}
+
+.sw-post-jump-sep {
+  color: var(--text-muted);
+  opacity: 0.4;
+  user-select: none;
+  pointer-events: none;
+}
+
+.sw-post-jump-link {
+  color: var(--purple-deep);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition:
+    color 0.2s,
+    border-color 0.2s;
+}
+
+.sw-post-jump-link:hover {
+  border-bottom-color: var(--purple-mid);
+  color: var(--purple-dark);
+}
+
+.sw-post-jump-link.is-active {
+  color: var(--purple-dark);
+  border-bottom-color: var(--purple-dark);
+}
+
+.sw-post-jump-link:focus-visible {
+  outline: 2px solid var(--purple-dark);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* Single post (scroll) */
 .sw-back {
   display: inline-block;
   margin-bottom: 2rem;
@@ -813,6 +938,7 @@ body {
 }
 
 .sw-entry-section {
+  scroll-margin-top: 5.5rem;
   background: var(--sw-surface, #fff);
   border: 1px solid var(--border);
   border-radius: 16px;

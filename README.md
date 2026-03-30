@@ -1,5 +1,29 @@
 # Stillwater — blog
 
+## AI agent: raw text → structured posts
+
+If you’re using Cursor (or another agent) with **raw draft text**, point it at **[`BLOG_AGENT_WORKFLOW.md`](./BLOG_AGENT_WORKFLOW.md)**. That file defines the **agentic workflow**: content analysis, mandatory web research (5 sources), **5 per-post interactive elements** (manifest widgets), and **design constraints**. For **images, mood, and art direction**, use the linked companion **[`BLOG_AGENT_VISUALS.md`](./BLOG_AGENT_VISUALS.md)** (see the top of the workflow file for when to switch).
+
+**Fixed for every post (do not remove per article):** section **jump strip** (smooth scroll), **reading progress bar**, **scroll-spy** on jump links — implemented in `interactive/src/main.ts`.
+
+**Two “home” grids (keep them in sync):** The journal at **`/`** builds post cards from **`interactive/content/publishes/*/manifest.json`**. The marketing pages **`interactive/public/stillwater.html`** (built to `dist`) and **`index 2.html`** use a **hand-written** grid for the same look. When you change a manifest (`title`, `summary`, `category`, `readTimeMinutes`), update the matching `<a class="blog-tile" href="/?slug=…">` block in those HTML files or the tile will **lie** while the article is correct—and **back/forward** between `/` and `stillwater.html` will feel inconsistent.
+
+### Images (Unsplash) — how to phrase search queries
+
+When you or an agent run **`npm run unsplash-search`** (from `interactive/`, with `UNSPLASH_ACCESS_KEY` in the repo root `.env`), the **query string** is the only lever you have. Poor queries return pretty but **off-topic** photos. Use this order:
+
+1. **Tie the query to what the prose is actually doing.** Skim the draft (or the `paragraph` blocks near where the image will sit) and extract **concrete cues**: setting (kitchen, path, room), time of day, weather, metaphor (light, water, threshold). Build **3–8 words** that a photographer might have tagged honestly—not a generic mood like “peaceful nature” unless the essay is truly about nature.
+
+2. **Keep a contemplative register.** Stillwater reads **spiritual-but-editorial**: favor soft light, mist, hands at rest, distant mountains, empty bench, candle, temple *architecture* as space, walking path, dawn—things that feel **inward** and quiet. Avoid neon “wellness” stock, cliché yoga poses, or loud tourist shots.
+
+3. **Use Himalayan / Buddhist / meditation vocabulary only when it fits.** Words like *Himalaya*, *Tibet*, *temple*, *prayer flags*, *Zen garden*, *meditation* can **sharpen** a query when the piece touches stillness, tradition, altitude, or pilgrimage. They are **not** a default template—if the essay is domestic, intimate, or grounded in ordinary mornings, search for **that** (e.g. *steam morning kitchen window light*) instead of forcing exotic place-names.
+
+4. **Vary queries between images.** The first and second image should each reflect **different beats** in the essay (e.g. opening “threshold” vs later “return”), not the same generic search twice.
+
+For the full art-direction checklist, see **[`BLOG_AGENT_VISUALS.md`](./BLOG_AGENT_VISUALS.md)** (Unsplash section).
+
+---
+
 This repo is **one** spiritual blog, two ways to open it:
 
 ## 1. Landing page (the grid of posts)

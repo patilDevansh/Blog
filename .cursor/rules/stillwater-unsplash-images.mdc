@@ -1,0 +1,39 @@
+---
+description: Stillwater blog — add Unsplash images via unsplash-search when creating or editing manifests
+alwaysApply: true
+---
+
+# Stillwater — Agent must add Unsplash images for blog posts
+
+When the user wants a **new blog post**, **manifest**, or raw **draft** turned into `interactive/content/publishes/<slug>/manifest.json`, or when you **create or edit** any file under `interactive/content/publishes/`:
+
+## Required steps
+
+1. **Produce the manifest** (tiles, blocks, interactions) per `BLOG_AGENT_WORKFLOW.md` and `BLOG_AGENT_VISUALS.md`.
+
+2. **Before handoff**, unless the user clearly says **no images**, run **from the `interactive/` directory** (repo root `.env` supplies the key). Run **up to two searches** with **different queries** when using `--limit 1` twice, or one search with `--limit 2` only if both results still feel on-topic (prefer two tailored queries).
+
+   ```bash
+   cd interactive && npm run unsplash-search -- "<query>" --limit 1
+   ```
+
+   **Query construction (must be topic-related):**
+
+   - **Anchor in the draft:** Read the manifest or draft and pull **concrete** cues from the paragraphs where each image will sit—setting, metaphor, time of day, objects (kitchen, path, window, water). The query should read like honest photo tags for *this* essay, not generic “peaceful nature.”
+   - **Contemplative register:** Prefer quiet, inward, editorial-spiritual language: soft light, mist, dawn, interior, distant mountains, path, hands, candle, still water—**not** loud wellness stock or random pretty landscapes unrelated to the text.
+   - **Himalayas / Tibet / Buddhism / meditation / Zen:** Use these terms **only when** the piece’s themes support them (tradition, altitude, practice, pilgrimage). **Do not** default to them every post; if the essay is domestic or ordinary-life, search for *that* so images match the topic.
+   - **Two images:** First query reflects an **early** thematic beat; second query reflects a **later** beat (re-read body). Never reuse one generic query twice unless the user insists.
+
+3. **Merge** the printed JSON into the manifest:
+   - Paste each `image` block into `tiles[].blocks` in reading order.
+   - **Placement:** if there is one main prose tile with many paragraphs, put the **first** image after the **second `paragraph`** block, the **second** image after a paragraph near **~70%** through the block list (by paragraph count). If only one image was fetched, use one placement only.
+   - **Never** invent `src` or `creditLink`. Use only output from `unsplash-search`.
+
+4. If `unsplash-search` fails (no `UNSPLASH_ACCESS_KEY`, network error, no results), say so briefly, deliver the manifest **without** fake image URLs, and mention checking root `.env`.
+
+5. Run **`npm run validate-manifest -- content/publishes/<slug>/manifest.json`** from `interactive/` and fix any schema errors before finishing.
+
+## Skip images only when
+
+- The user explicitly asks for **no images**, **text only**, or **skip Unsplash**; or
+- The manifest already contains satisfactory `image` blocks and the user is only doing a small copy edit.

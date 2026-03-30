@@ -8,7 +8,8 @@
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
     "validate-manifest": "tsx scripts/validate-manifest.ts",
-    "compile-blog": "tsx scripts/compile-blog.ts"
+    "compile-blog": "tsx scripts/compile-blog.ts",
+    "unsplash-search": "tsx scripts/unsplash-search.ts"
   },
   "devDependencies": {
     "tsx": "^4.19.2",

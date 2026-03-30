@@ -4,6 +4,7 @@
  *   CREATOR_PASSWORD — required; must match POST body.password
  *   OPENAI_API_KEY   — required
  *   OPENAI_MODEL     — optional, default gpt-4o-mini
+ *   UNSPLASH_ACCESS_KEY — optional; when set, inserts 1–2 Unsplash images after paragraphs (no images if manifest already has image blocks)
  */
 
 const SYSTEM = `You are a publishing agent for "Stillwater", a spiritual blog. The user sends English blog prose and metadata.
@@ -38,7 +39,8 @@ Output a single JSON object (no markdown fences, no commentary) with this shape:
 Rules:
 - 4–10 tiles. Split the draft into coherent sections; each tile has blocks.
 - Omit "navigation" unless you need a custom order; otherwise order tiles in reading order.
-- Block types only: { "type": "heading", "level": 1|2|3, "text": "..." }, { "type": "paragraph", "text": "..." }, { "type": "list", "ordered": boolean, "items": ["..."] }, { "type": "quote", "text": "...", "attribution": "optional" }, { "type": "code", "language": "optional", "code": "..." }.
+- Block types only: { "type": "heading", "level": 1|2|3, "text": "..." }, { "type": "paragraph", "text": "..." }, { "type": "list", "ordered": boolean, "items": ["..."] }, { "type": "quote", "text": "...", "attribution": "optional" }, { "type": "code", "language": "optional", "code": "..." }, { "type": "image", "src": "https://...", "alt": "...", "creditName": "...", "creditLink": "https://unsplash.com/photos/..." }.
+- For "image" blocks: never invent URLs. Only use "src"/"creditLink" from the Unsplash API (or the human-run unsplash-search script). If you have no verified URLs, omit "image" blocks entirely — the compile server may still add images when Unsplash is configured.
 - Add 2–4 interactions total across the post (not every tile). Allowed interaction types:
   - reveal: { "type": "reveal", "pairs": [ { "prompt": "...", "hidden": "..." } ] }
   - accordion: { "type": "accordion", "sections": [ { "title": "...", "body": "..." } ] }
@@ -64,6 +66,134 @@ function extractJson(text) {
   const fence = t.match(/```(?:json)?\s*([\s\S]*?)```/);
   if (fence) return fence[1].trim();
   return t;
+}
+
+function withUtm(photoPageUrl) {
+  try {
+    const u = new URL(photoPageUrl);
+    u.searchParams.set("utm_source", "stillwater");
+    u.searchParams.set("utm_medium", "referral");
+    return u.toString();
+  } catch {
+    return photoPageUrl;
+  }
+}
+
+function photoToBlock(p) {
+  const alt =
+    (p.alt_description && String(p.alt_description).trim()) ||
+    (p.description && String(p.description).trim()) ||
+    "Photograph";
+  return {
+    type: "image",
+    src: p.urls.regular,
+    alt,
+    creditName: p.user.name,
+    creditLink: withUtm(p.links.html),
+  };
+}
+
+async function unsplashSearch(query, accessKey) {
+  const url = new URL("https://api.unsplash.com/search/photos");
+  url.searchParams.set("query", query);
+  url.searchParams.set("per_page", "6");
+  url.searchParams.set("orientation", "landscape");
+  const res = await fetch(url.toString(), {
+    headers: { Authorization: `Client-ID ${accessKey}` },
+  });
+  if (!res.ok) return [];
+  const data = await res.json();
+  return Array.isArray(data.results) ? data.results : [];
+}
+
+async function trackUnsplashDownload(accessKey, photoId) {
+  await fetch(`https://api.unsplash.com/photos/${photoId}/download`, {
+    headers: { Authorization: `Client-ID ${accessKey}` },
+  });
+}
+
+function manifestHasImageBlock(manifest) {
+  for (const t of manifest.tiles || []) {
+    for (const b of t.blocks || []) {
+      if (b && b.type === "image") return true;
+    }
+  }
+  return false;
+}
+
+function buildUnsplashQuery(title, draft) {
+  const blob = `${title || ""} ${(draft || "").slice(0, 240)}`.toLowerCase();
+  const words = blob
+    .replace(/[^a-z0-9\s]/g, " ")
+    .split(/\s+/)
+    .filter((w) => w.length > 2);
+  const seen = new Set();
+  const unique = [];
+  for (const w of words) {
+    if (seen.has(w)) continue;
+    seen.add(w);
+    unique.push(w);
+    if (unique.length >= 6) break;
+  }
+  return unique.join(" ") || "calm nature light";
+}
+
+function paragraphAnchors(manifest) {
+  const out = [];
+  const tiles = manifest.tiles || [];
+  for (let ti = 0; ti < tiles.length; ti++) {
+    const blocks = tiles[ti].blocks;
+    if (!Array.isArray(blocks)) continue;
+    for (let bi = 0; bi < blocks.length; bi++) {
+      if (blocks[bi].type === "paragraph") out.push({ ti, bi });
+    }
+  }
+  return out;
+}
+
+async function injectUnsplashImages(manifest, draft, accessKey) {
+  if (!accessKey?.trim() || !manifest.tiles?.length) return;
+  if (manifestHasImageBlock(manifest)) return;
+
+  const results = await unsplashSearch(
+    buildUnsplashQuery(manifest.title, draft),
+    accessKey.trim(),
+  );
+  if (!results.length) return;
+
+  const anchors = paragraphAnchors(manifest);
+  if (!anchors.length) {
+    const t0 = manifest.tiles[0];
+    if (!Array.isArray(t0.blocks)) t0.blocks = [];
+    const p = results[0];
+    await trackUnsplashDownload(accessKey, p.id);
+    t0.blocks.push(photoToBlock(p));
+    return;
+  }
+
+  const i1 = Math.min(
+    anchors.length - 1,
+    Math.max(0, Math.floor(anchors.length * 0.28)),
+  );
+  const i2 = Math.min(
+    anchors.length - 1,
+    Math.max(0, Math.floor(anchors.length * 0.72)),
+  );
+  const indices = i1 === i2 ? [i1] : [i1, i2];
+  const insertions = [];
+
+  for (let n = 0; n < indices.length && n < results.length; n++) {
+    const p = results[n];
+    await trackUnsplashDownload(accessKey, p.id);
+    const { ti, bi } = anchors[indices[n]];
+    insertions.push({ ti, bi, block: photoToBlock(p) });
+  }
+
+  insertions.sort((a, b) => b.bi - a.bi || b.ti - a.ti);
+
+  for (const ins of insertions) {
+    manifest.tiles[ins.ti].blocks.splice(ins.bi + 1, 0, ins.block);
+  }
 }
 
 export const handler = async (event) => {
@@ -162,6 +292,15 @@ export const handler = async (event) => {
 
     if (!parsed.createdAt.includes("Z") && !parsed.createdAt.match(/[+-]\d{2}:\d{2}$/)) {
       parsed.createdAt = new Date().toISOString();
+    }
+
+    const unsplashKey = process.env.UNSPLASH_ACCESS_KEY;
+    if (unsplashKey) {
+      try {
+        await injectUnsplashImages(parsed, draft, unsplashKey);
+      } catch {
+        /* non-fatal: publish without auto images */
+      }
     }
 
     return jsonResponse(200, { manifest: parsed });
