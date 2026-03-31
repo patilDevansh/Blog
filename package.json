@@ -3,5 +3,8 @@
   "private": true,
   "scripts": {
     "build": "npm --prefix interactive install --no-audit --no-fund && npm --prefix interactive run build"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^1.0.2"
   }
 }

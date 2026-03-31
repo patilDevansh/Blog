@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stillwater — Prototype (Spiritual Redesign)</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    /* Lighter, warmer parchment instead of cool off-white */
+    --bg: #fdf8f2;
+    /* Purple family — unchanged (good for readability) */
+    --purple-light: #EEEDFE;
+    --purple-mid: #AFA9EC;
+    --purple-dark: #3C3489;
+    --purple-deep: #26215C;
+    /* Existing accents */
+    --teal-light: #E1F5EE;
+    --teal-mid: #5DCAA5;
+    --amber-light: #FAEEDA;
+    --amber-mid: #EF9F27;
+    --pink-light: #FBEAF0;
+    --pink-mid: #ED93B1;
+    /* NEW — sacred colour additions */
+    --saffron-light: #fff5e4;
+    --gold: #c9952a;
+    --turquoise-light: #e0f4f3;
+    /* Text */
+    --text: #1a1a2e;
+    --text-muted: #6b6b8a;
+    --border: rgba(80, 70, 140, 0.12);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Jost', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    font-weight: 300;
+  }
+
+  /* ── Banner ────────────────────────────────────────── */
+  .prototype-banner {
+    background: #26215C;
+    color: rgba(255,255,255,0.85);
+    text-align: center;
+    padding: 0.65rem 2rem;
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  /* ── NAV ───────────────────────────────────────────── */
+  nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 3rem;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    /* Warmer nav glass */
+    background: rgba(253, 248, 242, 0.93);
+    backdrop-filter: blur(8px);
+    z-index: 100;
+  }
+
+  .logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.6rem;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--purple-deep);
+    letter-spacing: 0.02em;
+    text-decoration: none;
+  }
+
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a {
+    text-decoration: none;
+    font-size: 0.8rem;
+    letter-spacing: 0.12em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--purple-dark); }
+
+  /* ── HERO ──────────────────────────────────────────── */
+  .hero {
+    min-height: 88vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 5rem 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Warm-tinted gradient vs the old cool one */
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 40%, #EEEDFE 0%, #fdf8f2 70%);
+    z-index: 0;
+  }
+
+  /* NEW — slowly rotating mandala geometry */
+  .hero-mandala {
+    position: absolute;
+    width: 620px;
+    height: 620px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0.07;
+    pointer-events: none;
+    z-index: 0;
+    animation: mandala-spin 90s linear infinite;
+  }
+
+  @keyframes mandala-spin {
+    from { transform: translate(-50%, -50%) rotate(0deg); }
+    to   { transform: translate(-50%, -50%) rotate(360deg); }
+  }
+
+  .hero-orb {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.25;
+    animation: drift 12s ease-in-out infinite alternate;
+  }
+  .hero-orb-1 { width:320px; height:320px; background:var(--purple-mid); top:-80px; right:5%; animation-delay:0s; }
+  .hero-orb-2 { width:200px; height:200px; background:var(--teal-mid);   bottom:5%; left:8%;  animation-delay:-4s; }
+  .hero-orb-3 { width:140px; height:140px; background:var(--amber-mid);  top:20%;   left:3%;  animation-delay:-8s; }
+  @keyframes drift {
+    from { transform: translate(0, 0) scale(1); }
+    to   { transform: translate(20px, 30px) scale(1.05); }
+  }
+
+  .hero-content { position: relative; z-index: 1; max-width: 680px; }
+
+  /* NEW — Om glyph before the eyebrow */
+  .hero-eyebrow {
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--purple-dark);
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.2s forwards;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+  .hero-eyebrow .om-glyph {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.25rem;
+    font-style: normal;
+    text-transform: none;
+    letter-spacing: 0;
+    opacity: 0.75;
+    color: var(--gold);
+  }
+
+  .hero h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.8rem, 6vw, 5rem);
+    font-weight: 300;
+    line-height: 1.15;
+    color: var(--purple-deep);
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.4s forwards;
+  }
+  .hero h1 em { font-style: italic; color: var(--purple-dark); }
+
+  .hero p {
+    font-size: 1.05rem;
+    color: var(--text-muted);
+    max-width: 480px;
+    margin: 0 auto 2.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.6s forwards;
+  }
+
+  .hero-cta {
+    display: inline-block;
+    padding: 0.85rem 2.4rem;
+    border: 1px solid var(--purple-dark);
+    border-radius: 999px;
+    color: var(--purple-deep);
+    text-decoration: none;
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: background 0.25s, color 0.25s;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.8s forwards;
+  }
+  .hero-cta:hover { background: var(--purple-deep); color: #fff; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── SECTION ───────────────────────────────────────── */
+  .section-header { text-align: center; padding: 4rem 2rem 2rem; }
+  .section-header .eyebrow {
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+  }
+  .section-header h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.2rem;
+    font-weight: 300;
+    color: var(--purple-deep);
+  }
+
+  /* ── BLOG GRID ─────────────────────────────────────── */
+  .blog-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    padding: 1rem 3rem 5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .blog-tile {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
+  .blog-tile:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(80, 70, 140, 0.1);
+    border-color: var(--purple-mid);
+  }
+
+  .tile-header {
+    height: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .tile-header svg { position: relative; z-index: 1; }
+
+  .tile-header.purple  { background: var(--purple-light); }
+  .tile-header.teal    { background: var(--teal-light); }
+  .tile-header.amber   { background: var(--amber-light); }
+  .tile-header.pink    { background: var(--pink-light); }
+  /* NEW tile accent colours */
+  .tile-header.saffron { background: var(--saffron-light); }
+  .tile-header.turquoise { background: var(--turquoise-light); }
+
+  .tile-body { padding: 1.25rem 1.5rem 1.5rem; }
+  .tile-cat  { font-size: 0.68rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.5rem; }
+  .tile-title { font-family: 'Cormorant Garamond', serif; font-size: 1.35rem; font-weight: 400; color: var(--purple-deep); line-height: 1.3; margin-bottom: 0.6rem; }
+  .tile-excerpt { font-size: 0.88rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 1rem; }
+  .tile-meta { font-size: 0.75rem; color: var(--text-muted); opacity: 0.7; display: flex; align-items: center; gap: 6px; }
+  .tile-meta::before { content:''; display:inline-block; width:20px; height:1px; background:var(--purple-mid); }
+
+  /* ── QUOTE BAND (lighter, warmer, Siddha-attributed) ─ */
+  .quote-band {
+    /* Softer than hard --purple-deep — warm dark indigo with a hint of ochre */
+    background: linear-gradient(135deg, #2a1f0f 0%, #1e1a3a 60%);
+    color: #fff;
+    text-align: center;
+    padding: 4.5rem 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+  /* Faint yantra rings behind the quote */
+  .quote-band::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 50% 50%, rgba(232, 148, 42, 0.08) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  .quote-om {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.2rem;
+    color: var(--gold);
+    opacity: 0.5;
+    margin-bottom: 1.25rem;
+    display: block;
+  }
+  .quote-band blockquote {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    font-weight: 300;
+    font-style: italic;
+    max-width: 640px;
+    margin: 0 auto 1.25rem;
+    line-height: 1.55;
+    opacity: 0.95;
+    position: relative;
+  }
+  .quote-band cite {
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    opacity: 0.45;
+    position: relative;
+  }
+
+  /* ── CONNECT ───────────────────────────────────────── */
+  .sw-connect-static {
+    padding: 4.5rem 2rem 5rem;
+    border-top: 1px solid var(--border);
+    background: linear-gradient(180deg, rgba(245, 243, 255, 0.5) 0%, var(--bg) 100%);
+  }
+  .sw-connect-static-inner { max-width: 920px; margin: 0 auto; }
+  .sw-connect-static-header { text-align: center; max-width: 36rem; margin: 0 auto 2.75rem; }
+  .sw-connect-static-header .eyebrow { font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.75rem; }
+  .sw-connect-static-header h3 { font-family: 'Cormorant Garamond', serif; font-size: clamp(1.75rem, 4vw, 2.35rem); font-weight: 300; color: var(--purple-deep); margin: 0 0 0.65rem; line-height: 1.2; }
+  .sw-connect-static-header p { font-size: 0.95rem; color: var(--text-muted); line-height: 1.6; margin: 0; }
+  .sw-connect-static-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2rem 2.5rem; }
+  .sw-connect-static-panel { background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 1.75rem 1.85rem 2rem; box-shadow: 0 10px 36px rgba(80, 70, 140, 0.05); }
+  .sw-connect-static-panel h4 { font-family: 'Cormorant Garamond', serif; font-size: 1.35rem; font-weight: 400; color: var(--purple-deep); margin: 0 0 0.5rem; }
+  .sw-connect-static-panel p { font-size: 0.88rem; color: var(--text-muted); line-height: 1.55; margin: 0 0 1.25rem; }
+  .sw-connect-static-cta { display: inline-block; padding: 0.75rem 1.5rem; background: var(--purple-deep); color: #fff !important; text-decoration: none; border-radius: 999px; font-family: 'Jost', sans-serif; font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; transition: background 0.2s; }
+  .sw-connect-static-cta:hover { background: var(--purple-dark); }
+  @media (max-width: 768px) { .sw-connect-static-grid { grid-template-columns: 1fr; } }
+
+  /* ── FOOTER ────────────────────────────────────────── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 2.5rem 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .footer-logo { font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; font-style: italic; color: var(--purple-deep); }
+  .footer-links { display: flex; gap: 2rem; list-style: none; }
+  .footer-links a { font-size: 0.78rem; letter-spacing: 0.1em; color: var(--text-muted); text-decoration: none; text-transform: uppercase; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--purple-dark); }
+  /* NEW — Sanskrit subtitle in footer */
+  .footer-copy { font-size: 0.75rem; color: var(--text-muted); opacity: 0.6; }
+  .footer-copy .devanagari { font-family: 'Cormorant Garamond', serif; font-size: 0.9rem; letter-spacing: 0; opacity: 0.65; margin-left: 0.35rem; }
+
+  @media (max-width: 640px) {
+    nav { padding: 1.2rem 1.5rem; }
+    .nav-links { gap: 1.5rem; }
+    .blog-grid { padding: 1rem 1.5rem 4rem; }
+    footer { flex-direction: column; text-align: center; padding: 2rem 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Prototype banner -->
+<div class="prototype-banner">
+  Prototype · Spiritual Redesign · Not live — for review only
+</div>
+
+<nav>
+  <a class="logo" href="#">Stillwater</a>
+  <ul class="nav-links">
+    <li><a href="#">Home</a></li>
+    <li><a href="#">Journal</a></li>
+    <li><a href="#">About</a></li>
+    <li><a href="#">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════
+     HERO — mandala geometry + Om in eyebrow
+═══════════════════════════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-orb hero-orb-1"></div>
+  <div class="hero-orb hero-orb-2"></div>
+  <div class="hero-orb hero-orb-3"></div>
+
+  <!-- NEW: slowly-rotating 16-ray mandala geometry -->
+  <svg class="hero-mandala" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <!-- Concentric circles -->
+    <circle cx="200" cy="200" r="38"  stroke="#AFA9EC" stroke-width="0.7" fill="none"/>
+    <circle cx="200" cy="200" r="76"  stroke="#AFA9EC" stroke-width="0.7" fill="none"/>
+    <circle cx="200" cy="200" r="114" stroke="#AFA9EC" stroke-width="0.55" fill="none"/>
+    <circle cx="200" cy="200" r="152" stroke="#AFA9EC" stroke-width="0.55" fill="none"/>
+    <circle cx="200" cy="200" r="192" stroke="#AFA9EC" stroke-width="0.4" fill="none"/>
+    <!-- 8 cardinal & diagonal axes -->
+    <line x1="200" y1="4"   x2="200" y2="396" stroke="#AFA9EC" stroke-width="0.5"/>
+    <line x1="4"   y1="200" x2="396" y2="200" stroke="#AFA9EC" stroke-width="0.5"/>
+    <line x1="57"  y1="57"  x2="343" y2="343" stroke="#AFA9EC" stroke-width="0.4"/>
+    <line x1="343" y1="57"  x2="57"  y2="343" stroke="#AFA9EC" stroke-width="0.4"/>
+    <!-- 8 secondary axes (22.5° intervals) -->
+    <line x1="122" y1="4"   x2="278" y2="396" stroke="#AFA9EC" stroke-width="0.3" opacity="0.6"/>
+    <line x1="278" y1="4"   x2="122" y2="396" stroke="#AFA9EC" stroke-width="0.3" opacity="0.6"/>
+    <line x1="4"   y1="122" x2="396" y2="278" stroke="#AFA9EC" stroke-width="0.3" opacity="0.6"/>
+    <line x1="4"   y1="278" x2="396" y2="122" stroke="#AFA9EC" stroke-width="0.3" opacity="0.6"/>
+    <!-- Marker dots at inner-circle intersections -->
+    <circle cx="200" cy="162" r="2" fill="#AFA9EC" opacity="0.55"/>
+    <circle cx="227" cy="173" r="2" fill="#AFA9EC" opacity="0.55"/>
+    <circle cx="238" cy="200" r="2" fill="#AFA9EC" opacity="0.55"/>
+    <circle cx="227" cy="227" r="2" fill="#AFA9EC" opacity="0.55"/>
+    <circle cx="200" cy="238" r="2" fill="#AFA9EC" opacity="0.55"/>
+    <circle cx="173" cy="227" r="2" fill="#AFA9EC" opacity="0.55"/>
+    <circle cx="162" cy="200" r="2" fill="#AFA9EC" opacity="0.55"/>
+    <circle cx="173" cy="173" r="2" fill="#AFA9EC" opacity="0.55"/>
+    <!-- Central bindu -->
+    <circle cx="200" cy="200" r="3.5" fill="#AFA9EC" opacity="0.4"/>
+  </svg>
+
+  <div class="hero-content">
+    <!-- NEW: Om glyph in the eyebrow -->
+    <p class="hero-eyebrow"><span class="om-glyph">ॐ</span>A space for the soul</p>
+    <h1>Words to still<br>the <em>wandering</em> mind</h1>
+    <p>Reflections on presence, healing, and the quiet wisdom that lives within you.</p>
+    <a href="#posts" class="hero-cta">Read the journal</a>
+  </div>
+</section>
+
+<!-- Section header -->
+<div class="section-header" id="posts">
+  <p class="eyebrow">Latest posts</p>
+  <h2>From the journal</h2>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     BLOG GRID — all 8 icons replaced with spiritual symbols
+═══════════════════════════════════════════════════════ -->
+<div class="blog-grid">
+
+  <!-- 1. LOTUS (8-petal) — replaces heart -->
+  <a class="blog-tile" href="#">
+    <div class="tile-header pink">
+      <svg width="64" height="64" viewBox="0 0 56 56" fill="none" aria-label="Lotus">
+        <ellipse cx="28" cy="19" rx="4.5" ry="9" fill="#F4C0D1" stroke="#ED93B1" stroke-width="1"/>
+        <ellipse cx="28" cy="19" rx="4.5" ry="9" fill="#F4C0D1" stroke="#ED93B1" stroke-width="1" transform="rotate(45 28 28)"/>
+        <ellipse cx="28" cy="19" rx="4.5" ry="9" fill="#F4C0D1" stroke="#ED93B1" stroke-width="1" transform="rotate(90 28 28)"/>
+        <ellipse cx="28" cy="19" rx="4.5" ry="9" fill="#F4C0D1" stroke="#ED93B1" stroke-width="1" transform="rotate(135 28 28)"/>
+        <ellipse cx="28" cy="19" rx="4.5" ry="9" fill="#FBEAF0" stroke="#ED93B1" stroke-width="0.8" transform="rotate(180 28 28)"/>
+        <ellipse cx="28" cy="19" rx="4.5" ry="9" fill="#FBEAF0" stroke="#ED93B1" stroke-width="0.8" transform="rotate(225 28 28)"/>
+        <ellipse cx="28" cy="19" rx="4.5" ry="9" fill="#FBEAF0" stroke="#ED93B1" stroke-width="0.8" transform="rotate(270 28 28)"/>
+        <ellipse cx="28" cy="19" rx="4.5" ry="9" fill="#FBEAF0" stroke="#ED93B1" stroke-width="0.8" transform="rotate(315 28 28)"/>
+        <circle cx="28" cy="28" r="5.5" fill="#ED93B1"/>
+        <circle cx="28" cy="28" r="2.5" fill="#c86b8e" opacity="0.65"/>
+      </svg>
+    </div>
+    <div class="tile-body">
+      <div class="tile-cat">Reflection</div>
+      <div class="tile-title">When the performance rests</div>
+      <div class="tile-excerpt">On safer faces that become personality, stillness that tells the truth, misplaced goodness, slow forgiveness, and staying past the urge to flee.</div>
+      <div class="tile-meta">March 30 · 4 min read</div>
+    </div>
+  </a>
+
+  <!-- 2. DHARMACHAKRA — replaces generic star -->
+  <a class="blog-tile" href="#">
+    <div class="tile-header amber">
+      <svg width="64" height="64" viewBox="0 0 56 56" fill="none" aria-label="Dharma wheel">
+        <circle cx="28" cy="28" r="20" stroke="#EF9F27" stroke-width="1.5" fill="none"/>
+        <circle cx="28" cy="28" r="4.5" fill="#FAC775" stroke="#EF9F27" stroke-width="1.2"/>
+        <!-- 8 spokes from hub to rim -->
+        <line x1="28"  y1="23.5" x2="28"  y2="8"    stroke="#EF9F27" stroke-width="1.2"/>
+        <line x1="31.5" y1="24.5" x2="42.1" y2="13.9" stroke="#EF9F27" stroke-width="1.2"/>
+        <line x1="32.5" y1="28"   x2="48"   y2="28"   stroke="#EF9F27" stroke-width="1.2"/>
+        <line x1="31.5" y1="31.5" x2="42.1" y2="42.1" stroke="#EF9F27" stroke-width="1.2"/>
+        <line x1="28"   y1="32.5" x2="28"   y2="48"   stroke="#EF9F27" stroke-width="1.2"/>
+        <line x1="24.5" y1="31.5" x2="13.9" y2="42.1" stroke="#EF9F27" stroke-width="1.2"/>
+        <line x1="23.5" y1="28"   x2="8"    y2="28"   stroke="#EF9F27" stroke-width="1.2"/>
+        <line x1="24.5" y1="24.5" x2="13.9" y2="13.9" stroke="#EF9F27" stroke-width="1.2"/>
+      </svg>
+    </div>
+    <div class="tile-body">
+      <div class="tile-cat">Reflection</div>
+      <div class="tile-title">Meeting yourself when no one is clapping</div>
+      <div class="tile-excerpt">On heaviness without a story, spirituality as restraint, presence as ethic, and a love that does not need you to be finished.</div>
+      <div class="tile-meta">March 30 · 6 min read</div>
+    </div>
+  </a>
+
+  <!-- 3. AUM / OM GLYPH — replaces concentric circles -->
+  <a class="blog-tile" href="#">
+    <div class="tile-header purple">
+      <svg width="64" height="64" viewBox="0 0 56 56" aria-label="Aum">
+        <text x="28" y="40" text-anchor="middle"
+              font-family="Georgia, 'Times New Roman', serif"
+              font-size="40" fill="#AFA9EC">ॐ</text>
+      </svg>
+    </div>
+    <div class="tile-body">
+      <div class="tile-cat">Reflection</div>
+      <div class="tile-title">We seldom can do the work we can in this world</div>
+      <div class="tile-excerpt">On sitting down to study or build a life, the mind floods with storm—self-blame, identity, shifting sand.</div>
+      <div class="tile-meta">June 3 · 14 min read</div>
+    </div>
+  </a>
+
+  <!-- 4. BODHI LEAF — replaces generic leaf -->
+  <a class="blog-tile" href="#">
+    <div class="tile-header teal">
+      <svg width="64" height="64" viewBox="0 0 56 56" fill="none" aria-label="Bodhi leaf">
+        <!-- Heart-shaped Ficus religiosa leaf with elongated tip -->
+        <path d="M28 46 C19 40 13 31 14 21 C15 13 21 9 28 11 C35 9 41 13 42 21 C43 31 37 40 28 46Z"
+              fill="#9FE1CB" stroke="#5DCAA5" stroke-width="1.5"/>
+        <!-- Long drip tip of the bodhi leaf -->
+        <path d="M28 46 Q27.5 50 28 53 Q28.5 50 28 46Z" fill="#5DCAA5"/>
+        <!-- Midrib -->
+        <line x1="28" y1="12" x2="28" y2="46" stroke="#5DCAA5" stroke-width="0.9" opacity="0.6"/>
+        <!-- Side veins -->
+        <path d="M28 20 Q22 25 18 30" stroke="#5DCAA5" stroke-width="0.8" fill="none" opacity="0.55"/>
+        <path d="M28 20 Q34 25 38 30" stroke="#5DCAA5" stroke-width="0.8" fill="none" opacity="0.55"/>
+        <path d="M28 30 Q20 34 16 39" stroke="#5DCAA5" stroke-width="0.8" fill="none" opacity="0.55"/>
+        <path d="M28 30 Q36 34 40 39" stroke="#5DCAA5" stroke-width="0.8" fill="none" opacity="0.55"/>
+      </svg>
+    </div>
+    <div class="tile-body">
+      <div class="tile-cat">Healing</div>
+      <div class="tile-title">Letting the season change you</div>
+      <div class="tile-excerpt">Nature doesn't resist transformation. It surrenders to it. Neither should we.</div>
+      <div class="tile-meta">May 28 · 4 min read</div>
+    </div>
+  </a>
+
+  <!-- 5. AGNI — sacred flame — replaces second star -->
+  <a class="blog-tile" href="#">
+    <div class="tile-header amber">
+      <svg width="64" height="64" viewBox="0 0 56 56" fill="none" aria-label="Sacred flame">
+        <!-- Outer flame body -->
+        <path d="M28 44 C20 38 16 29 18 21 C20 15 24 12 28 10 C32 12 36 15 38 21 C40 29 36 38 28 44Z"
+              fill="#FAC775" stroke="#EF9F27" stroke-width="1.5"/>
+        <!-- Inner flame -->
+        <path d="M28 41 C23 35 21 27 23 21 C25 17 27 15 28 13 C29 15 31 17 33 21 C35 27 33 35 28 41Z"
+              fill="#EF9F27" opacity="0.7"/>
+        <!-- Bright tip -->
+        <path d="M28 13 C27.5 11 27 9 28 7 C29 9 28.5 11 28 13Z" fill="#fff8e8" opacity="0.9"/>
+        <!-- Base line (yagna/altar suggestion) -->
+        <path d="M21 44 Q28 48 35 44" stroke="#EF9F27" stroke-width="1" fill="none" opacity="0.4"/>
+      </svg>
+    </div>
+    <div class="tile-body">
+      <div class="tile-cat">Intention</div>
+      <div class="tile-title">Morning rituals that ground you</div>
+      <div class="tile-excerpt">How the first ten minutes of your day can shift everything that follows after.</div>
+      <div class="tile-meta">May 19 · 6 min read</div>
+    </div>
+  </a>
+
+  <!-- 6. ANJALI MUDRA — prayer hands — replaces second heart -->
+  <a class="blog-tile" href="#">
+    <div class="tile-header pink">
+      <svg width="64" height="64" viewBox="0 0 56 56" fill="none" aria-label="Anjali mudra">
+        <!-- Left palm -->
+        <path d="M28 38 L21 40 L18 26 C17 20 20 16 24 16 C26 16 27.2 17.2 28 19Z"
+              fill="#F4C0D1" stroke="#ED93B1" stroke-width="1.2"/>
+        <!-- Right palm -->
+        <path d="M28 38 L35 40 L38 26 C39 20 36 16 32 16 C30 16 28.8 17.2 28 19Z"
+              fill="#F4C0D1" stroke="#ED93B1" stroke-width="1.2"/>
+        <!-- Wrist join -->
+        <path d="M21 40 Q28 44 35 40" stroke="#ED93B1" stroke-width="1" fill="none"/>
+        <!-- Finger tips coming together at top -->
+        <path d="M24 16 C24 13 25.5 11 28 10 C30.5 11 32 13 32 16"
+              stroke="#ED93B1" stroke-width="1" fill="#FBEAF0"/>
+      </svg>
+    </div>
+    <div class="tile-body">
+      <div class="tile-cat">Self-love</div>
+      <div class="tile-title">You are allowed to rest</div>
+      <div class="tile-excerpt">Rest is not earned through exhaustion. It is a birthright. A gentle reminder.</div>
+      <div class="tile-meta">May 12 · 3 min read</div>
+    </div>
+  </a>
+
+  <!-- 7. YANTRA / BINDU WITH RAYS — replaces teardrop -->
+  <a class="blog-tile" href="#">
+    <div class="tile-header purple">
+      <svg width="64" height="64" viewBox="0 0 56 56" fill="none" aria-label="Yantra">
+        <!-- Outer aura ring -->
+        <circle cx="28" cy="28" r="22" stroke="#AFA9EC" stroke-width="0.8" fill="none" opacity="0.3"/>
+        <!-- Middle ring -->
+        <circle cx="28" cy="28" r="14" stroke="#AFA9EC" stroke-width="1" fill="none" opacity="0.6"/>
+        <!-- Inner filled circle -->
+        <circle cx="28" cy="28" r="7.5" stroke="#AFA9EC" stroke-width="1.5" fill="#EEEDFE"/>
+        <!-- 8 rays from inner circle edge to outer -->
+        <line x1="28"  y1="20.5" x2="28"  y2="6"    stroke="#AFA9EC" stroke-width="1" opacity="0.65"/>
+        <line x1="33.3" y1="22.7" x2="43.6" y2="12.4" stroke="#AFA9EC" stroke-width="1" opacity="0.65"/>
+        <line x1="35.5" y1="28"   x2="50"   y2="28"   stroke="#AFA9EC" stroke-width="1" opacity="0.65"/>
+        <line x1="33.3" y1="33.3" x2="43.6" y2="43.6" stroke="#AFA9EC" stroke-width="1" opacity="0.65"/>
+        <line x1="28"   y1="35.5" x2="28"   y2="50"   stroke="#AFA9EC" stroke-width="1" opacity="0.65"/>
+        <line x1="22.7" y1="33.3" x2="12.4" y2="43.6" stroke="#AFA9EC" stroke-width="1" opacity="0.65"/>
+        <line x1="20.5" y1="28"   x2="6"    y2="28"   stroke="#AFA9EC" stroke-width="1" opacity="0.65"/>
+        <line x1="22.7" y1="22.7" x2="12.4" y2="12.4" stroke="#AFA9EC" stroke-width="1" opacity="0.65"/>
+        <!-- Central bindu -->
+        <circle cx="28" cy="28" r="3" fill="#534AB7"/>
+      </svg>
+    </div>
+    <div class="tile-body">
+      <div class="tile-cat">Breathwork</div>
+      <div class="tile-title">The breath as a homecoming</div>
+      <div class="tile-excerpt">Every inhale is an invitation to return. To your body. To this moment. To yourself.</div>
+      <div class="tile-meta">May 5 · 4 min read</div>
+    </div>
+  </a>
+
+  <!-- 8. SRI YANTRA — interlocking triangles — replaces dashed circle -->
+  <a class="blog-tile" href="#">
+    <div class="tile-header teal">
+      <svg width="64" height="64" viewBox="0 0 56 56" fill="none" aria-label="Sri Yantra">
+        <!-- Outer lotus circle -->
+        <circle cx="28" cy="28" r="22" stroke="#5DCAA5" stroke-width="0.8" fill="none" opacity="0.4"/>
+        <!-- Upward-pointing triangle (Shiva) -->
+        <polygon points="28,9 47,41 9,41"
+                 stroke="#5DCAA5" stroke-width="1.5" fill="#9FE1CB" fill-opacity="0.2"/>
+        <!-- Downward-pointing triangle (Shakti) -->
+        <polygon points="28,47 47,15 9,15"
+                 stroke="#5DCAA5" stroke-width="1.5" fill="#9FE1CB" fill-opacity="0.2"/>
+        <!-- Central bindu -->
+        <circle cx="28" cy="28" r="3.5" fill="#9FE1CB" stroke="#5DCAA5" stroke-width="1"/>
+      </svg>
+    </div>
+    <div class="tile-body">
+      <div class="tile-cat">Presence</div>
+      <div class="tile-title">Living without the why</div>
+      <div class="tile-excerpt">Not every moment needs meaning. Sometimes existence itself is enough.</div>
+      <div class="tile-meta">April 29 · 5 min read</div>
+    </div>
+  </a>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     QUOTE BAND — Tilopa (one of the 84 Mahāsiddhas)
+     Warmer, darker gradient vs the flat cold --purple-deep
+═══════════════════════════════════════════════════════ -->
+<div class="quote-band">
+  <span class="quote-om">ॐ</span>
+  <blockquote>"Let go of what has passed. Let come what will. Rest in ease."</blockquote>
+  <cite>— Tilopa (988–1069 CE) · One of the 84 Mahāsiddhas · Song of Mahāmudrā</cite>
+</div>
+
+<!-- Connect section — unchanged structurally -->
+<section class="sw-connect-static">
+  <div class="sw-connect-static-inner">
+    <header class="sw-connect-static-header">
+      <p class="eyebrow">Connect</p>
+      <h3>Offer your words to the writer</h3>
+      <p>Leave a note from your own reflection, or ask to hear when something new goes live.</p>
+    </header>
+    <div class="sw-connect-static-grid">
+      <div class="sw-connect-static-panel">
+        <h4>Send a message</h4>
+        <p>Questions, gratitude, a line that stayed with you—open the journal home to write.</p>
+        <a class="sw-connect-static-cta" href="#">Send a message</a>
+      </div>
+      <div class="sw-connect-static-panel">
+        <h4>New writing by email</h4>
+        <p>Subscribe for a single note when a new reflection is published—no promotions.</p>
+        <a class="sw-connect-static-cta" href="#">Subscribe</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo">Stillwater</div>
+  <ul class="footer-links">
+    <li><a href="#">Journal</a></li>
+    <li><a href="#">About</a></li>
+    <li><a href="#">Contact</a></li>
+  </ul>
+  <!-- NEW: Sanskrit for "Stillwater" beside the copyright -->
+  <div class="footer-copy">© 2026 Stillwater<span class="devanagari">· स्थिरम्</span> · Made with intention.</div>
+</footer>
+
+</body>
+</html>

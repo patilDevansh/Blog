@@ -215,7 +215,7 @@ function mount(): void {
   });
 
   const foot = el("div", "creator-footer");
-  foot.innerHTML = `<a href="/">← Journal</a> · <a href="/stillwater.html">Home</a> · Save JSON to <code>content/publishes/&lt;slug&gt;/manifest.json</code>, then commit and deploy.`;
+  foot.innerHTML = `<a href="/journal.html">← Journal</a> · <a href="/stillwater.html">Home</a> · Save JSON to <code>content/publishes/&lt;slug&gt;/manifest.json</code>, then commit and deploy.`;
 
   wrap.appendChild(note);
   wrap.appendChild(pwField);

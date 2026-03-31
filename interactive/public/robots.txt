@@ -1,0 +1,3 @@
+# Public journal may be indexed. Creator studio is not.
+User-agent: *
+Disallow: /creator.html

@@ -35,6 +35,10 @@ export const blockSchema = z.discriminatedUnion("type", [
     /** Link to the photo on Unsplash (or photographer page), including UTM if required */
     creditLink: z.string().url(),
   }),
+  z.object({
+    type: z.literal("divider"),
+    style: z.enum(["ornamental", "minimal", "heavy"]).optional(),
+  }),
 ]);
 
 export type Block = z.infer<typeof blockSchema>;

@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Journal — Browse all entries (UI mockup)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --purple-light: #EEEDFE;
+      --purple-mid: #AFA9EC;
+      --purple-dark: #3C3489;
+      --purple-deep: #26215C;
+      --teal-light: #E1F5EE;
+      --teal-mid: #5DCAA5;
+      --text: #1a1a2e;
+      --text-muted: #6b6b8a;
+      --bg: #f6f4f0;
+      --surface: rgba(255, 255, 255, 0.72);
+      --border: rgba(80, 70, 140, 0.14);
+      --glow: rgba(175, 169, 236, 0.35);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    @keyframes drift {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(12px, -18px) scale(1.04); }
+    }
+
+    @keyframes fadeRise {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+      }
+    }
+
+    body {
+      font-family: 'Jost', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      font-weight: 300;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    .stage {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background:
+        radial-gradient(ellipse 90% 70% at 15% -10%, rgba(238, 237, 254, 0.9) 0%, transparent 55%),
+        radial-gradient(ellipse 70% 50% at 95% 25%, rgba(225, 245, 238, 0.65) 0%, transparent 50%),
+        radial-gradient(ellipse 60% 45% at 70% 100%, rgba(250, 238, 218, 0.5) 0%, transparent 45%),
+        var(--bg);
+    }
+
+    .stage::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      opacity: 0.055;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(0.5px);
+      opacity: 0.22;
+      animation: drift 14s ease-in-out infinite alternate;
+    }
+
+    .orb-1 {
+      width: min(420px, 55vw);
+      height: min(420px, 55vw);
+      background: radial-gradient(circle at 35% 35%, var(--purple-mid), transparent 70%);
+      top: -120px;
+      right: -80px;
+      animation-delay: -2s;
+    }
+
+    .orb-2 {
+      width: 240px;
+      height: 240px;
+      background: radial-gradient(circle, var(--teal-mid), transparent 68%);
+      bottom: 15%;
+      left: -60px;
+      opacity: 0.14;
+      animation-delay: -6s;
+    }
+
+    .orb-3 {
+      width: 180px;
+      height: 180px;
+      background: radial-gradient(circle, #c9b8e8, transparent 65%);
+      top: 42%;
+      right: 8%;
+      opacity: 0.12;
+      animation-delay: -4s;
+    }
+
+    /* Header — match home page; keep green underline */ 
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem 3rem;
+      border-bottom: 1px solid var(--border);
+      background: rgba(250, 249, 247, 0.92);
+      backdrop-filter: blur(8px);
+    }
+
+    @media (max-width: 720px) {
+      nav { padding: 1.25rem 1.5rem; }
+    }
+
+    .logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.6rem;
+      font-weight: 400;
+      font-style: italic;
+      color: var(--purple-deep);
+      text-decoration: none;
+      letter-spacing: 0.02em;
+      transition: color 0.2s;
+    }
+
+    .logo:hover { color: var(--purple-dark); }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+
+    @media (max-width: 720px) {
+      .nav-links { gap: 1.25rem; }
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      font-size: 0.8rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      transition: color 0.2s;
+      position: relative;
+    }
+
+    .nav-links a:hover { color: var(--purple-dark); }
+
+    .nav-links a:focus-visible,
+    .logo:focus-visible {
+      outline: 2px solid var(--purple-dark);
+      outline-offset: 3px;
+    }
+
+    .nav-links a.is-current {
+      color: var(--purple-dark);
+      font-weight: 500;
+    }
+
+    .nav-links a.is-current::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -8px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--teal-mid), transparent);
+    }
+
+    .page {
+      position: relative;
+      z-index: 1;
+      max-width: 56rem;
+      margin: 0 auto;
+      padding: 2.25rem 1.35rem 4rem;
+    }
+
+    @media (min-width: 768px) {
+      .page { padding: 3rem 2rem 5.5rem; }
+    }
+
+    /* Featured (most recent) — reference: large card, text + image */
+    .featured-wrap {
+      margin-bottom: 2.5rem;
+      animation: fadeRise 0.65s ease-out both;
+    }
+
+    .featured-wrap[hidden] {
+      display: none !important;
+    }
+
+    .featured-card {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.82);
+      box-shadow:
+        0 1px 0 rgba(255,255,255,0.95) inset,
+        0 28px 56px rgba(38, 33, 92, 0.08);
+      overflow: hidden;
+    }
+
+    .featured-link {
+      display: grid;
+      grid-template-columns: 1fr;
+      text-decoration: none;
+      color: inherit;
+      transition: background 0.2s;
+    }
+
+    @media (min-width: 720px) {
+      .featured-link {
+        grid-template-columns: 1fr min(42%, 320px);
+        align-items: stretch;
+        min-height: 280px;
+      }
+    }
+
+    .featured-link:hover {
+      background: rgba(255, 255, 255, 0.95);
+    }
+
+    .featured-link:focus-visible {
+      outline: 2px solid var(--purple-dark);
+      outline-offset: 2px;
+    }
+
+    .featured-body {
+      padding: 1.6rem 1.5rem 2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+    }
+
+    @media (min-width: 720px) {
+      .featured-body {
+        padding: 2rem 2rem 2.25rem 2rem;
+      }
+    }
+
+    .featured-body::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 1.5rem;
+      bottom: 1.5rem;
+      width: 3px;
+      background: linear-gradient(180deg, var(--purple-dark), var(--teal-mid));
+      border-radius: 2px;
+      opacity: 0.85;
+    }
+
+    @media (max-width: 719px) {
+      .featured-body::before {
+        top: 0;
+        bottom: auto;
+        left: 1.5rem;
+        right: 1.5rem;
+        width: auto;
+        height: 3px;
+      }
+    }
+
+    .featured-eyebrow {
+      font-size: 0.68rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.65rem;
+      padding-left: 1rem;
+    }
+
+    .featured-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.75rem, 4.2vw, 2.35rem);
+      font-weight: 600;
+      color: var(--purple-deep);
+      line-height: 1.15;
+      margin-bottom: 0.65rem;
+      padding-left: 1rem;
+      letter-spacing: -0.02em;
+    }
+
+    .featured-meta {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      padding-left: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .featured-meta span { color: var(--purple-dark); font-weight: 500; }
+
+    .featured-excerpt {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: var(--text-muted);
+      padding-left: 1rem;
+      margin-bottom: 1.25rem;
+      max-width: 50ch;
+    }
+
+    .featured-cta {
+      font-size: 0.8rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--purple-dark);
+      padding-left: 1rem;
+      font-weight: 500;
+      transition: color 0.2s, letter-spacing 0.2s;
+    }
+
+    .featured-link:hover .featured-cta {
+      color: var(--teal-mid);
+      letter-spacing: 0.14em;
+    }
+
+    .featured-media {
+      position: relative;
+      min-height: 200px;
+    }
+
+    @media (min-width: 720px) {
+      .featured-media { min-height: 100%; }
+    }
+
+    .featured-media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      min-height: 220px;
+    }
+
+    @media (min-width: 720px) {
+      .featured-media img { min-height: 100%; }
+    }
+
+    /* Search block */
+    .search-section {
+      margin-bottom: 2rem;
+      animation: fadeRise 0.7s ease-out 0.08s both;
+    }
+
+    .search-section .lede {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      line-height: 1.75;
+      margin-bottom: 1.1rem;
+      max-width: 52ch;
+    }
+
+    .search-wrap { position: relative; }
+
+    .search-wrap label {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+    }
+
+    .search-input {
+      width: 100%;
+      max-width: 36rem;
+      padding: 1rem 1.1rem 1rem 3rem;
+      font-family: inherit;
+      font-size: 0.95rem;
+      font-weight: 300;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: var(--surface);
+      box-shadow:
+        0 1px 0 rgba(255,255,255,0.8) inset,
+        0 12px 32px rgba(38, 33, 92, 0.06);
+      color: var(--text);
+      transition: border-color 0.2s, box-shadow 0.25s, transform 0.2s;
+    }
+
+    .search-input:hover { border-color: rgba(60, 52, 137, 0.22); }
+
+    .search-input::placeholder {
+      color: rgba(107, 107, 138, 0.65);
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--purple-mid);
+      box-shadow:
+        0 0 0 4px var(--glow),
+        0 16px 40px rgba(38, 33, 92, 0.08);
+      transform: translateY(-1px);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 1.15rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 1.15rem;
+      height: 1.15rem;
+      opacity: 0.4;
+      pointer-events: none;
+      color: var(--purple-deep);
+    }
+
+    .fleuron {
+      display: block;
+      text-align: center;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 1.35rem;
+      color: var(--purple-mid);
+      margin: 1.5rem 0 1.25rem;
+      letter-spacing: 0.35em;
+      opacity: 0.7;
+    }
+
+    .result-bar {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin: 0.5rem 0 1.25rem;
+    }
+
+    .result-meta {
+      font-size: 0.78rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .result-meta strong {
+      font-size: 1.05rem;
+      font-weight: 500;
+      color: var(--purple-deep);
+      letter-spacing: 0.02em;
+      margin-right: 0.15rem;
+    }
+
+    .hint {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    /* Archive grid — Top Articles–style tiles (image, category, title) */
+    .post-list-wrap {
+      animation: fadeRise 0.75s ease-out 0.12s both;
+    }
+
+    .grid-section-title {
+      font-family: 'Jost', sans-serif;
+      font-size: clamp(1.35rem, 3vw, 1.65rem);
+      font-weight: 500;
+      color: var(--purple-deep);
+      letter-spacing: -0.02em;
+      margin: 0 0 1.35rem;
+    }
+
+    .post-list {
+      list-style: none;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: clamp(1.5rem, 3vw, 2rem);
+    }
+
+    @media (min-width: 560px) {
+      .post-list {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .post-list {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    .post-row {
+      margin: 0;
+      min-width: 0;
+    }
+
+    .tile-link {
+      display: block;
+      text-decoration: none;
+      color: inherit;
+      border-radius: 20px;
+      transition: transform 0.3s ease;
+    }
+
+    .tile-link:hover {
+      transform: translateY(-4px);
+    }
+
+    .tile-link:focus-visible {
+      outline: 2px solid var(--purple-dark);
+      outline-offset: 4px;
+      border-radius: 22px;
+    }
+
+    .tile-media {
+      border-radius: 18px;
+      overflow: hidden;
+      aspect-ratio: 4 / 3;
+      background: var(--purple-light);
+      box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.9) inset,
+        0 16px 40px rgba(38, 33, 92, 0.1);
+      transition: box-shadow 0.3s ease;
+    }
+
+    .tile-link:hover .tile-media {
+      box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.95) inset,
+        0 24px 52px rgba(38, 33, 92, 0.16);
+    }
+
+    .tile-media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.45s ease;
+    }
+
+    .tile-link:hover .tile-media img {
+      transform: scale(1.04);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .tile-link:hover .tile-media img {
+        transform: none;
+      }
+      .tile-link:hover {
+        transform: none;
+      }
+    }
+
+    .tile-body {
+      padding: 1rem 0.2rem 0;
+    }
+
+    .tile-cat {
+      font-size: 0.65rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      font-weight: 400;
+      margin-bottom: 0.45rem;
+      line-height: 1.35;
+    }
+
+    .tile-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.12rem, 2.2vw, 1.28rem);
+      font-weight: 600;
+      color: var(--purple-deep);
+      line-height: 1.28;
+      margin: 0;
+      transition: color 0.2s;
+    }
+
+    .tile-link:hover .tile-title {
+      color: var(--purple-dark);
+    }
+
+    .tile-date {
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(107, 107, 138, 0.85);
+      margin-top: 0.4rem;
+    }
+
+    .empty {
+      text-align: center;
+      padding: 3.5rem 1rem;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 1.15rem;
+      color: var(--text-muted);
+    }
+
+    .mock-badge {
+      margin-top: 3.5rem;
+      padding: 1rem 1.15rem;
+      font-size: 0.72rem;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      text-align: center;
+      background: rgba(255, 255, 255, 0.35);
+    }
+  </style>
+</head>
+<body>
+  <div class="stage" aria-hidden="true">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <nav>
+    <a class="logo" href="stillwater.html">Stillwater</a>
+    <ul class="nav-links">
+      <li><a href="stillwater.html">Home</a></li>
+      <li><a href="#" class="is-current" aria-current="page">Journal</a></li>
+      <li><a href="stillwater.html#">About</a></li>
+      <li><a href="stillwater.html#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <main class="page">
+    <div class="featured-wrap" id="featured-wrap">
+      <div id="featured-root"></div>
+    </div>
+
+    <section class="search-section" aria-label="Search archive">
+      <p class="lede">Search the archive by title, theme, or summary. Below are the rest of the entries—newest piece always lives in the card above when you are not searching.</p>
+      <div class="search-wrap">
+        <label for="q">Search posts</label>
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
+          <circle cx="10.5" cy="10.5" r="6.5"/>
+          <path d="M15 15 L21 21" stroke-linecap="round"/>
+        </svg>
+        <input type="search" class="search-input" id="q" placeholder="Presence, winter, silence, path…" autocomplete="off">
+      </div>
+    </section>
+
+    <span class="fleuron" aria-hidden="true">⁘</span>
+
+    <div class="result-bar">
+      <p class="result-meta"><strong id="count">0</strong> pieces in view</p>
+      <p class="hint">Searching shows every match, including the latest if it fits.</p>
+    </div>
+
+    <div class="post-list-wrap">
+      <h2 class="grid-section-title" id="archive-title">From the journal</h2>
+      <ul class="post-list" id="list" role="list"></ul>
+    </div>
+
+    <p class="empty" id="empty" hidden>The well is quiet—nothing matches. Try another word.</p>
+
+    <p class="mock-badge">Mockup: images from Unsplash placeholders per row. Production uses manifest fields (e.g. first image block or hero) + <code>createdAt</code> for ordering.</p>
+  </main>
+
+  <script>
+    /** `createdAt` ISO dates determine “most recent”; ship uses manifest.createdAt */
+    const SAMPLE = [
+      { createdAt: '2026-03-12', date: 'Mar 12, 2026', cat: 'Practice', title: 'The room before thought', summary: 'What stays when the mind finally stops narrating the moment you are in.', image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80', imageAlt: 'Soft mist over distant hills at dawn' },
+      { createdAt: '2026-02-28', date: 'Feb 28, 2026', cat: 'Grief', title: 'Winter light through the curtains', summary: 'Small rituals of remembrance without reaching for closure too soon.', image: 'https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?w=800&q=80', imageAlt: 'Sunlight through sheer curtains in a quiet room' },
+      { createdAt: '2026-01-15', date: 'Jan 15, 2026', cat: 'Journal', title: 'Walking the same path', summary: 'How repetition on familiar ground can become a quiet form of prayer.', image: 'https://images.unsplash.com/photo-1441974231531-c6227db76b66?w=800&q=80', imageAlt: 'Forest path in morning light' },
+      { createdAt: '2025-12-03', date: 'Dec 3, 2025', cat: 'Practice', title: 'One sound, then silence', summary: 'Sitting with a single bell note until the room remembers how to be still.', image: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&q=80', imageAlt: 'Vintage bell in soft focus' },
+      { createdAt: '2025-11-08', date: 'Nov 8, 2025', cat: 'Reflection', title: 'Questions you stop asking out loud', summary: 'The dignity of keeping some doubts private while still living the search.', image: 'https://images.unsplash.com/photo-1455390582262-044cdead277a?w=800&q=80', imageAlt: 'Open notebook and pen in still life' },
+      { createdAt: '2025-10-22', date: 'Oct 22, 2025', cat: 'Journal', title: 'After the difficult conversation', summary: 'Returning to the body when words have emptied the air between you.', image: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=800&q=80', imageAlt: 'Two people in quiet conversation by a window' },
+      { createdAt: '2025-09-05', date: 'Sep 5, 2025', cat: 'Nature', title: 'Mist on the reservoir', summary: 'Distance, water, and the way weather softens every edge at dawn.', image: 'https://images.unsplash.com/photo-1432405972618-c60bfc05bfbc?w=800&q=80', imageAlt: 'Still water reflecting soft sky' },
+    ];
+
+    function sortByCreatedDesc(posts) {
+      return [...posts].sort(
+        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+    }
+
+    const sortedAll = sortByCreatedDesc(SAMPLE);
+    const FEATURED = sortedAll[0];
+    const ARCHIVE_REST = sortedAll.slice(1);
+
+    const featuredWrap = document.getElementById('featured-wrap');
+    const featuredRoot = document.getElementById('featured-root');
+    const archiveTitleEl = document.getElementById('archive-title');
+    const listEl = document.getElementById('list');
+    const qEl = document.getElementById('q');
+    const countEl = document.getElementById('count');
+    const emptyEl = document.getElementById('empty');
+
+    function escapeHtml(s) {
+      return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+    }
+
+    function renderFeatured(p) {
+      const href = '#latest';
+      featuredRoot.innerHTML =
+        '<article class="featured-card">' +
+        '<a class="featured-link" href="' + href + '">' +
+        '<div class="featured-body">' +
+        '<p class="featured-eyebrow">Latest entry</p>' +
+        '<h2 class="featured-title">' + escapeHtml(p.title) + '</h2>' +
+        '<p class="featured-meta"><span>Stillwater</span> · ' + escapeHtml(p.date) + ' · ' + escapeHtml(p.cat) + '</p>' +
+        '<p class="featured-excerpt">' + escapeHtml(p.summary) + '</p>' +
+        '<span class="featured-cta">Read full piece →</span>' +
+        '</div>' +
+        '<div class="featured-media">' +
+        '<img src="' + escapeHtml(p.image) + '" alt="' + escapeHtml(p.imageAlt) + '" width="640" height="480" loading="eager">' +
+        '</div>' +
+        '</a></article>';
+    }
+
+    function tileHtml(p) {
+      const href = '#post-' + encodeURIComponent(p.createdAt);
+      const catUpper = escapeHtml(p.cat.toUpperCase());
+      return (
+        '<li class="post-row">' +
+        '<a class="tile-link" href="' + href + '">' +
+        '<div class="tile-media">' +
+        '<img src="' + escapeHtml(p.image) + '" alt="' + escapeHtml(p.imageAlt) + '" width="640" height="480" loading="lazy">' +
+        '</div>' +
+        '<div class="tile-body">' +
+        '<p class="tile-cat">' + catUpper + '</p>' +
+        '<h2 class="tile-title">' + escapeHtml(p.title) + '</h2>' +
+        '<p class="tile-date">' + escapeHtml(p.date) + '</p>' +
+        '</div>' +
+        '</a></li>'
+      );
+    }
+
+    function postMatches(p, q) {
+      const hay = (p.title + ' ' + p.summary + ' ' + p.cat).toLowerCase();
+      return hay.includes(q);
+    }
+
+    function render() {
+      const q = (qEl.value || '').trim().toLowerCase();
+
+      if (q) {
+        featuredWrap.hidden = true;
+        archiveTitleEl.textContent = 'Results';
+        const items = sortByCreatedDesc(SAMPLE.filter((p) => postMatches(p, q)));
+        listEl.innerHTML = items.map(tileHtml).join('');
+        countEl.textContent = String(items.length);
+        emptyEl.hidden = items.length > 0;
+      } else {
+        featuredWrap.hidden = false;
+        archiveTitleEl.textContent = 'From the journal';
+        renderFeatured(FEATURED);
+        listEl.innerHTML = ARCHIVE_REST.map(tileHtml).join('');
+        countEl.textContent = String(ARCHIVE_REST.length);
+        emptyEl.hidden = true;
+      }
+    }
+
+    qEl.addEventListener('input', render);
+    render();
+  </script>
+</body>
+</html>

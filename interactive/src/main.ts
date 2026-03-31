@@ -1,48 +1,16 @@
 import "./style.css";
 import {
-  parseManifest,
   orderedTiles,
   type PublishManifest,
   type Tile,
 } from "@schema/manifest";
 import { applyTheme, readPrefersReducedMotion } from "@runtime/apply-theme";
 import { renderBlocks } from "@runtime/render-blocks";
-import { pickVariant, svgForVariant, type CardVariant } from "@runtime/grid-svgs";
 import { mountInteraction } from "@widgets/index";
-
-const manifestGlob = import.meta.glob<{ default: unknown }>(
-  "../content/publishes/*/manifest.json",
-  { eager: true }
-);
+import { loadAllManifests, mergeFromDatabase } from "./lib/load-publishes";
+import { buildShell } from "./shell";
 
 const baseUrl = import.meta.env.BASE_URL ?? "/";
-
-function slugFromKey(key: string): string {
-  const m = key.match(/publishes\/([^/]+)\/manifest\.json$/);
-  return m?.[1] ?? "";
-}
-
-function loadAllManifests(): Map<string, PublishManifest> {
-  const map = new Map<string, PublishManifest>();
-  for (const [path, mod] of Object.entries(manifestGlob)) {
-    const slug = slugFromKey(path);
-    if (!slug) continue;
-    try {
-      const raw =
-        mod &&
-        typeof mod === "object" &&
-        "default" in mod &&
-        (mod as { default: unknown }).default !== undefined
-          ? (mod as { default: unknown }).default
-          : mod;
-      const m = parseManifest(raw);
-      map.set(m.slug, m);
-    } catch (e) {
-      console.error(`Invalid manifest: ${path}`, e);
-    }
-  }
-  return map;
-}
 
 function formatJournalDate(iso: string): string {
   return new Date(iso).toLocaleDateString(undefined, {
@@ -63,17 +31,20 @@ function formatMetaLine(manifest: PublishManifest): string {
 function renderTileSection(
   container: HTMLElement,
   tile: Tile,
-  reducedMotion: boolean
+  reducedMotion: boolean,
+  showTitle = true
 ): HTMLElement {
   const section = document.createElement("section");
   section.className = "sw-entry-section";
   section.id = tile.id;
   section.dataset.sectionId = tile.id;
 
-  const h = document.createElement("h2");
-  h.className = "sw-entry-section-title";
-  h.textContent = tile.label;
-  section.appendChild(h);
+  if (showTitle) {
+    const h = document.createElement("h2");
+    h.className = "sw-entry-section-title";
+    h.textContent = tile.label;
+    section.appendChild(h);
+  }
 
   const blocksWrap = document.createElement("div");
   blocksWrap.className = "tile-blocks";
@@ -149,6 +120,52 @@ function updateReadingProgress(bar: HTMLElement): void {
   bar.style.transform = `scaleX(${p})`;
 }
 
+function attachScrollReveal(
+  body: HTMLElement,
+  reducedMotion: boolean
+): () => void {
+  if (reducedMotion) return () => {};
+
+  const selector =
+    ".block-paragraph, .block-quote, .block-divider";
+  const els = Array.from(body.querySelectorAll<HTMLElement>(selector));
+  if (!els.length) return () => {};
+
+  const viewportH = globalThis.innerHeight ?? 800;
+
+  // Mark only below-fold elements as pending so above-fold ones show immediately
+  const pending: HTMLElement[] = [];
+  for (const el of els) {
+    const rect = el.getBoundingClientRect();
+    if (rect.top < viewportH * 0.92) {
+      // Already in view — show immediately, no animation
+      el.classList.add("sw-revealed");
+    } else {
+      el.classList.add("sw-pending");
+      pending.push(el);
+    }
+  }
+
+  if (!pending.length) return () => {};
+
+  const io = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          const target = entry.target as HTMLElement;
+          target.classList.add("sw-revealed");
+          io.unobserve(target);
+        }
+      }
+    },
+    { threshold: 0.08, rootMargin: "0px 0px -40px 0px" }
+  );
+
+  for (const el of pending) io.observe(el);
+
+  return () => io.disconnect();
+}
+
 let postViewTeardown: (() => void) | null = null;
 
 function teardownPostView(): void {
@@ -162,6 +179,7 @@ function attachPostReadingChrome(options: {
   sectionEls: HTMLElement[];
   jumpLinks: HTMLAnchorElement[];
   reducedMotion: boolean;
+  onTeardown?: () => void;
 }): void {
   const ac = new AbortController();
   const { signal } = ac;
@@ -232,225 +250,8 @@ function attachPostReadingChrome(options: {
     options.topNav.classList.remove("sw-top-nav--with-progress");
     const track = options.topNav.querySelector(".sw-read-progress-track");
     track?.remove();
+    options.onTeardown?.();
   };
-}
-
-function buildShell(): {
-  shell: HTMLElement;
-  topNav: HTMLElement;
-  mainEl: HTMLElement;
-  footer: HTMLElement;
-} {
-  const shell = document.createElement("div");
-  shell.className = "sw-shell";
-
-  const topNav = document.createElement("nav");
-  topNav.className = "sw-top-nav";
-  const logo = document.createElement("a");
-  logo.className = "sw-logo";
-  logo.href = `${baseUrl}stillwater.html`;
-  logo.textContent = "Stillwater";
-  const ul = document.createElement("ul");
-  ul.className = "sw-nav-links";
-  const topNavLinks: [string, string][] = [
-    ["Home", `${baseUrl}stillwater.html`],
-    ["Journal", `${baseUrl}`],
-    ["About", "#"],
-    ["Contact", "#"],
-  ];
-  for (const [label, href] of topNavLinks) {
-    const li = document.createElement("li");
-    const a = document.createElement("a");
-    a.href = href;
-    a.textContent = label;
-    li.appendChild(a);
-    ul.appendChild(li);
-  }
-  topNav.appendChild(logo);
-  topNav.appendChild(ul);
-
-  const mainEl = document.createElement("main");
-  mainEl.className = "sw-main sw-main--fluid";
-
-  const footer = document.createElement("footer");
-  footer.className = "sw-footer";
-  const footLogo = document.createElement("div");
-  footLogo.className = "footer-logo";
-  footLogo.textContent = "Stillwater";
-  const footerLinks = document.createElement("ul");
-  footerLinks.className = "footer-links";
-  const footerLinkItems: [string, string][] = [
-    ["Journal", `${baseUrl}`],
-    ["About", "#"],
-    ["Contact", "#"],
-  ];
-  for (const [label, href] of footerLinkItems) {
-    const li = document.createElement("li");
-    const a = document.createElement("a");
-    a.href = href;
-    a.textContent = label;
-    li.appendChild(a);
-    footerLinks.appendChild(li);
-  }
-  const footCopy = document.createElement("div");
-  footCopy.className = "footer-copy";
-  footCopy.textContent =
-    "© " + new Date().getFullYear() + " Stillwater. Made with intention.";
-  footer.appendChild(footLogo);
-  footer.appendChild(footerLinks);
-  footer.appendChild(footCopy);
-
-  shell.appendChild(topNav);
-  shell.appendChild(mainEl);
-  shell.appendChild(footer);
-
-  return { shell, topNav, mainEl, footer };
-}
-
-function mountJournalGrid(
-  root: HTMLElement,
-  manifests: Map<string, PublishManifest>
-): void {
-  teardownPostView();
-  applyTheme(root, undefined, readPrefersReducedMotion());
-  root.innerHTML = "";
-  root.className = "app-root";
-
-  const { shell, mainEl } = buildShell();
-
-  const hero = document.createElement("section");
-  hero.className = "journal-hero";
-  const heroBg = document.createElement("div");
-  heroBg.className = "journal-hero-bg";
-  const orb1 = document.createElement("div");
-  orb1.className = "hero-orb hero-orb-1";
-  const orb2 = document.createElement("div");
-  orb2.className = "hero-orb hero-orb-2";
-  const orb3 = document.createElement("div");
-  orb3.className = "hero-orb hero-orb-3";
-  const heroInner = document.createElement("div");
-  heroInner.className = "journal-hero-inner";
-  const eyebrow = document.createElement("p");
-  eyebrow.className = "hero-eyebrow";
-  eyebrow.textContent = "A space for the soul";
-  const h1 = document.createElement("h1");
-  h1.innerHTML = "Words to still<br>the <em>wandering</em> mind";
-  const sub = document.createElement("p");
-  sub.className = "journal-hero-sub";
-  sub.textContent =
-    "Reflections on presence, healing, and the quiet wisdom that lives within you.";
-  const cta = document.createElement("a");
-  cta.className = "hero-cta";
-  cta.href = "#posts";
-  cta.textContent = "Read the journal";
-  heroInner.appendChild(eyebrow);
-  heroInner.appendChild(h1);
-  heroInner.appendChild(sub);
-  heroInner.appendChild(cta);
-  hero.appendChild(heroBg);
-  hero.appendChild(orb1);
-  hero.appendChild(orb2);
-  hero.appendChild(orb3);
-  hero.appendChild(heroInner);
-
-  const sectionHead = document.createElement("div");
-  sectionHead.className = "section-header";
-  sectionHead.id = "posts";
-  const shEyebrow = document.createElement("p");
-  shEyebrow.className = "eyebrow";
-  shEyebrow.textContent = "Latest posts";
-  const shH2 = document.createElement("h2");
-  shH2.textContent = "From the journal";
-  sectionHead.appendChild(shEyebrow);
-  sectionHead.appendChild(shH2);
-
-  const grid = document.createElement("div");
-  grid.className = "blog-grid";
-
-  const list = [...manifests.entries()].sort(
-    (a, b) =>
-      new Date(b[1].createdAt).getTime() -
-      new Date(a[1].createdAt).getTime()
-  );
-
-  list.forEach(([slug, m], index) => {
-    const variant = pickVariant(m.cardVariant as CardVariant | undefined, index);
-    const a = document.createElement("a");
-    a.className = "blog-tile";
-    a.href = `${baseUrl}?slug=${encodeURIComponent(slug)}`;
-
-    const head = document.createElement("div");
-    head.className = `tile-header ${variant}`;
-    head.innerHTML = svgForVariant(variant);
-
-    const body = document.createElement("div");
-    body.className = "tile-body";
-    const cat = document.createElement("div");
-    cat.className = "tile-cat";
-    cat.textContent = m.category ?? "Journal";
-    const title = document.createElement("div");
-    title.className = "tile-title";
-    title.textContent = m.title;
-    const excerpt = document.createElement("div");
-    excerpt.className = "tile-excerpt";
-    excerpt.textContent = m.summary;
-    const meta = document.createElement("div");
-    meta.className = "tile-meta";
-    meta.textContent = formatMetaLine(m);
-
-    body.appendChild(cat);
-    body.appendChild(title);
-    body.appendChild(excerpt);
-    body.appendChild(meta);
-    a.appendChild(head);
-    a.appendChild(body);
-    grid.appendChild(a);
-  });
-
-  mainEl.appendChild(hero);
-  mainEl.appendChild(sectionHead);
-  mainEl.appendChild(grid);
-
-  // Quote band (same spirit as `index 2.html`)
-  const quoteBand = document.createElement("div");
-  quoteBand.className = "quote-band";
-  const quote = document.createElement("blockquote");
-  quote.textContent = "The quieter you become, the more you are able to hear.";
-  const cite = document.createElement("cite");
-  cite.textContent = "— Rumi";
-  quoteBand.appendChild(quote);
-  quoteBand.appendChild(cite);
-  mainEl.appendChild(quoteBand);
-
-  // Newsletter (static UI; no backend yet)
-  const newsletter = document.createElement("div");
-  newsletter.className = "newsletter";
-  const nwEyebrow = document.createElement("p");
-  nwEyebrow.className = "eyebrow";
-  nwEyebrow.textContent = "Stay connected";
-  const nwH3 = document.createElement("h3");
-  nwH3.textContent = "Wisdom in your inbox";
-  const nwP = document.createElement("p");
-  nwP.textContent =
-    "New reflections delivered gently, twice a month. No noise. Just soul.";
-  const form = document.createElement("div");
-  form.className = "newsletter-form";
-  const input = document.createElement("input");
-  input.type = "email";
-  input.placeholder = "your@email.com";
-  const btn = document.createElement("button");
-  btn.type = "button";
-  btn.textContent = "Subscribe";
-  form.appendChild(input);
-  form.appendChild(btn);
-  newsletter.appendChild(nwEyebrow);
-  newsletter.appendChild(nwH3);
-  newsletter.appendChild(nwP);
-  newsletter.appendChild(form);
-  mainEl.appendChild(newsletter);
-
-  root.appendChild(shell);
-  document.title = "Stillwater — A Spiritual Journal";
 }
 
 function mountPostView(root: HTMLElement, manifest: PublishManifest): void {
@@ -478,7 +279,7 @@ function mountPostView(root: HTMLElement, manifest: PublishManifest): void {
 
   const back = document.createElement("a");
   back.className = "sw-back";
-  back.href = `${baseUrl}`;
+  back.href = `${baseUrl}journal.html`;
   back.textContent = "← Back to journal";
 
   const article = document.createElement("article");
@@ -513,25 +314,30 @@ function mountPostView(root: HTMLElement, manifest: PublishManifest): void {
   const { nav: jumpNav, links: jumpLinks } = buildPostJumpNav(tiles, {
     reducedMotion: rm,
   });
+  const showJumpNav = tiles.length > 1;
 
   const sectionEls: HTMLElement[] = [];
+  const showSectionTitles = tiles.length > 1;
   for (const tile of tiles) {
-    sectionEls.push(renderTileSection(body, tile, rm));
+    sectionEls.push(renderTileSection(body, tile, rm, showSectionTitles));
   }
 
   article.appendChild(back);
   article.appendChild(header);
-  article.appendChild(jumpNav);
+  if (showJumpNav) article.appendChild(jumpNav);
   article.appendChild(body);
   mainEl.appendChild(article);
   root.appendChild(shell);
+
+  const teardownReveal = attachScrollReveal(body, rm);
 
   attachPostReadingChrome({
     topNav,
     progressBar,
     sectionEls,
-    jumpLinks,
+    jumpLinks: showJumpNav ? jumpLinks : [],
     reducedMotion: rm,
+    onTeardown: teardownReveal,
   });
 
   const initialHash = globalThis.location.hash.slice(1);
@@ -548,14 +354,7 @@ function mountPostView(root: HTMLElement, manifest: PublishManifest): void {
   }
 }
 
-function main(): void {
-  const manifests = loadAllManifests();
-  if (manifests.size === 0) {
-    document.body.innerHTML =
-      "<p>No posts found. Add content/publishes/&lt;slug&gt;/manifest.json</p>";
-    return;
-  }
-
+async function main(): Promise<void> {
   const params = new URLSearchParams(globalThis.location.search);
   const slugParam = params.get("slug");
 
@@ -563,14 +362,24 @@ function main(): void {
   if (!app) return;
 
   if (!slugParam) {
-    mountJournalGrid(app, manifests);
+    globalThis.location.replace(`${baseUrl}journal.html`);
     return;
   }
 
-  const manifest = manifests.get(slugParam);
+  // Try bundled manifests first (instant, no network)
+  const manifests = loadAllManifests();
+  let manifest = manifests.get(slugParam);
+
+  // If not in the bundle, this post was published via the creator after
+  // the last deploy — fetch it live from the database
+  if (!manifest) {
+    await mergeFromDatabase(manifests);
+    manifest = manifests.get(slugParam);
+  }
+
   if (!manifest) {
     teardownPostView();
-    app.innerHTML = `<p class="sw-error">No post “${slugParam}”. <a href="${baseUrl}">Back to journal</a></p>`;
+    app.innerHTML = `<p class="sw-error">No post "${slugParam}". <a href="${baseUrl}journal.html">Back to journal</a></p>`;
     document.title = "Not found — Stillwater";
     return;
   }
@@ -579,4 +388,4 @@ function main(): void {
   mountPostView(app, manifest);
 }
 
-main();
+void main();

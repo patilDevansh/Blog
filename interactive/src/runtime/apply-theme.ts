@@ -26,6 +26,11 @@ export function applyTheme(
   root.style.setProperty("--sw-surface", t.surface ?? base.surface);
   root.style.setProperty("--sw-text", t.text ?? base.text);
   root.dataset.motion = motion;
+  if (t.fontPreset) {
+    root.dataset.fontPreset = t.fontPreset;
+  } else {
+    delete root.dataset.fontPreset;
+  }
   if (prefersReducedMotion) {
     root.dataset.reducedMotion = "1";
   } else {

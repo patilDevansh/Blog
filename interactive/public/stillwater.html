@@ -325,72 +325,77 @@
     opacity: 0.5;
   }
 
-  /* NEWSLETTER */
-  .newsletter {
-    text-align: center;
-    padding: 5rem 2rem;
-    max-width: 540px;
-    margin: 0 auto;
+  /* CONNECT (static page — live forms on journal home) */
+  .sw-connect-static {
+    padding: 4.5rem 2rem 5rem;
+    border-top: 1px solid var(--border);
+    background: linear-gradient(180deg, rgba(245, 243, 255, 0.5) 0%, var(--bg) 100%);
   }
-
-  .newsletter .eyebrow {
+  .sw-connect-static-inner { max-width: 920px; margin: 0 auto; }
+  .sw-connect-static-header { text-align: center; max-width: 36rem; margin: 0 auto 2.75rem; }
+  .sw-connect-static-header .eyebrow {
     font-size: 0.72rem;
     letter-spacing: 0.2em;
     text-transform: uppercase;
     color: var(--text-muted);
-    margin-bottom: 1rem;
+    margin-bottom: 0.75rem;
   }
-
-  .newsletter h3 {
+  .sw-connect-static-header h3 {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 2rem;
+    font-size: clamp(1.75rem, 4vw, 2.35rem);
     font-weight: 300;
     color: var(--purple-deep);
-    margin-bottom: 1rem;
+    margin: 0 0 0.65rem;
+    line-height: 1.2;
   }
-
-  .newsletter p {
-    font-size: 0.92rem;
+  .sw-connect-static-header p {
+    font-size: 0.95rem;
     color: var(--text-muted);
-    margin-bottom: 2rem;
+    line-height: 1.6;
+    margin: 0;
   }
-
-  .newsletter-form {
-    display: flex;
-    gap: 10px;
-    max-width: 400px;
-    margin: 0 auto;
+  .sw-connect-static-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2rem 2.5rem;
   }
-
-  .newsletter-form input {
-    flex: 1;
-    padding: 0.75rem 1.2rem;
-    border: 1px solid var(--border);
-    border-radius: 999px;
-    font-family: 'Jost', sans-serif;
-    font-size: 0.88rem;
-    color: var(--text);
+  .sw-connect-static-panel {
     background: #fff;
-    outline: none;
-    transition: border-color 0.2s;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.75rem 1.85rem 2rem;
+    box-shadow: 0 10px 36px rgba(80, 70, 140, 0.05);
   }
-
-  .newsletter-form input:focus { border-color: var(--purple-mid); }
-
-  .newsletter-form button {
-    padding: 0.75rem 1.6rem;
+  .sw-connect-static-panel h4 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.35rem;
+    font-weight: 400;
+    color: var(--purple-deep);
+    margin: 0 0 0.5rem;
+  }
+  .sw-connect-static-panel p {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    line-height: 1.55;
+    margin: 0 0 1.25rem;
+  }
+  .sw-connect-static-cta {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
     background: var(--purple-deep);
-    color: #fff;
-    border: none;
+    color: #fff !important;
+    text-decoration: none;
     border-radius: 999px;
     font-family: 'Jost', sans-serif;
     font-size: 0.8rem;
     letter-spacing: 0.08em;
-    cursor: pointer;
+    text-transform: uppercase;
     transition: background 0.2s;
   }
-
-  .newsletter-form button:hover { background: var(--purple-dark); }
+  .sw-connect-static-cta:hover { background: var(--purple-dark); }
+  @media (max-width: 768px) {
+    .sw-connect-static-grid { grid-template-columns: 1fr; }
+  }
 
   /* FOOTER */
   footer {
@@ -438,8 +443,6 @@
     .nav-links { gap: 1.5rem; }
     .blog-grid { padding: 1rem 1.5rem 4rem; }
     footer { flex-direction: column; text-align: center; padding: 2rem 1.5rem; }
-    .newsletter-form { flex-direction: column; }
-    .newsletter-form input, .newsletter-form button { width: 100%; }
   }
 </style>
 </head>
@@ -449,9 +452,9 @@
   <a class="logo" href="/stillwater.html">Stillwater</a>
   <ul class="nav-links">
     <li><a href="/stillwater.html">Home</a></li>
-    <li><a href="/">Journal</a></li>
+    <li><a href="/journal.html">Journal</a></li>
     <li><a href="#">About</a></li>
-    <li><a href="#">Contact</a></li>
+    <li><a href="/journal.html#contact">Contact</a></li>
   </ul>
 </nav>
 
@@ -464,7 +467,7 @@
     <p class="hero-eyebrow">A space for the soul</p>
     <h1>Words to still<br>the <em>wandering</em> mind</h1>
     <p>Reflections on presence, healing, and the quiet wisdom that lives within you.</p>
-    <a href="/#posts" class="hero-cta">Read the journal</a>
+    <a href="/journal.html" class="hero-cta">Read the journal</a>
   </div>
 </section>
 
@@ -600,22 +603,34 @@
   <cite>— Rumi</cite>
 </div>
 
-<div class="newsletter">
-  <p class="eyebrow">Stay connected</p>
-  <h3>Wisdom in your inbox</h3>
-  <p>New reflections delivered gently, twice a month. No noise. Just soul.</p>
-  <div class="newsletter-form">
-    <input type="email" placeholder="your@email.com">
-    <button type="button">Subscribe</button>
+<section class="sw-connect-static">
+  <div class="sw-connect-static-inner">
+    <header class="sw-connect-static-header">
+      <p class="eyebrow">Connect</p>
+      <h3>Offer your words to the writer</h3>
+      <p>Leave a note from your own reflection, or ask to hear when something new goes live.</p>
+    </header>
+    <div class="sw-connect-static-grid">
+      <div class="sw-connect-static-panel">
+        <h4>Send a message</h4>
+        <p>Questions, gratitude, a line that stayed with you—open the journal home to write.</p>
+        <a class="sw-connect-static-cta" href="/journal.html#contact">Send a message</a>
+      </div>
+      <div class="sw-connect-static-panel">
+        <h4>New writing by email</h4>
+        <p>Subscribe for a single note when a new reflection is published—no promotions.</p>
+        <a class="sw-connect-static-cta" href="/journal.html#contact">Subscribe</a>
+      </div>
+    </div>
   </div>
-</div>
+</section>
 
 <footer>
   <div class="footer-logo">Stillwater</div>
   <ul class="footer-links">
-    <li><a href="/">Journal</a></li>
+    <li><a href="/journal.html">Journal</a></li>
     <li><a href="#">About</a></li>
-    <li><a href="#">Contact</a></li>
+    <li><a href="/journal.html#contact">Contact</a></li>
   </ul>
   <div class="footer-copy">© 2026 Stillwater. Made with intention.</div>
 </footer>

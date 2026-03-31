@@ -20,7 +20,11 @@ function renderBlock(block: Block): HTMLElement {
     case "paragraph": {
       const p = document.createElement("p");
       p.className = "block-paragraph";
-      p.textContent = block.text;
+      const text = block.text.trim();
+      if (text.length < 90) {
+        p.classList.add("block-paragraph--short");
+      }
+      p.textContent = text;
       return p;
     }
     case "list": {
@@ -56,6 +60,23 @@ function renderBlock(block: Block): HTMLElement {
       code.textContent = block.code;
       pre.appendChild(code);
       return pre;
+    }
+    case "divider": {
+      const div = document.createElement("div");
+      const style = block.style ?? "ornamental";
+      div.className = `block-divider block-divider--${style}`;
+      div.setAttribute("aria-hidden", "true");
+      const span = document.createElement("span");
+      span.className = "block-divider-glyph";
+      if (style === "minimal") {
+        span.textContent = "· · ·";
+      } else if (style === "heavy") {
+        span.textContent = "——";
+      } else {
+        span.textContent = "✦";
+      }
+      div.appendChild(span);
+      return div;
     }
     case "image": {
       const figure = document.createElement("figure");
