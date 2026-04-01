@@ -13,7 +13,7 @@
   directory = "netlify/functions"
 
 [dev]
-  command = "cd interactive && npm run dev"
+  command = "npm --prefix interactive run dev"
   targetPort = 5173
   port = 8888
   publish = "interactive/dist"

@@ -12,11 +12,13 @@
     "unsplash-search": "tsx scripts/unsplash-search.ts"
   },
   "devDependencies": {
+    "@neondatabase/serverless": "^1.0.2",
     "tsx": "^4.19.2",
     "typescript": "~5.7.2",
     "vite": "^6.0.3"
   },
   "dependencies": {
+    "chart.js": "^4.4.0",
     "zod": "^3.24.1"
   }
 }

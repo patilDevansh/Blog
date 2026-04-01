@@ -1,8 +1,13 @@
 import type { PublishManifest } from "@schema/manifest";
-import { journalPostUrl } from "../../lib/site-paths";
-import { estimatedWordCount, sectionCount } from "../../lib/manifest-stats";
+import { estimatedWordCount } from "../../lib/manifest-stats";
 import { el, clearChildren } from "../ui";
 import type { ViewId } from "../types";
+import { getWritingBoardCards, type BoardCard } from "./writing-board";
+
+function pct(card: BoardCard): number {
+  if (!card.wordTarget) return 0;
+  return Math.min(100, Math.round((card.wordCount / card.wordTarget) * 100));
+}
 
 export function renderDashboard(
   container: HTMLElement,
@@ -25,102 +30,238 @@ export function renderDashboard(
     totalWords += estimatedWordCount(m);
   }
 
-  const hero = el("div", "cr-dash-hero");
-  const eyebrow = el("p", "cr-eyebrow", "Creator studio");
-  const h1 = el("h1", "cr-dash-title", "Overview");
-  const lede = el(
-    "p",
-    "cr-dash-lede",
-    "Write in plain language; posts live in your database or GitHub. Open any post below (Edit) to change text, headings, and images in the browser — no JSON required for everyday edits."
-  );
-  hero.appendChild(eyebrow);
-  hero.appendChild(h1);
-  hero.appendChild(lede);
+  const boardCards = getWritingBoardCards();
+  const inPipeline = boardCards.filter((c) =>
+    ["seed", "research", "drafting", "editing", "ready"].includes(c.column)
+  ).length;
 
-  const stats = el("div", "cr-stat-grid");
-  const mkStat = (label: string, value: string, hint?: string) => {
-    const card = el("div", "cr-stat-card");
-    card.appendChild(el("p", "cr-stat-label", label));
-    card.appendChild(el("p", "cr-stat-value", value));
-    if (hint) card.appendChild(el("p", "cr-stat-hint", hint));
+  const head = el("div", "cr-view-head");
+  head.appendChild(el("p", "cr-eyebrow", "Creator Studio"));
+  const headRow = el("div", "cr-view-head__row");
+  headRow.appendChild(el("h1", "cr-view-title", "Overview"));
+  const actions = el("div", "cr-view-head__actions");
+  const b1 = el("button", "cr-btn cr-btn--ghost cr-btn--sm", "Writing board") as HTMLButtonElement;
+  b1.type = "button";
+  b1.addEventListener("click", () => opts.navigate("writing-board"));
+  const b2 = el("button", "cr-btn cr-btn--primary cr-btn--sm", "+ New post") as HTMLButtonElement;
+  b2.type = "button";
+  b2.addEventListener("click", () => opts.navigate("compose"));
+  actions.appendChild(b1);
+  actions.appendChild(b2);
+  headRow.appendChild(actions);
+  head.appendChild(headRow);
+  head.appendChild(
+    el(
+      "p",
+      "cr-view-lede",
+      "Your writing pipeline at a glance. Stats mix live bundle data with illustrative placeholders until analytics are connected."
+    )
+  );
+  container.appendChild(head);
+
+  const stats = el("div", "cr-dash-stats");
+  const mkStat = (label: string, value: string, hint: string) => {
+    const card = el("div", "cr-dash-stat");
+    card.appendChild(el("div", "cr-dash-stat-label", label));
+    card.appendChild(el("div", "cr-dash-stat-value", value));
+    card.appendChild(el("div", "cr-dash-stat-hint", hint));
     return card;
   };
   stats.appendChild(
-    mkStat("Published in bundle", String(opts.manifests.size), "Shipped with this deploy")
+    mkStat(
+      "Posts live",
+      String(opts.manifests.size),
+      `${inPipeline} in pipeline on board`
+    )
   );
   stats.appendChild(
     mkStat(
       "Local drafts",
       String(opts.draftSlugs.size),
-      "Saved in this browser only"
+      "This browser only"
     )
   );
   stats.appendChild(
-    mkStat("Total words (est.)", String(totalWords), "Title, summary, and tiles")
+    mkStat("Words (est.)", totalWords.toLocaleString(), "Across all manifests")
   );
+  stats.appendChild(
+    mkStat(
+      "Board cards",
+      String(boardCards.length),
+      "Ideas & drafts in kanban"
+    )
+  );
+  container.appendChild(stats);
 
-  const quick = el("div", "cr-panel");
-  quick.appendChild(el("h2", "cr-panel-title", "Quick actions"));
-  const qaRow = el("div", "cr-quick-actions");
-  const mkBtn = (label: string, v: ViewId) => {
-    const b = el("button", "cr-btn cr-btn--primary", label) as HTMLButtonElement;
-    b.type = "button";
-    b.addEventListener("click", () => opts.navigate(v));
-    return b;
-  };
-  qaRow.appendChild(mkBtn("Write new post", "compose"));
-  qaRow.appendChild(mkBtn("All posts", "posts"));
-  qaRow.appendChild(mkBtn("Content insights", "analytics"));
-  quick.appendChild(qaRow);
+  const grid = el("div", "cr-dash-layout");
+  const left = el("div", "cr-dash-col cr-dash-col--main");
+  const right = el("div", "cr-dash-col cr-dash-col--side");
 
-  const recent = el("div", "cr-panel");
-  recent.appendChild(el("h2", "cr-panel-title", "Recent posts"));
-  const ul = el("ul", "cr-recent-list");
-  for (const [slug, m] of list.slice(0, 5)) {
-    const li = el("li", "cr-recent-item");
-    const left = el("div", "cr-recent-main");
-    const title = el("a", "cr-recent-title", m.title);
-    title.href = journalPostUrl(opts.baseUrl, slug);
-    title.target = "_blank";
-    title.rel = "noopener noreferrer";
-    const meta = el(
-      "p",
-      "cr-recent-meta",
-      `${new Date(m.createdAt).toLocaleDateString(undefined, {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-      })} · ${estimatedWordCount(m)} words · ${sectionCount(m)} sections`
+  const snap = el("div", "cr-dash-card");
+  snap.appendChild(el("div", "cr-dash-card-title", "Writing board snapshot"));
+  const active = boardCards.filter((c) =>
+    ["drafting", "editing", "research", "ready"].includes(c.column)
+  );
+  const show = active.slice(0, 3);
+  if (show.length === 0) {
+    snap.appendChild(
+      el(
+        "p",
+        "cr-dash-muted",
+        "No cards in motion yet. Open the writing board to add seeds and drafts."
+      )
     );
-    left.appendChild(title);
-    left.appendChild(meta);
-    li.appendChild(left);
+  }
+  for (const c of show) {
+    const row = el("div", "cr-dash-snap-row");
+    const leftBit = el("div");
+    leftBit.appendChild(
+      el(
+        "div",
+        "cr-dash-snap-trad",
+        `${c.tradition} · ${c.column}`
+      )
+    );
+    leftBit.appendChild(el("div", "cr-dash-snap-title", c.title));
+    const rightBit = el("div", "cr-dash-snap-metric");
+    if (c.wordTarget > 0) {
+      rightBit.appendChild(
+        el(
+          "div",
+          "cr-dash-snap-wc",
+          `${c.wordCount.toLocaleString()} / ${c.wordTarget.toLocaleString()}`
+        )
+      );
+      const track = el("div", "cr-dash-snap-bar");
+      const fill = el("div", "cr-dash-snap-fill");
+      fill.style.width = `${pct(c)}%`;
+      track.appendChild(fill);
+      rightBit.appendChild(track);
+    } else {
+      rightBit.appendChild(el("div", "cr-dash-snap-wc", "—"));
+    }
+    row.appendChild(leftBit);
+    row.appendChild(rightBit);
+    snap.appendChild(row);
+  }
+  const openBoard = el(
+    "button",
+    "cr-btn cr-btn--ghost cr-btn--sm cr-dash-card-btn",
+    "Open full board →"
+  ) as HTMLButtonElement;
+  openBoard.type = "button";
+  openBoard.addEventListener("click", () => opts.navigate("writing-board"));
+  snap.appendChild(openBoard);
+  left.appendChild(snap);
 
-    const right = el("div", "cr-recent-actions");
-    const editPost = el(
-      "button",
-      "cr-btn cr-btn--primary cr-btn--sm",
-      "Edit"
-    ) as HTMLButtonElement;
-    editPost.type = "button";
-    editPost.addEventListener("click", () =>
+  const chartCard = el("div", "cr-dash-card");
+  chartCard.appendChild(
+    el("div", "cr-dash-card-title", "Reads by tradition (sample)")
+  );
+  const canvas = el("canvas", "cr-dash-chart") as HTMLCanvasElement;
+  chartCard.appendChild(canvas);
+  left.appendChild(chartCard);
+
+  const tasks = el("div", "cr-dash-card");
+  tasks.appendChild(el("div", "cr-dash-card-title", "Pending tasks"));
+  const taskItems: [string, string][] = [
+    ["Review drafts in Post Library", "Ship or trim before next dispatch"],
+    ["Reply to reader letters", "Public footnotes build trust"],
+    ["Tune glossary terms", "High-hover terms need richer defs"],
+  ];
+  for (const [t, m] of taskItems) {
+    const ti = el("div", "cr-dash-task");
+    ti.appendChild(el("span", "cr-dash-task-dot"));
+    const tx = el("div");
+    tx.appendChild(el("div", "cr-dash-task-text", t));
+    tx.appendChild(el("div", "cr-dash-task-meta", m));
+    ti.appendChild(tx);
+    tasks.appendChild(ti);
+  }
+  const lettersBtn = el(
+    "button",
+    "cr-btn cr-btn--ghost cr-btn--sm",
+    "Open letters →"
+  ) as HTMLButtonElement;
+  lettersBtn.type = "button";
+  lettersBtn.addEventListener("click", () => opts.navigate("reader-letters"));
+  tasks.appendChild(lettersBtn);
+  right.appendChild(tasks);
+
+  const recent = el("div", "cr-dash-card");
+  recent.appendChild(el("div", "cr-dash-card-title", "Recent posts"));
+  for (const [slug, m] of list.slice(0, 4)) {
+    const r = el("div", "cr-dash-recent-row");
+    const pill = el(
+      "span",
+      "cr-lib-pill " +
+        (opts.draftSlugs.has(slug) ? "cr-lib-pill--draft" : "cr-lib-pill--pub"),
+      opts.draftSlugs.has(slug) ? "Draft" : "Live"
+    );
+    const t = el("span", "cr-dash-recent-title", m.title);
+    t.style.cursor = "pointer";
+    t.addEventListener("click", () =>
       opts.navigate("editor", { editorSlug: slug })
     );
-    right.appendChild(editPost);
-    if (opts.draftSlugs.has(slug)) {
-      right.appendChild(el("span", "cr-badge cr-badge--draft", "Local draft"));
-    }
-    li.appendChild(right);
-
-    ul.appendChild(li);
+    const meta = el(
+      "span",
+      "cr-dash-recent-meta",
+      `${estimatedWordCount(m)} w`
+    );
+    r.appendChild(pill);
+    r.appendChild(t);
+    r.appendChild(meta);
+    recent.appendChild(r);
   }
   if (list.length === 0) {
-    ul.appendChild(el("li", "cr-empty", "No manifests in content/publishes yet."));
+    recent.appendChild(el("p", "cr-dash-muted", "No manifests in this build yet."));
   }
-  recent.appendChild(ul);
+  right.appendChild(recent);
 
-  container.appendChild(hero);
-  container.appendChild(stats);
-  container.appendChild(quick);
-  container.appendChild(recent);
+  grid.appendChild(left);
+  grid.appendChild(right);
+  container.appendChild(grid);
+
+  void import("chart.js/auto")
+    .then(({ default: Chart }) => {
+      const gold = "#b8882a";
+      const goldLight = "rgba(184, 136, 42, 0.15)";
+      const labels = [
+        "Kashmir Shaivism",
+        "Yoga Sutras",
+        "Tantra",
+        "Vajrayana",
+        "Kriya",
+      ];
+      const data = [42, 28, 22, 18, 14];
+      new Chart(canvas, {
+        type: "bar",
+        data: {
+          labels,
+          datasets: [
+            {
+              data,
+              backgroundColor: goldLight,
+              borderColor: gold,
+              borderWidth: 1,
+              borderRadius: 4,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { grid: { display: false }, ticks: { font: { size: 10 } } },
+            y: { beginAtZero: true, grid: { color: "rgba(0,0,0,0.06)" } },
+          },
+        },
+      });
+    })
+    .catch(() => {
+      canvas.replaceWith(
+        el("p", "cr-dash-muted", "Chart unavailable offline.")
+      );
+    });
 }

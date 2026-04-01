@@ -1,4 +1,4 @@
-import { setSessionPassword, setStudioUnlocked } from "./storage";
+import { setSessionPassword, setStudioUnlocked, clearSignedOutFlag } from "./storage";
 import { el } from "./ui";
 
 const VERIFY_FN =
@@ -12,6 +12,14 @@ export function renderStudioGate(
   root.replaceChildren();
 
   const wrap = el("div", "cr-gate");
+  const bg = el("div", "cr-gate-bg");
+  bg.setAttribute("aria-hidden", "true");
+  const bgImg = document.createElement("img");
+  bgImg.src = "/thangka-84-mahasiddhas.jpg";
+  bgImg.alt = "";
+  bgImg.setAttribute("aria-hidden", "true");
+  bg.appendChild(bgImg);
+  wrap.appendChild(bg);
   const panel = el("div", "cr-gate-panel");
   panel.appendChild(el("p", "cr-gate-eyebrow", "Stillwater — private"));
   panel.appendChild(el("h1", "cr-gate-title", "Sign in"));
@@ -75,6 +83,7 @@ export function renderStudioGate(
         err.hidden = false;
         return;
       }
+      clearSignedOutFlag();
       setSessionPassword(password);
       setStudioUnlocked();
       onUnlocked();

@@ -13,7 +13,7 @@ export function renderSettings(container: HTMLElement): void {
 
   const hero = el("div", "cr-dash-hero");
   hero.appendChild(el("p", "cr-eyebrow", "Studio"));
-  hero.appendChild(el("h1", "cr-dash-title", "Settings"));
+  hero.appendChild(el("h1", "cr-dash-title", "Site Settings"));
   hero.appendChild(
     el(
       "p",

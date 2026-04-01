@@ -31,18 +31,20 @@ export function renderCompose(
 ): void {
   container.replaceChildren();
 
-  const hero = el("div", "cr-dash-hero");
-  hero.appendChild(el("p", "cr-eyebrow", "Write"));
-  hero.appendChild(el("h1", "cr-dash-title", "New post"));
-  hero.appendChild(
+  const head = el("div", "cr-view-head");
+  head.appendChild(el("p", "cr-eyebrow", "Write"));
+  const headRow = el("div", "cr-view-head__row");
+  headRow.appendChild(el("h1", "cr-view-title", "Post Editor"));
+  head.appendChild(headRow);
+  head.appendChild(
     el(
       "p",
-      "cr-dash-lede",
-      "Type your article below. We turn it into a beautiful post for you. When you’re happy, publish — it goes to your database or GitHub on Netlify (no coding)."
+      "cr-view-lede",
+      "Compose in plain text; Generate turns it into a full manifest with layout and imagery. Publish sends it to your database or GitHub."
     )
   );
 
-  const note = el("div", "cr-callout cr-callout--compact");
+  const note = el("div", "cr-callout cr-callout--compact cr-callout--editor");
   note.innerHTML =
     "<strong>Behind the scenes:</strong> “Generate” uses AI to build your post. " +
     "<strong>Publish to live site</strong> saves to Postgres when <code>DATABASE_URL</code> is set, otherwise to GitHub. " +
@@ -106,10 +108,12 @@ export function renderCompose(
   rtIn.placeholder = "e.g. 6";
   rtField.appendChild(rtIn);
 
-  const draftField = el("div", "creator-field");
+  const draftField = el("div", "creator-field cr-compose-draft-wrap");
   draftField.appendChild(el("label", "", "Draft (English)"));
   const draft = el("textarea") as HTMLTextAreaElement;
   draft.placeholder = "Full blog text…";
+  draft.className = "cr-compose-draft";
+  draft.rows = 20;
   draftField.appendChild(draft);
 
   const err = el("p", "creator-error");
@@ -118,28 +122,23 @@ export function renderCompose(
   const valOk = el("p", "cr-validate-ok");
   valOk.hidden = true;
 
-  const actions = el("div", "creator-actions cr-actions-ext");
   const gen = el("button", "", "Generate my post") as HTMLButtonElement;
   gen.type = "button";
-  const validateBtn = el(
-    "button",
-    "secondary",
-    "Validate JSON"
-  ) as HTMLButtonElement;
+  const validateBtn = el("button", "", "Validate JSON") as HTMLButtonElement;
   validateBtn.type = "button";
-  const copyBtn = el("button", "secondary", "Copy JSON") as HTMLButtonElement;
+  const copyBtn = el("button", "", "Copy JSON") as HTMLButtonElement;
   copyBtn.type = "button";
   copyBtn.disabled = true;
   const dlBtn = el(
     "button",
-    "secondary",
+    "",
     "Download manifest.json"
   ) as HTMLButtonElement;
   dlBtn.type = "button";
   dlBtn.disabled = true;
   const saveDraftBtn = el(
     "button",
-    "secondary",
+    "",
     "Save draft on this device"
   ) as HTMLButtonElement;
   saveDraftBtn.type = "button";
@@ -154,12 +153,10 @@ export function renderCompose(
   publishBtn.title =
     "Saves this post to your database or GitHub (see settings).";
 
-  actions.appendChild(gen);
-  actions.appendChild(publishBtn);
-  actions.appendChild(validateBtn);
-  actions.appendChild(copyBtn);
-  actions.appendChild(dlBtn);
-  actions.appendChild(saveDraftBtn);
+  validateBtn.classList.add("cr-btn", "cr-btn--ghost", "cr-btn--sm", "cr-btn--block");
+  copyBtn.classList.add("cr-btn", "cr-btn--ghost", "cr-btn--sm", "cr-btn--block");
+  dlBtn.classList.add("cr-btn", "cr-btn--ghost", "cr-btn--sm", "cr-btn--block");
+  saveDraftBtn.classList.add("cr-btn", "cr-btn--secondary", "cr-btn--sm", "cr-btn--block");
 
   const publishHelp = el("p", "cr-publish-hint");
   publishHelp.innerHTML =
@@ -458,21 +455,78 @@ export function renderCompose(
     valOk.hidden = false;
   });
 
-  gen.classList.add("cr-btn", "cr-btn--secondary");
-  publishBtn.classList.add("cr-btn", "cr-btn--primary");
+  gen.classList.add("cr-btn", "cr-btn--secondary", "cr-btn--lg");
+  publishBtn.classList.add("cr-btn", "cr-btn--primary", "cr-btn--lg");
 
-  container.appendChild(hero);
-  container.appendChild(note);
-  container.appendChild(rememberRow);
-  container.appendChild(titleField);
-  container.appendChild(slugField);
-  container.appendChild(catField);
-  container.appendChild(rtField);
-  container.appendChild(draftField);
-  container.appendChild(err);
-  container.appendChild(valOk);
-  container.appendChild(actions);
-  container.appendChild(publishHelp);
-  container.appendChild(advanced);
-  container.appendChild(foot);
+  const modes = el("div", "cr-editor-modes");
+  ["Default", "Focus", "Outline", "Preview"].forEach((label, i) => {
+    const b = el("button", "cr-editor-mode", label) as HTMLButtonElement;
+    b.type = "button";
+    if (i === 0) b.classList.add("is-active");
+    b.addEventListener("click", () => {
+      modes.querySelectorAll(".cr-editor-mode").forEach((x) => {
+        x.classList.remove("is-active");
+      });
+      b.classList.add("is-active");
+      if (label === "Focus") draft.classList.add("cr-compose-draft--focus");
+      else draft.classList.remove("cr-compose-draft--focus");
+    });
+    modes.appendChild(b);
+  });
+
+  const tb = el("div", "cr-editor-toolbar-mock");
+  ["B", "I", "U", "H2", "H3", "❦", "Quote", "—", "IAST", "¹"].forEach((t) => {
+    const b = el("button", "cr-editor-tool", t) as HTMLButtonElement;
+    b.type = "button";
+    b.disabled = true;
+    b.title = "Reserved for a future rich-text surface";
+    tb.appendChild(b);
+  });
+
+  const primaryBar = el("div", "cr-compose-primary");
+  primaryBar.appendChild(gen);
+  primaryBar.appendChild(publishBtn);
+
+  const railSession = el("div", "cr-rail-panel");
+  railSession.appendChild(el("div", "cr-rail-panel-head", "Session & password"));
+  railSession.appendChild(rememberRow);
+
+  const railTools = el("div", "cr-rail-panel");
+  railTools.appendChild(el("div", "cr-rail-panel-head", "Manifest tools"));
+  const toolStack = el("div", "cr-rail-buttons");
+  toolStack.appendChild(validateBtn);
+  toolStack.appendChild(copyBtn);
+  toolStack.appendChild(dlBtn);
+  toolStack.appendChild(saveDraftBtn);
+  railTools.appendChild(toolStack);
+
+  const rail = el("div", "cr-compose-rail");
+  rail.appendChild(railSession);
+  rail.appendChild(railTools);
+
+  const metaRow = el("div", "cr-compose-fields");
+  metaRow.appendChild(catField);
+  metaRow.appendChild(rtField);
+
+  const main = el("div", "cr-compose-main");
+  main.appendChild(note);
+  main.appendChild(modes);
+  main.appendChild(tb);
+  main.appendChild(titleField);
+  main.appendChild(slugField);
+  main.appendChild(metaRow);
+  main.appendChild(draftField);
+  main.appendChild(err);
+  main.appendChild(valOk);
+  main.appendChild(primaryBar);
+  main.appendChild(publishHelp);
+  main.appendChild(advanced);
+  main.appendChild(foot);
+
+  const shell = el("div", "cr-compose-shell");
+  shell.appendChild(main);
+  shell.appendChild(rail);
+
+  container.appendChild(head);
+  container.appendChild(shell);
 }

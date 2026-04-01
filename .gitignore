@@ -8,3 +8,6 @@ dist/
 
 # Posts live in Neon DB — not in git
 interactive/content/publishes/
+
+# Local Netlify folder
+.netlify

@@ -1,6 +1,5 @@
 import type { PublishManifest } from "@schema/manifest";
 import { journalPostUrl } from "../../lib/site-paths";
-import { estimatedWordCount, imageBlockCount } from "../../lib/manifest-stats";
 import { el, clearChildren } from "../ui";
 import {
   deleteLocalDraft,
@@ -27,42 +26,49 @@ export function renderPosts(
   const drafts = getLocalDrafts();
   const draftSlugs = new Set(Object.keys(drafts));
 
-  const hero = el("div", "cr-dash-hero");
-  hero.appendChild(el("p", "cr-eyebrow", "Your stories"));
-  hero.appendChild(el("h1", "cr-dash-title", "Posts"));
-  hero.appendChild(
-    el(
-      "p",
-      "cr-dash-lede",
-      "Everything live on GitHub (when connected), plus device-only drafts. Edit in the visual editor, remove from the site, or tweak raw JSON for advanced widgets."
-    )
-  );
-
-  const toolbar = el("div", "cr-toolbar");
-  const searchWrap = el("div", "cr-search-wrap");
-  const search = el("input", "cr-search") as HTMLInputElement;
-  search.type = "search";
-  search.placeholder = "Search title or slug…";
-  search.setAttribute("aria-label", "Filter posts");
-  searchWrap.appendChild(search);
-
+  const head = el("div", "cr-view-head");
+  head.appendChild(el("p", "cr-eyebrow", "Your archive"));
+  const headRow = el("div", "cr-view-head__row");
+  headRow.appendChild(el("h1", "cr-view-title", "Post Library"));
+  const headAct = el("div", "cr-view-head__actions");
   const addBtn = el(
     "button",
-    "cr-btn cr-btn--primary",
-    "Write new post"
+    "cr-btn cr-btn--primary cr-btn--sm",
+    "+ New post"
   ) as HTMLButtonElement;
   addBtn.type = "button";
   addBtn.addEventListener("click", () => {
     opts.setComposeImport(null);
     opts.navigate("compose");
   });
-  toolbar.appendChild(searchWrap);
-  toolbar.appendChild(addBtn);
+  headAct.appendChild(addBtn);
+  headRow.appendChild(headAct);
+  head.appendChild(headRow);
+  head.appendChild(
+    el(
+      "p",
+      "cr-view-lede",
+      "Search and filter the full archive. Device-only drafts appear alongside live posts. Edit visually, open the public view, or jump to raw JSON when you need it."
+    )
+  );
 
-  const listEl = el("div", "cr-post-list");
+  const searchBar = el("div", "cr-lib-searchbar");
+  const search = el("input", "cr-lib-search") as HTMLInputElement;
+  search.type = "search";
+  search.placeholder = "Search title, slug, or summary…";
+  search.setAttribute("aria-label", "Filter posts");
+  searchBar.appendChild(search);
+
+  const pillStrip = el("div", "cr-pill-strip cr-pill-strip--wrap");
+  let statusFilter: "all" | "published" | "drafts" = "all";
+  let catFilter = "all";
+
+  const tableShell = el("div", "cr-lib-table-shell");
+  const listEl = el("div", "cr-lib-table-inner");
   const loadNote = el("p", "cr-muted cr-posts-loading");
   loadNote.textContent = "Loading library…";
   listEl.appendChild(loadNote);
+  tableShell.appendChild(listEl);
 
   type Row = {
     slug: string;
@@ -73,6 +79,79 @@ export function renderPosts(
 
   let rows: Row[] = [];
   let remoteSlugs: string[] | null = null;
+
+  function seedFromSlug(slug: string): number {
+    return slug.split("").reduce((a, c) => a + c.charCodeAt(0), 0);
+  }
+
+  function illusReads(slug: string): string {
+    return String(80 + (seedFromSlug(slug) % 920));
+  }
+
+  function rowCategory(row: Row): string {
+    return row.manifest?.category?.trim() || "—";
+  }
+
+  function rowStatus(row: Row): { label: string; variant: string } {
+    if (row.local && row.manifest) {
+      return { label: "Draft overlay", variant: "cr-lib-pill--draft" };
+    }
+    if (row.local) return { label: "Draft", variant: "cr-lib-pill--draft" };
+    if (row.manifest) return { label: "Published", variant: "cr-lib-pill--pub" };
+    return { label: "Pending load", variant: "cr-lib-pill--sched" };
+  }
+
+  function rebuildPills(): void {
+    clearChildren(pillStrip);
+    const n = rows.length;
+    const pub = rows.filter((r) => r.manifest).length;
+    const dr = rows.filter((r) => r.local).length;
+    const defs: { id: "all" | "published" | "drafts"; label: string }[] = [
+      { id: "all", label: `All (${n})` },
+      { id: "published", label: `Published (${pub})` },
+      { id: "drafts", label: `Drafts (${dr})` },
+    ];
+    for (const d of defs) {
+      const b = el("button", "cr-pill-btn", d.label) as HTMLButtonElement;
+      b.type = "button";
+      b.dataset.filter = d.id;
+      b.classList.toggle("is-active", statusFilter === d.id);
+      b.addEventListener("click", () => {
+        statusFilter = d.id;
+        pillStrip.querySelectorAll(".cr-pill-btn[data-filter]").forEach((p) => {
+          p.classList.toggle(
+            "is-active",
+            (p as HTMLButtonElement).dataset.filter === d.id
+          );
+        });
+        paintList();
+      });
+      pillStrip.appendChild(b);
+    }
+    const cats = new Set<string>();
+    for (const r of rows) {
+      const c = rowCategory(r);
+      if (c && c !== "—") cats.add(c);
+    }
+    const sorted = [...cats].sort();
+    for (const c of sorted.slice(0, 8)) {
+      const b = el("button", "cr-pill-btn", c) as HTMLButtonElement;
+      b.type = "button";
+      b.dataset.cat = c;
+      b.classList.toggle("is-active", catFilter === c);
+      b.addEventListener("click", () => {
+        catFilter = catFilter === c ? "all" : c;
+        pillStrip.querySelectorAll(".cr-pill-btn[data-cat]").forEach((p) => {
+          p.classList.toggle(
+            "is-active",
+            (p as HTMLButtonElement).dataset.cat === catFilter
+          );
+        });
+        paintList();
+      });
+      pillStrip.appendChild(b);
+    }
+  }
 
   function buildRows(): void {
     const removed = getSessionRemovedSlugs();
@@ -126,106 +205,100 @@ export function renderPosts(
     clearChildren(listEl);
     const q = search.value.trim();
     let any = false;
+
+    const table = el("table", "cr-lib-table");
+    const thead = el("thead");
+    const thr = el("tr");
+    ["Title", "Tradition", "Status", "Reads", "Updated", "Actions"].forEach(
+      (h) => {
+        thr.appendChild(el("th", "", h));
+      }
+    );
+    thead.appendChild(thr);
+    table.appendChild(thead);
+    const tbody = el("tbody");
+
     for (const row of rows) {
       if (!matches(row, q)) continue;
+      if (statusFilter === "drafts" && !row.local) continue;
+      if (statusFilter === "published" && !row.manifest) continue;
+      if (catFilter !== "all") {
+        const c = row.manifest?.category?.trim();
+        if (c !== catFilter) continue;
+      }
       any = true;
-      const card = el("article", "cr-post-card");
-      const top = el("div", "cr-post-card-top");
-      const titles = el("div", "cr-post-titles");
+
       const titleText =
         row.manifest?.title ?? row.local?.title ?? row.slug;
-      titles.appendChild(el("h3", "cr-post-card-title", titleText));
-      titles.appendChild(el("p", "cr-post-card-slug", row.slug));
-      top.appendChild(titles);
-      const badges = el("div", "cr-badges");
-      if (row.onGithub) {
-        badges.appendChild(el("span", "cr-badge cr-badge--live", "Live on site"));
-      } else if (remoteSlugs != null && !row.local) {
-        badges.appendChild(
-          el("span", "cr-badge cr-badge--warn", "Not in GitHub list")
-        );
-      }
-      if (row.manifest && !row.onGithub && remoteSlugs == null) {
-        badges.appendChild(
-          el("span", "cr-badge cr-badge--live", "In this build")
-        );
-      }
-      if (row.local) {
-        badges.appendChild(
-          el("span", "cr-badge cr-badge--draft", "Draft on device")
-        );
-      }
-      top.appendChild(badges);
-      card.appendChild(top);
+      const sub = row.manifest?.summary?.trim().slice(0, 96) ?? row.slug;
 
-      const meta = el("p", "cr-post-card-meta");
-      if (row.manifest) {
-        const w = estimatedWordCount(row.manifest);
-        const imgs = imageBlockCount(row.manifest);
-        const imgPart = imgs > 0 ? ` · ${imgs} photo${imgs === 1 ? "" : "s"}` : "";
-        meta.textContent = `${new Date(row.manifest.createdAt).toLocaleDateString(undefined, {
-          month: "short",
-          day: "numeric",
-          year: "numeric",
-        })} · ${w} words${imgPart}`;
-      } else if (row.local) {
-        meta.textContent = `Draft saved ${new Date(row.local.updatedAt).toLocaleString()}`;
-      } else {
-        meta.textContent = "Open editor to load from GitHub.";
-      }
-      card.appendChild(meta);
+      const tr = el("tr", "cr-lib-tr");
+      tr.addEventListener("mouseenter", () => {
+        tr.classList.add("is-hover");
+      });
+      tr.addEventListener("mouseleave", () => {
+        tr.classList.remove("is-hover");
+      });
 
-      const actions = el("div", "cr-post-actions");
+      const tdTitle = el("td", "cr-lib-td cr-lib-td--title");
+      const titleWrap = el("div");
+      titleWrap.appendChild(el("div", "cr-lib-title", titleText));
+      titleWrap.appendChild(el("div", "cr-lib-sub", sub));
+      tdTitle.appendChild(titleWrap);
+      tr.appendChild(tdTitle);
 
-      const preview = el(
-        "a",
-        "cr-btn cr-btn--ghost cr-btn--sm",
-        "View live"
-      ) as HTMLAnchorElement;
-      preview.href = journalPostUrl(opts.baseUrl, row.slug);
-      preview.target = "_blank";
-      preview.rel = "noopener noreferrer";
-      actions.appendChild(preview);
+      tr.appendChild(
+        el("td", "cr-lib-td cr-lib-td--muted", rowCategory(row))
+      );
 
-      if (row.manifest || row.onGithub || row.local) {
-        const copyLink = el(
-          "button",
-          "cr-btn cr-btn--ghost cr-btn--sm",
-          "Copy link"
-        ) as HTMLButtonElement;
-        copyLink.type = "button";
-        copyLink.addEventListener("click", async () => {
-          const href = new URL(
-            journalPostUrl(opts.baseUrl, row.slug),
-            globalThis.location.origin
-          ).href;
-          await navigator.clipboard.writeText(href);
-          copyLink.textContent = "Copied";
-          setTimeout(() => {
-            copyLink.textContent = "Copy link";
-          }, 2000);
-        });
-        actions.appendChild(copyLink);
-      }
+      const st = rowStatus(row);
+      const tdSt = el("td", "cr-lib-td");
+      tdSt.appendChild(el("span", `cr-lib-pill ${st.variant}`, st.label));
+      tr.appendChild(tdSt);
 
-      const editVisual = el(
+      tr.appendChild(
+        el(
+          "td",
+          "cr-lib-td cr-lib-td--muted",
+          row.manifest ? illusReads(row.slug) : "—"
+        )
+      );
+
+      const updated =
+        row.manifest != null
+          ? new Date(row.manifest.createdAt).toLocaleDateString(undefined, {
+              month: "short",
+              day: "numeric",
+            })
+          : row.local != null
+            ? new Date(row.local.updatedAt).toLocaleDateString(undefined, {
+                month: "short",
+                day: "numeric",
+              })
+            : "—";
+      tr.appendChild(el("td", "cr-lib-td cr-lib-td--muted", updated));
+
+      const tdAct = el("td", "cr-lib-td cr-lib-td--actions");
+      const editL = el(
         "button",
-        "cr-btn cr-btn--primary cr-btn--sm",
-        "Edit post"
+        "cr-lib-link cr-lib-link--accent",
+        "Edit"
       ) as HTMLButtonElement;
-      editVisual.type = "button";
-      editVisual.addEventListener("click", () => {
+      editL.type = "button";
+      editL.addEventListener("click", () => {
         opts.navigate("editor", { editorSlug: row.slug });
       });
-      actions.appendChild(editVisual);
-
-      const editJson = el(
+      const viewL = el("a", "cr-lib-link", "View") as HTMLAnchorElement;
+      viewL.href = journalPostUrl(opts.baseUrl, row.slug);
+      viewL.target = "_blank";
+      viewL.rel = "noopener noreferrer";
+      const jsonL = el(
         "button",
-        "cr-btn cr-btn--secondary cr-btn--sm",
-        "Raw JSON"
+        "cr-lib-link",
+        "JSON"
       ) as HTMLButtonElement;
-      editJson.type = "button";
-      editJson.addEventListener("click", () => {
+      jsonL.type = "button";
+      jsonL.addEventListener("click", () => {
         let json: string;
         if (row.local) {
           json = row.local.json;
@@ -238,21 +311,26 @@ export function renderPosts(
         opts.setComposeImport(json);
         opts.navigate("compose");
       });
-      actions.appendChild(editJson);
+      tdAct.appendChild(editL);
+      tdAct.appendChild(document.createTextNode(" · "));
+      tdAct.appendChild(viewL);
+      tdAct.appendChild(document.createTextNode(" · "));
+      tdAct.appendChild(jsonL);
 
       const canDeleteLive =
         row.onGithub || (remoteSlugs == null && Boolean(row.manifest));
       if (canDeleteLive && getSessionPassword()) {
+        tdAct.appendChild(document.createTextNode(" · "));
         const delLive = el(
           "button",
-          "cr-btn cr-btn--ghost cr-btn--sm",
-          "Remove from site"
+          "cr-lib-link cr-lib-link--danger",
+          "Remove"
         ) as HTMLButtonElement;
         delLive.type = "button";
         delLive.addEventListener("click", async () => {
           if (
             !confirm(
-              `Remove “${row.slug}” from GitHub? The public journal will update after deploy. This cannot be undone from here.`
+              `Remove “${row.slug}” from the live archive? The site updates after deploy.`
             )
           ) {
             return;
@@ -278,34 +356,39 @@ export function renderPosts(
             delLive.disabled = false;
           }
         });
-        actions.appendChild(delLive);
+        tdAct.appendChild(delLive);
       }
 
       if (row.local) {
+        tdAct.appendChild(document.createTextNode(" · "));
         const del = el(
           "button",
-          "cr-btn cr-btn--ghost cr-btn--sm",
-          "Drop device draft"
+          "cr-lib-link",
+          "Drop draft"
         ) as HTMLButtonElement;
         del.type = "button";
         del.addEventListener("click", () => {
           if (confirm(`Remove local draft for “${row.slug}”?`)) {
             deleteLocalDraft(row.slug);
-            initFromRemote();
+            void initFromRemote();
           }
         });
-        actions.appendChild(del);
+        tdAct.appendChild(del);
       }
 
-      card.appendChild(actions);
-      listEl.appendChild(card);
+      tr.appendChild(tdAct);
+      tbody.appendChild(tr);
     }
-    if (!any) {
+
+    if (any) {
+      table.appendChild(tbody);
+      listEl.appendChild(table);
+    } else {
       listEl.appendChild(
         el(
           "p",
           "cr-empty",
-          q ? "No posts match your search." : "No posts yet."
+          q ? "No posts match your filters." : "No posts yet."
         )
       );
     }
@@ -330,6 +413,7 @@ export function renderPosts(
       }
     }
     buildRows();
+    rebuildPills();
     paintList();
   }
 
@@ -337,8 +421,9 @@ export function renderPosts(
     paintList();
   });
 
-  container.appendChild(hero);
-  container.appendChild(toolbar);
-  container.appendChild(listEl);
+  container.appendChild(head);
+  container.appendChild(searchBar);
+  container.appendChild(pillStrip);
+  container.appendChild(tableShell);
   void initFromRemote();
 }

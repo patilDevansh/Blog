@@ -4,4 +4,15 @@ export type ViewId =
   | "compose"
   | "editor"
   | "analytics"
-  | "settings";
+  | "settings"
+  | "writing-board"
+  | "reader-letters"
+  | "subscribers"
+  | "glossary"
+  | "reading-paths"
+  | "sources"
+  | "deep-analytics"
+  | "lineage-masters"
+  | "internal-notes"
+  | "comments"
+  | "media-library";

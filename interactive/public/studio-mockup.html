@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Stillwater Creator Studio — Full Mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --gold:#b8882a;--gold-light:#f5eed8;--gold-muted:rgba(184,136,42,0.18);
+  --bg:#f7f5f0;--surface:#f0ede6;--surface2:#e8e3d8;
+  --text:#1c1a17;--text-muted:#6b6450;--text-faint:#a09880;
+  --border:rgba(184,136,42,0.18);--border-strong:rgba(184,136,42,0.35);
+  --sidebar-bg:#1a1612;--sidebar-text:rgba(255,248,230,0.82);--sidebar-muted:rgba(255,248,230,0.38);
+  --sidebar-active:rgba(184,136,42,0.2);--sidebar-hover:rgba(255,248,230,0.06);
+  --radius:10px;--shadow:0 1px 3px rgba(28,26,23,0.08),0 4px 12px rgba(28,26,23,0.04);
+  --shadow-md:0 2px 8px rgba(28,26,23,0.1),0 8px 24px rgba(28,26,23,0.06);
+}
+body{font-family:"Jost",system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;font-size:14px;overflow:hidden;height:100vh}
+.app{display:flex;height:100vh;overflow:hidden}
+
+/* SIDEBAR */
+.sidebar{width:220px;min-width:220px;background:var(--sidebar-bg);display:flex;flex-direction:column;height:100vh;overflow-y:auto;padding:0 0 1rem}
+.sidebar-brand{padding:1.25rem 1.1rem 1rem;border-bottom:1px solid rgba(255,248,230,0.07);margin-bottom:0.5rem}
+.sidebar-brand-name{font-family:"Cormorant Garamond",serif;font-size:1.25rem;color:#fff;letter-spacing:0.04em}
+.sidebar-brand-sub{font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--sidebar-muted);margin-top:0.15rem}
+.sidebar-group{font-size:0.56rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,248,230,0.25);padding:0.9rem 1.1rem 0.2rem;font-weight:600}
+.sidebar-item{display:flex;align-items:center;gap:0.6rem;width:100%;padding:0.52rem 0.9rem;background:none;border:none;font:inherit;font-size:0.82rem;color:var(--sidebar-text);cursor:pointer;text-align:left;border-radius:7px;margin:0 0.35rem;width:calc(100% - 0.7rem);transition:all 0.15s}
+.sidebar-item:hover{background:var(--sidebar-hover);color:#fff}
+.sidebar-item.active{background:var(--sidebar-active);color:#fde9a8;font-weight:500}
+.sidebar-item .icon{font-size:0.85rem;width:16px;text-align:center;opacity:0.7}
+.sidebar-foot{margin-top:auto;padding:0.75rem 0.35rem 0;border-top:1px solid rgba(255,248,230,0.07)}
+.sidebar-foot a,.sidebar-foot button{display:block;padding:0.45rem 0.9rem;font:inherit;font-size:0.75rem;color:var(--sidebar-muted);text-decoration:none;background:none;border:none;cursor:pointer;text-align:left;width:100%;border-radius:7px;transition:all 0.15s}
+.sidebar-foot a:hover,.sidebar-foot button:hover{color:rgba(255,150,150,0.75);background:rgba(255,80,80,0.06)}
+
+/* MAIN */
+.main{flex:1;overflow-y:auto;min-width:0}
+.main-inner{max-width:980px;margin:0 auto;padding:2rem 2rem 5rem}
+
+/* VIEWS */
+.view{display:none}.view.active{display:block}
+
+/* TYPOGRAPHY */
+.eyebrow{font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);margin-bottom:0.4rem;font-weight:500}
+.page-title{font-family:"Cormorant Garamond",serif;font-size:clamp(1.7rem,3vw,2.2rem);font-weight:400;color:var(--text);line-height:1.15;margin-bottom:0.5rem}
+.page-lede{font-size:0.88rem;color:var(--text-muted);max-width:60ch;line-height:1.65;margin-bottom:1.75rem}
+
+/* CARDS */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem 1.4rem;box-shadow:var(--shadow)}
+.card-title{font-family:"Cormorant Garamond",serif;font-size:1.05rem;color:var(--text);margin-bottom:0.9rem;padding-bottom:0.65rem;border-bottom:1px solid var(--border)}
+
+/* STAT GRID */
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:0.85rem;margin-bottom:1.5rem}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem 1.25rem;box-shadow:var(--shadow)}
+.stat-label{font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.3rem}
+.stat-value{font-family:"Cormorant Garamond",serif;font-size:2.1rem;font-weight:300;color:var(--text);line-height:1}
+.stat-hint{font-size:0.7rem;color:var(--text-faint);margin-top:0.2rem}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:0.4rem;font:inherit;font-size:0.78rem;padding:0.48rem 1.1rem;border-radius:999px;border:1px solid transparent;cursor:pointer;transition:all 0.15s;white-space:nowrap;text-decoration:none}
+.btn-primary{background:var(--gold);color:#fff;border-color:var(--gold)}
+.btn-primary:hover{background:#a07624}
+.btn-secondary{background:var(--gold-light);color:var(--gold);border-color:var(--gold-muted)}
+.btn-secondary:hover{background:#ede5c4}
+.btn-ghost{background:transparent;color:var(--text-muted);border-color:var(--border)}
+.btn-ghost:hover{background:var(--surface);border-color:var(--border-strong)}
+.btn-sm{font-size:0.7rem;padding:0.3rem 0.8rem}
+
+/* BADGE */
+.badge{display:inline-block;font-size:0.6rem;letter-spacing:0.08em;text-transform:uppercase;font-weight:600;padding:0.18rem 0.5rem;border-radius:999px;white-space:nowrap}
+.badge-gold{background:var(--gold-light);color:var(--gold)}
+.badge-green{background:#e6f4ea;color:#2d6a4f}
+.badge-blue{background:#e6f0fa;color:#2d5a8a}
+.badge-red{background:#fde8e8;color:#a33}
+
+/* FORM */
+.field{margin-bottom:0.85rem}
+.field label{display:block;font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.3rem}
+.field input,.field textarea,.field select{width:100%;font:inherit;font-size:0.85rem;padding:0.55rem 0.8rem;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);outline:none;transition:border-color 0.15s}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:rgba(184,136,42,0.5)}
+.field textarea{resize:vertical}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+
+/* PILLS */
+.pills{display:flex;gap:0.4rem;flex-wrap:wrap}
+.pill{font:inherit;font-size:0.7rem;padding:0.22rem 0.7rem;border-radius:999px;border:1px solid var(--border);background:var(--surface);cursor:pointer;color:var(--text-muted);transition:all 0.15s}
+.pill:hover{background:var(--gold-light);border-color:var(--gold-muted)}
+.pill.active{background:var(--gold);color:#fff;border-color:var(--gold)}
+
+/* TABLE */
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:0.83rem}
+th,td{text-align:left;padding:0.6rem 0.75rem;border-bottom:1px solid var(--border)}
+th{font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);font-weight:500;background:var(--surface)}
+
+/* KANBAN */
+.kanban{display:grid;grid-template-columns:repeat(7,1fr);gap:0.6rem;align-items:start;overflow-x:auto}
+.k-col{background:var(--surface);border-radius:var(--radius);overflow:hidden;min-width:150px}
+.k-col-head{padding:0.6rem 0.75rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.k-col-label{font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;font-weight:600;color:var(--text-muted)}
+.k-col-count{font-size:0.7rem;background:var(--bg);border-radius:999px;padding:0.05rem 0.45rem;color:var(--text-muted)}
+.k-body{padding:0.5rem;display:flex;flex-direction:column;gap:0.4rem;min-height:80px}
+.k-card{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:0.65rem 0.75rem;cursor:pointer;transition:all 0.15s}
+.k-card:hover{box-shadow:var(--shadow-md);border-color:var(--border-strong)}
+.k-card-trad{font-size:0.58rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);margin-bottom:0.2rem}
+.k-card-title{font-size:0.78rem;font-weight:500;color:var(--text);line-height:1.35;margin-bottom:0.35rem}
+.k-card-prog{height:3px;background:var(--border);border-radius:999px;overflow:hidden;margin-bottom:0.25rem}
+.k-card-bar{height:100%;background:var(--gold);border-radius:999px}
+.k-card-meta{font-size:0.65rem;color:var(--text-faint)}
+
+/* EDITOR */
+.editor-layout{display:grid;grid-template-columns:1fr 240px;gap:1.25rem;align-items:start}
+.editor-main{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.editor-toolbar{padding:0.65rem 1rem;border-bottom:1px solid var(--border);display:flex;gap:0.35rem;flex-wrap:wrap;background:var(--bg)}
+.editor-tool-btn{font:inherit;font-size:0.72rem;padding:0.28rem 0.6rem;border-radius:6px;border:1px solid var(--border);background:transparent;cursor:pointer;color:var(--text-muted);transition:all 0.15s;white-space:nowrap}
+.editor-tool-btn:hover{background:var(--gold-light);color:var(--gold);border-color:var(--gold-muted)}
+.editor-tool-btn.active{background:var(--gold);color:#fff;border-color:var(--gold)}
+.editor-sep{width:1px;background:var(--border);margin:0 0.25rem;align-self:stretch}
+.editor-modes{display:flex;gap:0.35rem;padding:0.5rem 1rem;border-bottom:1px solid var(--border);background:var(--surface)}
+.editor-mode-btn{font:inherit;font-size:0.7rem;padding:0.25rem 0.75rem;border-radius:999px;border:1px solid var(--border);background:transparent;cursor:pointer;color:var(--text-muted);transition:all 0.15s}
+.editor-mode-btn.active{background:var(--gold-light);color:var(--gold);border-color:var(--gold-muted)}
+.editor-content{padding:2rem 2.5rem;min-height:420px}
+.editor-content.focus-mode{background:#1c1a17;color:#f0ede6}
+.editor-content.focus-mode .drop-cap{color:var(--gold)}
+.editor-outline{padding:1rem}
+.outline-item{padding:0.35rem 0.5rem;cursor:pointer;border-radius:6px;font-size:0.85rem;color:var(--text-muted)}
+.outline-item:hover{background:var(--gold-light);color:var(--text)}
+.outline-item.h2{font-weight:500;color:var(--text)}
+.outline-item.h3{padding-left:1.25rem;font-size:0.8rem}
+.drop-cap::first-letter{font-family:"Cormorant Garamond",serif;font-size:3.8rem;font-weight:600;float:left;line-height:0.78;margin:0.08em 0.1em 0 0;color:var(--gold)}
+.pull-quote{border-left:3px solid var(--gold);padding:0.75rem 1.25rem;margin:1.5rem 0;background:var(--gold-light);border-radius:0 8px 8px 0}
+.pull-quote p{font-family:"Cormorant Garamond",serif;font-size:1.15rem;font-style:italic;color:var(--text);line-height:1.6}
+.orn-divider{text-align:center;color:var(--gold);opacity:0.6;margin:1.5rem 0;font-size:1.1rem;letter-spacing:0.5em}
+.footnote-ref{font-size:0.7rem;vertical-align:super;color:var(--gold);cursor:pointer}
+.editor-sidebar{display:flex;flex-direction:column;gap:0.75rem}
+.editor-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.editor-panel-head{padding:0.6rem 0.85rem;background:var(--bg);border-bottom:1px solid var(--border);font-size:0.68rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);font-weight:600;cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+.editor-panel-body{padding:0.85rem}
+
+/* GLOSSARY */
+.gloss-row{padding:1rem 0;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:0.35rem}
+.gloss-top{display:flex;align-items:baseline;gap:0.75rem;flex-wrap:wrap}
+.gloss-term{font-family:"Cormorant Garamond",serif;font-size:1.5rem;color:var(--text)}
+.gloss-iast{font-size:0.85rem;font-style:italic;color:var(--text-muted)}
+.gloss-def{font-size:0.85rem;line-height:1.7;color:#2a2820}
+
+/* LETTERS */
+.letters-layout{display:grid;grid-template-columns:300px 1fr;gap:1.25rem;align-items:start}
+.letters-list{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.letter-item{padding:0.85rem 1rem;border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.12s}
+.letter-item:hover,.letter-item.active{background:var(--gold-light)}
+.letter-item.unread .letter-from{font-weight:600}
+.letter-top{display:flex;justify-content:space-between;margin-bottom:0.2rem}
+.letter-from{font-size:0.83rem;color:var(--text)}
+.letter-date{font-size:0.7rem;color:var(--text-muted)}
+.letter-subj{font-size:0.8rem;font-weight:500;margin-bottom:0.15rem}
+.letter-preview{font-size:0.73rem;color:var(--text-muted)}
+.letter-detail{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem}
+
+/* ANALYTICS */
+.chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem}
+.chart-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem 1.25rem}
+.chart-title{font-size:0.75rem;font-weight:600;color:var(--text-muted);letter-spacing:0.05em;margin-bottom:0.75rem;text-transform:uppercase}
+.health-score{display:flex;align-items:center;gap:0.6rem;margin:0.35rem 0}
+.health-bar{flex:1;height:8px;background:var(--border);border-radius:999px;overflow:hidden}
+.health-fill{height:100%;border-radius:999px;background:var(--gold)}
+.heatmap{display:grid;grid-template-columns:repeat(10,1fr);gap:3px;margin-top:0.5rem}
+.heat-cell{aspect-ratio:1;border-radius:3px;position:relative}
+.heat-cell:hover::after{content:attr(data-label);position:absolute;bottom:120%;left:50%;transform:translateX(-50%);background:#1c1a17;color:#fff;font-size:0.65rem;padding:0.2rem 0.5rem;border-radius:4px;white-space:nowrap;z-index:10}
+
+/* SEARCH BAR */
+.search-bar{display:flex;align-items:center;gap:0.75rem;margin-bottom:1.25rem}
+.search-input{flex:1;font:inherit;font-size:0.85rem;padding:0.52rem 0.9rem;border:1px solid var(--border);border-radius:999px;background:var(--bg);outline:none;transition:border-color 0.15s}
+.search-input:focus{border-color:rgba(184,136,42,0.5)}
+
+/* SCROLL */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(184,136,42,0.25);border-radius:999px}
+
+/* DASHBOARD GRID */
+.dash-grid{display:grid;grid-template-columns:2fr 1fr;gap:1.25rem;align-items:start}
+.dash-left{display:flex;flex-direction:column;gap:1.25rem}
+.dash-right{display:flex;flex-direction:column;gap:1.25rem}
+.task-item{display:flex;align-items:flex-start;gap:0.65rem;padding:0.6rem 0;border-bottom:1px solid var(--border)}
+.task-item:last-child{border-bottom:none}
+.task-dot{width:8px;height:8px;border-radius:50%;background:var(--gold);flex-shrink:0;margin-top:0.35rem}
+.task-dot.done{background:#2d6a4f}
+.task-text{font-size:0.83rem;color:var(--text)}
+.task-meta{font-size:0.7rem;color:var(--text-muted);margin-top:0.15rem}
+
+/* SETTINGS */
+.settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;align-items:start}
+.settings-section{display:flex;flex-direction:column;gap:1rem}
+
+/* SUBS */
+.dispatch-form{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;display:flex;flex-direction:column;gap:0.85rem}
+</style>
+</head>
+<body>
+<div class="app">
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="sidebar-brand-name">Stillwater</div>
+    <div class="sidebar-brand-sub">Creator Studio</div>
+  </div>
+
+  <div class="sidebar-group">Write</div>
+  <button class="sidebar-item active" data-view="dashboard"><span class="icon">◈</span>Dashboard</button>
+  <button class="sidebar-item" data-view="board"><span class="icon">⊞</span>Writing Board</button>
+  <button class="sidebar-item" data-view="editor"><span class="icon">✦</span>Post Editor</button>
+  <button class="sidebar-item" data-view="library"><span class="icon">☰</span>Post Library</button>
+
+  <div class="sidebar-group">Knowledge</div>
+  <button class="sidebar-item" data-view="glossary"><span class="icon">ॐ</span>Glossary & Terms</button>
+  <button class="sidebar-item" data-view="masters"><span class="icon">◉</span>Lineage Masters</button>
+  <button class="sidebar-item" data-view="sources"><span class="icon">§</span>Sources & References</button>
+  <button class="sidebar-item" data-view="notes"><span class="icon">◎</span>Internal Notes</button>
+  <button class="sidebar-item" data-view="paths"><span class="icon">⟶</span>Reading Paths</button>
+
+  <div class="sidebar-group">Audience</div>
+  <button class="sidebar-item" data-view="letters"><span class="icon">✉</span>Reader Letters</button>
+  <button class="sidebar-item" data-view="subscribers"><span class="icon">◈</span>Subscribers</button>
+  <button class="sidebar-item" data-view="comments"><span class="icon">◇</span>Comments</button>
+  <button class="sidebar-item" data-view="analytics"><span class="icon">∿</span>Deep Analytics</button>
+
+  <div class="sidebar-group">Site</div>
+  <button class="sidebar-item" data-view="media"><span class="icon">⬚</span>Media Library</button>
+  <button class="sidebar-item" data-view="settings"><span class="icon">⊙</span>Site Settings</button>
+
+  <div class="sidebar-foot">
+    <a href="/journal.html">← Public journal</a>
+    <button>Sign out</button>
+  </div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="main">
+<div class="main-inner">
+
+<!-- ═══ DASHBOARD ═══ -->
+<div class="view active" id="view-dashboard">
+  <div class="eyebrow">Creator Studio</div>
+  <h1 class="page-title">Overview</h1>
+  <p class="page-lede">Your writing pipeline at a glance. 3 drafts waiting, 1 letter unanswered, next dispatch due Thursday.</p>
+
+  <div class="stat-grid">
+    <div class="stat-card"><div class="stat-label">Total reads</div><div class="stat-value">8,241</div><div class="stat-hint">↑ 14% this month</div></div>
+    <div class="stat-card"><div class="stat-label">Subscribers</div><div class="stat-value">312</div><div class="stat-hint">+18 since last dispatch</div></div>
+    <div class="stat-card"><div class="stat-label">Avg completion</div><div class="stat-value">71%</div><div class="stat-hint">Readers finishing posts</div></div>
+    <div class="stat-card"><div class="stat-label">Letters inbox</div><div class="stat-value">5</div><div class="stat-hint">2 unanswered</div></div>
+    <div class="stat-card"><div class="stat-label">Posts live</div><div class="stat-value">10</div><div class="stat-hint">3 in pipeline</div></div>
+    <div class="stat-card"><div class="stat-label">Return readers</div><div class="stat-value">38%</div><div class="stat-hint">Back within 30 days</div></div>
+  </div>
+
+  <div class="dash-grid">
+    <div class="dash-left">
+      <div class="card">
+        <div class="card-title">Writing board snapshot</div>
+        <div style="display:flex;flex-direction:column;gap:0.5rem">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:0.6rem;background:var(--bg);border-radius:8px;border:1px solid var(--border)">
+            <div><div style="font-size:0.6rem;color:var(--gold);text-transform:uppercase;letter-spacing:0.1em">Kashmir Shaivism · Drafting</div><div style="font-size:0.85rem;font-weight:500">Abhinavagupta's Tantraloka: the aesthetics of recognition</div></div>
+            <div style="text-align:right"><div style="font-size:0.7rem;color:var(--text-muted)">2,840 / 4,000</div><div style="width:80px;height:4px;background:var(--border);border-radius:99px;margin-top:4px"><div style="width:71%;height:100%;background:var(--gold);border-radius:99px"></div></div></div>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:0.6rem;background:var(--bg);border-radius:8px;border:1px solid var(--border)">
+            <div><div style="font-size:0.6rem;color:var(--gold);text-transform:uppercase;letter-spacing:0.1em">84 Mahasiddhas · Research</div><div style="font-size:0.85rem;font-weight:500">Tilopa's six nails: transmission without language</div></div>
+            <div style="text-align:right"><div style="font-size:0.7rem;color:var(--text-muted)">640 / 3,000</div><div style="width:80px;height:4px;background:var(--border);border-radius:99px;margin-top:4px"><div style="width:21%;height:100%;background:var(--gold);border-radius:99px"></div></div></div>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:0.6rem;background:var(--bg);border-radius:8px;border:1px solid var(--border)">
+            <div><div style="font-size:0.6rem;color:var(--gold);text-transform:uppercase;letter-spacing:0.1em">Kriya Yoga · Ready</div><div style="font-size:0.85rem;font-weight:500">Lahiri Mahasaya: the householder as the real radical</div></div>
+            <div><span class="badge badge-green">Ready to publish</span></div>
+          </div>
+        </div>
+        <div style="margin-top:1rem"><button class="btn btn-secondary btn-sm" onclick="navigate('board')">Open full board →</button></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Reads by tradition — last 30 days</div>
+        <canvas id="dashTradChart" height="140"></canvas>
+      </div>
+    </div>
+
+    <div class="dash-right">
+      <div class="card">
+        <div class="card-title">Pending tasks</div>
+        <div class="task-item"><div class="task-dot"></div><div><div class="task-text">Reply to Arjun Mehta's letter on nirodha</div><div class="task-meta">2 days old</div></div></div>
+        <div class="task-item"><div class="task-dot"></div><div><div class="task-text">Schedule Thursday dispatch — Lahiri post</div><div class="task-meta">Due in 2 days</div></div></div>
+        <div class="task-item"><div class="task-dot"></div><div><div class="task-text">Add "spanda" to glossary — missing term alert</div><div class="task-meta">3 posts use this term</div></div></div>
+        <div class="task-item"><div class="task-dot done"></div><div><div class="task-text" style="text-decoration:line-through;color:var(--text-muted)">Publish "When performance rests"</div><div class="task-meta">Done yesterday</div></div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Next scheduled post</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:1rem;margin-bottom:0.35rem">Lahiri Mahasaya: the householder as the real radical</div>
+        <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:0.75rem">Thu Apr 3 · 9:00 AM · Kriya Yoga segment (67 readers)</div>
+        <div style="display:flex;gap:0.5rem"><button class="btn btn-primary btn-sm">Edit dispatch</button><button class="btn btn-ghost btn-sm">Reschedule</button></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Recent letters</div>
+        <div style="font-size:0.82rem;font-weight:500;margin-bottom:0.15rem">Arjun Mehta</div>
+        <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:0.5rem">"On nirodha in Patanjali — a practitioner's question"</div>
+        <div style="font-size:0.82rem;font-weight:500;margin-bottom:0.15rem">Sofia Reyes</div>
+        <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:0.5rem">"Tantraloka and the question of transmission"</div>
+        <button class="btn btn-ghost btn-sm" style="margin-top:0.25rem" onclick="navigate('letters')">View all letters →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ WRITING BOARD ═══ -->
+<div class="view" id="view-board">
+  <div class="eyebrow">Creative Pipeline</div>
+  <h1 class="page-title">Writing Board</h1>
+  <p class="page-lede">From seed to published. Drag cards between columns. Word count progress visible at a glance.</p>
+  <div style="display:flex;gap:0.5rem;margin-bottom:1.25rem;flex-wrap:wrap">
+    <button class="btn btn-primary btn-sm">+ New idea</button>
+    <div class="pills">
+      <button class="pill active">All traditions</button>
+      <button class="pill">Kashmir Shaivism</button>
+      <button class="pill">Vajrayana</button>
+      <button class="pill">Kriya Yoga</button>
+      <button class="pill">84 Mahasiddhas</button>
+    </div>
+  </div>
+  <div class="kanban">
+    <div class="k-col">
+      <div class="k-col-head"><span class="k-col-label">Seed Idea</span><span class="k-col-count">3</span></div>
+      <div class="k-body">
+        <div class="k-card"><div class="k-card-trad">Advaita</div><div class="k-card-title">Ramana's silence as śakti</div><div class="k-card-meta">Sparked by: text study</div></div>
+        <div class="k-card"><div class="k-card-trad">Taoism</div><div class="k-card-title">Wúwéi and the problem of effort in practice</div><div class="k-card-meta">Sparked by: reader letter</div></div>
+        <div class="k-card"><div class="k-card-trad">Navnath</div><div class="k-card-title">Gorakshanath and the body as cosmogram</div><div class="k-card-meta">Sparked by: personal insight</div></div>
+      </div>
+    </div>
+    <div class="k-col">
+      <div class="k-col-head"><span class="k-col-label">Research</span><span class="k-col-count">2</span></div>
+      <div class="k-body">
+        <div class="k-card"><div class="k-card-trad">84 Mahasiddhas</div><div class="k-card-title">Tilopa's six nails: transmission without language</div><div class="k-card-meta">3 sources linked</div><div class="k-card-prog"><div class="k-card-bar" style="width:21%"></div></div><div class="k-card-meta">640 / 3,000 words</div></div>
+        <div class="k-card"><div class="k-card-trad">Tantra</div><div class="k-card-title">Kuṇḍalinī as śakti: beyond the metaphor</div><div class="k-card-meta">Internal notes linked</div></div>
+      </div>
+    </div>
+    <div class="k-col">
+      <div class="k-col-head"><span class="k-col-label">Drafting</span><span class="k-col-count">2</span></div>
+      <div class="k-body">
+        <div class="k-card"><div class="k-card-trad">Kashmir Shaivism</div><div class="k-card-title">Abhinavagupta's Tantraloka: the aesthetics of recognition</div><div class="k-card-prog"><div class="k-card-bar" style="width:71%"></div></div><div class="k-card-meta">2,840 / 4,000 words</div></div>
+        <div class="k-card"><div class="k-card-trad">Patanjali</div><div class="k-card-title">Nirodha revisited: cessation or settling?</div><div class="k-card-prog"><div class="k-card-bar" style="width:38%"></div></div><div class="k-card-meta">1,140 / 3,000 words</div></div>
+      </div>
+    </div>
+    <div class="k-col">
+      <div class="k-col-head"><span class="k-col-label">Editing</span><span class="k-col-count">1</span></div>
+      <div class="k-body">
+        <div class="k-card"><div class="k-card-trad">Vajrayana</div><div class="k-card-title">Rigpa and the problem of recognition in Dzogchen</div><div class="k-card-prog"><div class="k-card-bar" style="width:100%"></div></div><div class="k-card-meta">3,420 / 3,500 words · In revision</div></div>
+      </div>
+    </div>
+    <div class="k-col">
+      <div class="k-col-head"><span class="k-col-label">Ready</span><span class="k-col-count">1</span></div>
+      <div class="k-body">
+        <div class="k-card"><div class="k-card-trad">Kriya Yoga</div><div class="k-card-title">Lahiri Mahasaya: the householder as the real radical</div><span class="badge badge-green" style="margin-top:0.35rem">Scheduled Thu</span></div>
+      </div>
+    </div>
+    <div class="k-col">
+      <div class="k-col-head"><span class="k-col-label">Published</span><span class="k-col-count">10</span></div>
+      <div class="k-body">
+        <div class="k-card"><div class="k-card-trad">Reflection</div><div class="k-card-title">We seldom can do the work we can in this world</div><div class="k-card-meta">1,338 reads</div></div>
+        <div class="k-card"><div class="k-card-trad">Presence</div><div class="k-card-title">Meeting yourself when no one is clapping</div><div class="k-card-meta">892 reads</div></div>
+      </div>
+    </div>
+    <div class="k-col">
+      <div class="k-col-head"><span class="k-col-label">Seed Vault</span><span class="k-col-count">7</span></div>
+      <div class="k-body">
+        <div class="k-card" style="opacity:0.6"><div class="k-card-trad">Archived</div><div class="k-card-title">Seven ideas in cold storage</div><div class="k-card-meta">Searchable · Can resurrect</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ POST EDITOR ═══ -->
+<div class="view" id="view-editor">
+  <div class="eyebrow">Writing</div>
+  <h1 class="page-title">Post Editor</h1>
+  <div style="display:flex;gap:0.5rem;margin-bottom:1rem">
+    <button class="btn btn-ghost btn-sm" id="modeDefault" onclick="setMode('default')">Default</button>
+    <button class="btn btn-ghost btn-sm" id="modeFocus" onclick="setMode('focus')">Focus Mode</button>
+    <button class="btn btn-ghost btn-sm" id="modeOutline" onclick="setMode('outline')">Outline View</button>
+    <button class="btn btn-ghost btn-sm" id="modePreview" onclick="setMode('preview')">Preview</button>
+  </div>
+  <div class="editor-layout" id="editorLayout">
+    <div class="editor-main">
+      <div class="editor-toolbar">
+        <button class="editor-tool-btn active">B</button>
+        <button class="editor-tool-btn"><em>I</em></button>
+        <button class="editor-tool-btn">H2</button>
+        <button class="editor-tool-btn">H3</button>
+        <div class="editor-sep"></div>
+        <button class="editor-tool-btn" title="Drop Cap">❦ Drop Cap</button>
+        <button class="editor-tool-btn" title="Pull Quote">❝ Pull Quote</button>
+        <button class="editor-tool-btn" title="Ornamental Divider">✦ Divider</button>
+        <div class="editor-sep"></div>
+        <button class="editor-tool-btn" title="Sanskrit/Tibetan inline">अ Sanskrit</button>
+        <button class="editor-tool-btn" title="Scriptural Citation">§ Citation</button>
+        <button class="editor-tool-btn" title="Footnote">¹ Footnote</button>
+        <div class="editor-sep"></div>
+        <button class="editor-tool-btn" title="Sage Portrait">👤 Portrait</button>
+        <button class="editor-tool-btn" title="Thangka Image">⛩ Thangka</button>
+        <button class="editor-tool-btn" title="Internal Link Suggestion" style="color:#b8882a;border-color:#b8882a">⟲ Link: spanda</button>
+      </div>
+      <div id="editorContentArea">
+        <div class="editor-content" id="editorContent">
+          <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:400;margin-bottom:1.25rem;color:var(--text)">Abhinavagupta's Tantraloka: the aesthetics of recognition</h2>
+          <p class="drop-cap" style="font-size:0.95rem;line-height:1.85;margin-bottom:1rem">bhinava­gupta stands at the peak of a long mountain — ten centuries of Trika Shaiva elaboration — and from that peak he looks not down but inward. The Tantraloka is not a manual for practice in the ordinary sense. It is an aesthetic, a theory of how the universe recognises itself through the mirror of consciousness, and how that recognition, when it happens in a human being, is identical to liberation.</p>
+          <p style="font-size:0.95rem;line-height:1.85;margin-bottom:1rem">The Kashmiri master uses the word <span style="font-style:italic;color:var(--text)">pratyabhijñā</span><sup class="footnote-ref">1</sup> — recognition — in a way that is easy to read past. We assume recognition means remembering something forgotten. But Abhinavagupta means something more precise: the sudden, irrevocable realization that what you have been looking for was never absent, that the seeking was itself the veil.</p>
+          <div class="pull-quote"><p>"The entire universe is the self-recognition of Śiva. The meditator who understands this does not attain anything new; he simply stops obscuring what was always present."</p><div style="font-size:0.72rem;color:var(--text-muted);margin-top:0.5rem;font-style:normal">— Tantraloka, 1.22 (trans. Dyczkowski)</div></div>
+          <div class="orn-divider">✦ · ✦ · ✦</div>
+          <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:500;margin:1rem 0 0.6rem">The question of <span style="font-style:italic">spanda</span></h3>
+          <p style="font-size:0.95rem;line-height:1.85;margin-bottom:1rem">Before Abhinavagupta, there was the <span style="font-style:italic">Spanda Karikas</span> — the stanzas on divine vibration attributed to Kallata and Vasugupta. The <span style="font-style:italic">spanda</span><sup class="footnote-ref">2</sup> doctrine holds that Śiva's nature is not stillness but a kind of eternal, self-directed pulsation — not movement in space, but the throb of awareness knowing itself.</p>
+        </div>
+      </div>
+    </div>
+    <div class="editor-sidebar" id="editorSidebar">
+      <div class="editor-panel">
+        <div class="editor-panel-head" onclick="togglePanel(this)">Publish <span>▸</span></div>
+        <div class="editor-panel-body">
+          <div class="field"><label>Status</label><select><option>Draft</option><option selected>Scheduled</option><option>Published</option><option>Unlisted</option><option>Password protected</option></select></div>
+          <div class="field"><label>Schedule</label><input type="datetime-local" value="2026-04-03T09:00"/></div>
+          <label style="display:flex;align-items:center;gap:0.5rem;font-size:0.75rem;color:var(--text-muted);cursor:pointer"><input type="checkbox"/> Silent publish (no dispatch)</label>
+        </div>
+      </div>
+      <div class="editor-panel">
+        <div class="editor-panel-head" onclick="togglePanel(this)">Post Theme <span>▸</span></div>
+        <div class="editor-panel-body">
+          <div class="field"><label>Accent colour</label><input type="color" value="#b8882a" style="width:100%;height:32px;cursor:pointer"/></div>
+          <div class="field"><label>Ornament glyph</label><input type="text" value="✦ · ✦ · ✦"/></div>
+        </div>
+      </div>
+      <div class="editor-panel">
+        <div class="editor-panel-head" onclick="togglePanel(this)">Tradition Tags <span>▸</span></div>
+        <div class="editor-panel-body">
+          <div class="pills" style="margin-bottom:0.5rem">
+            <span class="pill active">Kashmir Shaivism</span>
+            <span class="pill active">Tantra</span>
+            <span class="pill">Advaita</span>
+            <span class="pill">+ Add</span>
+          </div>
+        </div>
+      </div>
+      <div class="editor-panel">
+        <div class="editor-panel-head" onclick="togglePanel(this)">SEO <span>▸</span></div>
+        <div class="editor-panel-body">
+          <div class="field"><label>Meta title</label><input value="Abhinavagupta's Tantraloka: Aesthetics of Recognition"/></div>
+          <div class="field"><label>Meta description</label><textarea rows="2" style="font-size:0.8rem">On Abhinavagupta's synthesis of Trika Shaivism and the doctrine of pratyabhijñā as liberation.</textarea></div>
+          <div style="font-size:0.72rem;color:#2d6a4f;background:#e6f4ea;padding:0.4rem 0.6rem;border-radius:6px">✓ Readability: strong · 3 internal linking opportunities</div>
+        </div>
+      </div>
+      <div class="editor-panel">
+        <div class="editor-panel-head" onclick="togglePanel(this)">Version History <span>▸</span></div>
+        <div class="editor-panel-body" style="display:flex;flex-direction:column;gap:0.4rem">
+          <div style="display:flex;justify-content:space-between;font-size:0.75rem;padding:0.3rem 0;border-bottom:1px solid var(--border)"><span>before restructure</span><span style="color:var(--text-muted)">Mar 29</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:0.75rem;padding:0.3rem 0;border-bottom:1px solid var(--border)"><span>added Dyczkowski citations</span><span style="color:var(--text-muted)">Mar 31</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:0.75rem;padding:0.3rem 0"><span style="font-weight:600">current draft</span><span style="color:var(--gold)">now</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ POST LIBRARY ═══ -->
+<div class="view" id="view-library">
+  <div class="eyebrow">Your Stories</div>
+  <h1 class="page-title">Post Library</h1>
+  <div class="search-bar"><input class="search-input" placeholder="Search title, tradition, slug…"/><button class="btn btn-primary btn-sm">+ New post</button></div>
+  <div class="pills" style="margin-bottom:1.25rem">
+    <button class="pill active">All</button><button class="pill">Published</button><button class="pill">Draft</button><button class="pill">Scheduled</button>
+    <button class="pill">Kashmir Shaivism</button><button class="pill">Vajrayana</button><button class="pill">Kriya Yoga</button>
+  </div>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Title</th><th>Tradition</th><th>Status</th><th>Words</th><th>Reads</th><th>Health</th><th></th></tr></thead>
+    <tbody>
+      <tr><td><a style="color:var(--gold);font-weight:500">We seldom can do the work we can in this world</a></td><td><span class="badge badge-blue">Reflection</span></td><td><span class="badge badge-green">Published</span></td><td>1,338</td><td>2,241</td><td><div style="display:flex;align-items:center;gap:0.4rem"><div style="width:50px;height:4px;background:var(--border);border-radius:99px"><div style="width:88%;height:100%;background:var(--gold);border-radius:99px"></div></div><span style="font-size:0.7rem">88</span></div></td><td><div style="display:flex;gap:0.3rem"><button class="btn btn-ghost btn-sm" onclick="navigate('editor')">Edit</button></div></td></tr>
+      <tr><td><a style="color:var(--gold);font-weight:500">Lahiri Mahasaya: the householder as the real radical</a></td><td><span class="badge badge-gold">Kriya Yoga</span></td><td><span class="badge badge-blue">Scheduled</span></td><td>2,890</td><td>—</td><td>—</td><td><div style="display:flex;gap:0.3rem"><button class="btn btn-ghost btn-sm">Edit</button></div></td></tr>
+      <tr><td><a style="color:var(--gold);font-weight:500">Meeting yourself when no one is clapping</a></td><td><span class="badge badge-blue">Reflection</span></td><td><span class="badge badge-green">Published</span></td><td>1,650</td><td>892</td><td><div style="display:flex;align-items:center;gap:0.4rem"><div style="width:50px;height:4px;background:var(--border);border-radius:99px"><div style="width:72%;height:100%;background:var(--gold);border-radius:99px"></div></div><span style="font-size:0.7rem">72</span></div></td><td><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+    </tbody>
+  </table></div>
+</div>
+
+<!-- ═══ GLOSSARY ═══ -->
+<div class="view" id="view-glossary">
+  <div class="eyebrow">Living Reference</div>
+  <h1 class="page-title">Glossary & Terms</h1>
+  <p class="page-lede">Sanskrit, Tibetan, and Chinese terms your readers encounter. Hover-card definitions mean they never leave mid-sentence.</p>
+  <div class="search-bar"><input class="search-input" placeholder="Search terms, IAST, tradition…"/><button class="btn btn-primary btn-sm">+ Add term</button></div>
+  <div style="background:#fff8e6;border:1px solid rgba(184,136,42,0.3);border-radius:8px;padding:0.65rem 1rem;margin-bottom:1.25rem;font-size:0.8rem;color:#7a5a10">⚠ Missing term alert: "spanda" appears in 3 posts but is not in the glossary. <button class="btn btn-secondary btn-sm" style="margin-left:0.5rem">Add now</button></div>
+
+  <div class="gloss-row"><div class="gloss-top"><span class="gloss-term">निरोध</span><span class="gloss-iast">nirodha</span><span class="badge badge-blue">Sanskrit · Patanjali</span><span style="font-size:0.7rem;color:var(--text-muted)">47 reader lookups</span></div><p class="gloss-def">Cessation or restraint of the modifications of the mind (citta-vṛtti). The goal of yoga in Patanjali's formulation — not suppression, but the settling of mental activity into its ground. Distinct from forced quieting: nirodha is what happens when the witness recognises itself as prior to thought.</p><div style="display:flex;gap:0.5rem"><button class="btn btn-ghost btn-sm">Edit</button><button class="btn btn-ghost btn-sm">Used in 4 posts</button></div></div>
+
+  <div class="gloss-row"><div class="gloss-top"><span class="gloss-term">प्रत्यभिज्ञा</span><span class="gloss-iast">pratyabhijñā</span><span class="badge badge-badge badge-gold">Sanskrit · Kashmir Shaivism</span><span style="font-size:0.7rem;color:var(--text-muted)">38 reader lookups</span></div><p class="gloss-def">Recognition — the sudden or gradual recognition that one's own awareness is identical with the universal consciousness (Śiva). The central soteriological concept of the Pratyabhijñā school founded by Utpaladeva and brought to fullness by Abhinavagupta. Not a new state but the seeing-through of the assumption that it was ever absent.</p><div style="display:flex;gap:0.5rem"><button class="btn btn-ghost btn-sm">Edit</button><button class="btn btn-ghost btn-sm">Used in 2 posts</button></div></div>
+
+  <div class="gloss-row"><div class="gloss-top"><span class="gloss-term">རིག་པ</span><span class="gloss-iast">rigpa</span><span class="badge badge-blue">Tibetan · Vajrayana</span><span style="font-size:0.7rem;color:var(--text-muted)">62 reader lookups</span></div><p class="gloss-def">Awareness in its primordial, unmodified state. In Dzogchen, the recognition of rigpa is the fundamental insight — not a state to be achieved, but what has always been present beneath the turbulence of ordinary mind (sems). The Tibetan master Longchenpa distinguishes it from samādhi: rigpa is not a meditative achievement but the ground of meditative achievement.</p><div style="display:flex;gap:0.5rem"><button class="btn btn-ghost btn-sm">Edit</button><button class="btn btn-ghost btn-sm">Used in 3 posts</button></div></div>
+
+  <div class="gloss-row"><div class="gloss-top"><span class="gloss-term">无为</span><span class="gloss-iast">wúwéi</span><span class="badge badge-blue">Chinese · Taoism</span><span style="font-size:0.7rem;color:var(--text-muted)">33 lookups</span></div><p class="gloss-def">Non-action or effortless action — acting in accordance with the natural flow of the Tao without forcing or contriving. Central to Daoist ethics and contemplative practice. The Tao Te Ching uses it to describe the sage's relationship to governance and to inner life: the less the sage interferes, the more gets accomplished.</p><div style="display:flex;gap:0.5rem"><button class="btn btn-ghost btn-sm">Edit</button></div></div>
+</div>
+
+<!-- ═══ LINEAGE MASTERS ═══ -->
+<div class="view" id="view-masters">
+  <div class="eyebrow">People Database</div>
+  <h1 class="page-title">Lineage Masters</h1>
+  <p class="page-lede">Structured records for each master. Powers the sage portrait block in the editor and the homepage lineage strip.</p>
+  <div class="search-bar"><input class="search-input" placeholder="Search masters, traditions…"/><button class="btn btn-primary btn-sm">+ Add master</button></div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem">
+    <div class="card" style="text-align:center">
+      <div style="width:64px;height:64px;border-radius:50%;background:var(--gold-light);border:2px solid var(--gold-muted);margin:0 auto 0.65rem;display:flex;align-items:center;justify-content:center;font-size:1.8rem">🧘</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:1.05rem;margin-bottom:0.2rem">Abhinavagupta</div>
+      <div class="badge badge-gold" style="margin-bottom:0.5rem">Kashmir Shaivism</div>
+      <div style="font-size:0.75rem;color:var(--text-muted)">c. 950–1016 CE · Kashmiri polymath, author of the Tantraloka</div>
+      <div style="margin-top:0.65rem;font-size:0.72rem;color:var(--text-muted)">Linked to 2 posts</div>
+    </div>
+    <div class="card" style="text-align:center">
+      <div style="width:64px;height:64px;border-radius:50%;background:var(--gold-light);border:2px solid var(--gold-muted);margin:0 auto 0.65rem;display:flex;align-items:center;justify-content:center;font-size:1.8rem">🌿</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:1.05rem;margin-bottom:0.2rem">Lahiri Mahasaya</div>
+      <div class="badge badge-blue" style="margin-bottom:0.5rem">Kriya Yoga</div>
+      <div style="font-size:0.75rem;color:var(--text-muted)">1828–1895 · Householder yogi, initiator of Kriya Yoga in the modern era</div>
+      <div style="margin-top:0.65rem;font-size:0.72rem;color:var(--text-muted)">Linked to 1 post</div>
+    </div>
+    <div class="card" style="text-align:center">
+      <div style="width:64px;height:64px;border-radius:50%;background:var(--gold-light);border:2px solid var(--gold-muted);margin:0 auto 0.65rem;display:flex;align-items:center;justify-content:center;font-size:1.8rem">☽</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:1.05rem;margin-bottom:0.2rem">Mahavatar Babaji</div>
+      <div class="badge badge-blue" style="margin-bottom:0.5rem">Kriya Yoga</div>
+      <div style="font-size:0.75rem;color:var(--text-muted)">Undated · Himalayan adept, source of the Kriya transmission</div>
+      <div style="margin-top:0.65rem;font-size:0.72rem;color:var(--text-muted)">Linked to 1 post</div>
+    </div>
+    <div class="card" style="text-align:center">
+      <div style="width:64px;height:64px;border-radius:50%;background:var(--gold-light);border:2px solid var(--gold-muted);margin:0 auto 0.65mm;display:flex;align-items:center;justify-content:center;font-size:1.8rem">🌊</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:1.05rem;margin-bottom:0.2rem">Tilopa</div>
+      <div class="badge badge-green" style="margin-bottom:0.5rem">84 Mahasiddhas</div>
+      <div style="font-size:0.75rem;color:var(--text-muted)">988–1069 CE · Mahasiddha, teacher of Naropa, root of the Kagyu lineage</div>
+      <div style="margin-top:0.65rem;font-size:0.72rem;color:var(--text-muted)">Research in progress</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SOURCES ═══ -->
+<div class="view" id="view-sources">
+  <div class="eyebrow">Scholarship</div>
+  <h1 class="page-title">Sources & References</h1>
+  <p class="page-lede">A shared bibliography maintained once, cited everywhere. Update a translation credit here and it updates across all posts.</p>
+  <div class="stat-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:1rem">
+    <div class="stat-card"><div class="stat-label">Total sources</div><div class="stat-value">24</div></div>
+    <div class="stat-card"><div class="stat-label">Primary texts</div><div class="stat-value">9</div></div>
+    <div class="stat-card"><div class="stat-label">Academic</div><div class="stat-value">8</div></div>
+    <div class="stat-card"><div class="stat-label">Translations</div><div class="stat-value">7</div></div>
+  </div>
+  <div class="search-bar"><input class="search-input" placeholder="Search author, title…"/><button class="btn btn-primary btn-sm">+ Add source</button></div>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Title</th><th>Author</th><th>Type</th><th>Tradition</th><th>Year</th><th>Citations</th><th></th></tr></thead>
+    <tbody>
+      <tr><td style="font-weight:500">Tantrāloka</td><td>Abhinavagupta</td><td><span class="badge badge-gold">Primary text</span></td><td>Kashmir Shaivism</td><td>c. 1000 CE</td><td>7</td><td><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+      <tr><td style="font-weight:500">Yoga Sūtras</td><td>Patañjali</td><td><span class="badge badge-gold">Primary text</span></td><td>Patanjali</td><td>c. 400 CE</td><td>11</td><td><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+      <tr><td style="font-weight:500">The Doctrine of Vibration</td><td>Mark SG Dyczkowski</td><td><span class="badge badge-blue">Academic</span></td><td>Kashmir Shaivism</td><td>1987</td><td>4</td><td><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+      <tr><td style="font-weight:500">Autobiography of a Yogi</td><td>Paramahansa Yogananda</td><td><span class="badge badge-green">Translation</span></td><td>Kriya Yoga</td><td>1946</td><td>5</td><td><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+      <tr><td style="font-weight:500">Spanda Kārikās</td><td>Vasugupta / Kallata</td><td><span class="badge badge-gold">Primary text</span></td><td>Kashmir Shaivism</td><td>c. 850 CE</td><td>3</td><td><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+    </tbody>
+  </table></div>
+</div>
+
+<!-- ═══ INTERNAL NOTES ═══ -->
+<div class="view" id="view-notes">
+  <div class="eyebrow">Private Research</div>
+  <h1 class="page-title">Internal Notes</h1>
+  <p class="page-lede">A private wiki for research, concept maps, and tradition outlines. Never public. Links to drafts and posts.</p>
+  <div style="display:grid;grid-template-columns:220px 1fr;gap:1.25rem">
+    <div class="card" style="padding:0.75rem">
+      <div style="font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);padding:0 0.25rem 0.5rem">Pages</div>
+      <div style="display:flex;flex-direction:column;gap:1px">
+        <button class="sidebar-item active" style="font-size:0.8rem;color:var(--text)">Kashmir Shaivism overview</button>
+        <button class="sidebar-item" style="font-size:0.8rem;color:var(--text-muted)">The Trika schema</button>
+        <button class="sidebar-item" style="font-size:0.8rem;color:var(--text-muted)">84 Mahasiddhas — research notes</button>
+        <button class="sidebar-item" style="font-size:0.8rem;color:var(--text-muted)">Kriya lineage map</button>
+        <button class="sidebar-item" style="font-size:0.8rem;color:var(--text-muted)">Navnath traditions</button>
+      </div>
+      <button class="btn btn-ghost btn-sm" style="margin-top:0.75rem;width:100%">+ New page</button>
+    </div>
+    <div class="card">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:1.25rem;margin-bottom:0.85rem;padding-bottom:0.65rem;border-bottom:1px solid var(--border)">Kashmir Shaivism overview</div>
+      <p style="font-size:0.88rem;line-height:1.75;color:var(--text);margin-bottom:0.85rem">Kashmir Shaivism refers to the cluster of non-dual Śaiva tantric schools that flourished in Kashmir roughly between the 8th and 12th centuries CE. The major schools are: <strong>Spanda</strong> (doctrine of divine vibration), <strong>Pratyabhijñā</strong> (philosophy of recognition), and <strong>Trika</strong> (the triad of Śiva, Śakti, and the bound soul). Abhinavagupta synthesised all three in the Tantraloka.</p>
+      <p style="font-size:0.88rem;line-height:1.75;color:var(--text);margin-bottom:0.85rem"><strong>Key figures:</strong> Vasugupta (Śiva Sūtras), Kallata (Spanda Kārikā commentary), Utpaladeva (Īśvara-pratyabhijñā-kārikā), Abhinavagupta (Tantraloka), Kṣemarāja (Pratyabhijñāhṛdayam).</p>
+      <div style="background:var(--gold-light);border:1px solid var(--gold-muted);border-radius:8px;padding:0.65rem 0.85rem;font-size:0.8rem;color:#7a5a10">→ Linked to: "Abhinavagupta's Tantraloka" draft · "pratyabhijñā" glossary entry · Dyczkowski source</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ READING PATHS ═══ -->
+<div class="view" id="view-paths">
+  <div class="eyebrow">Reader Guidance</div>
+  <h1 class="page-title">Reading Paths</h1>
+  <p class="page-lede">Curated sequences that guide new readers through your archive in the right order. Solves the blank-page problem for someone arriving via search.</p>
+  <button class="btn btn-primary btn-sm" style="margin-bottom:1.25rem">+ New path</button>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem">
+    <div class="card">
+      <span class="badge badge-green" style="margin-bottom:0.5rem;display:inline-block">Featured on journal</span>
+      <div style="font-size:0.62rem;color:var(--gold);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.3rem">Advaita · Beginner</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;margin-bottom:0.35rem">New to non-dual teachings</div>
+      <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.75rem">A gentle entry for readers from mindfulness or general spirituality who haven't encountered Advaita or Kashmir Shaivism before.</div>
+      <ol style="font-size:0.8rem;padding-left:1.1rem;margin-bottom:0.75rem;color:var(--text)"><li style="margin-bottom:0.2rem">Living without the why</li><li style="margin-bottom:0.2rem">Meeting yourself when no one is clapping</li><li>We seldom can do the work we can in this world</li></ol>
+      <div style="font-size:0.72rem;color:var(--text-muted);margin-bottom:0.75rem">Complete beginners · 3 posts · 68% completion rate</div>
+      <div style="display:flex;gap:0.4rem"><button class="btn btn-primary btn-sm">Edit</button><button class="btn btn-ghost btn-sm">Delete</button></div>
+    </div>
+    <div class="card">
+      <div style="font-size:0.62rem;color:var(--gold);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.3rem">Kashmir Shaivism · Advanced</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;margin-bottom:0.35rem">Kashmir Shaivism deep dive</div>
+      <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.75rem">For readers with some grounding. Goes from spanda to pratyabhijñā to Abhinavagupta's synthesis in the Tantraloka.</div>
+      <div style="font-size:0.72rem;color:var(--text-muted);margin-bottom:0.75rem">Practitioners with background · 4 posts planned · Path in progress</div>
+      <div style="display:flex;gap:0.4rem"><button class="btn btn-primary btn-sm">Edit</button></div>
+    </div>
+    <div class="card">
+      <div style="font-size:0.62rem;color:var(--gold);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.3rem">Kriya Yoga · All levels</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;margin-bottom:0.35rem">Kriya lineage</div>
+      <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.75rem">Mahavatar Babaji to Lahiri to Sri Yukteswar — the transmission line, the practices, and what makes Kriya distinct from hatha.</div>
+      <div style="font-size:0.72rem;color:var(--text-muted);margin-bottom:0.75rem">Interested in lineage · 2 posts live · 2 in pipeline</div>
+      <div style="display:flex;gap:0.4rem"><button class="btn btn-primary btn-sm">Edit</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ READER LETTERS ═══ -->
+<div class="view" id="view-letters">
+  <div class="eyebrow">Community</div>
+  <h1 class="page-title">Reader Letters</h1>
+  <p class="page-lede">Messages from practitioners and seekers. Reply publicly as a footnote on the relevant post, or let a letter inspire a new piece.</p>
+  <div style="display:flex;gap:0.5rem;margin-bottom:1.25rem">
+    <button class="btn btn-primary btn-sm">Inbox (5)</button>
+    <button class="btn btn-ghost btn-sm">Archived</button>
+    <div style="margin-left:auto"><button class="btn btn-secondary btn-sm">Letter of the week ✦</button></div>
+  </div>
+  <div class="letters-layout">
+    <div class="letters-list">
+      <div class="letter-item unread active">
+        <div class="letter-top"><span class="letter-from">Arjun Mehta</span><span class="letter-date">2 days ago</span></div>
+        <div class="letter-subj">On nirodha in Patanjali — a practitioner's question</div>
+        <div class="letter-preview">Your piece on the witness touched something I've been circling for years. In my practice, nirodha keeps appearing as a kind of dissolving rather than a stopping…</div>
+      </div>
+      <div class="letter-item">
+        <div class="letter-top"><span class="letter-from">Sofia Reyes</span><span class="letter-date">5 days ago</span></div>
+        <div class="letter-subj">Tantraloka and the question of transmission</div>
+        <div class="letter-preview">I keep returning to Abhinavagupta's insistence that recognition cannot be transmitted, only pointed at…</div>
+        <span class="badge badge-green" style="margin-top:0.3rem;display:inline-block">Replied publicly</span>
+      </div>
+      <div class="letter-item">
+        <div class="letter-top"><span class="letter-from">David Chen</span><span class="letter-date">11 days ago</span></div>
+        <div class="letter-subj">Thank you for the Lahiri Mahasaya essay</div>
+        <div class="letter-preview">I've read everything available on Kriya Yoga in English and your framing of Lahiri's householder path was something I hadn't encountered…</div>
+      </div>
+      <div class="letter-item">
+        <div class="letter-top"><span class="letter-from">Priya Nair</span><span class="letter-date">2 weeks ago</span></div>
+        <div class="letter-subj">On the 84 Mahasiddhas — where to begin?</div>
+        <div class="letter-preview">I've come to your writing from a Tibetan Buddhist background and am curious whether you plan to write on the siddha women…</div>
+      </div>
+    </div>
+    <div class="letter-detail">
+      <div style="font-size:1.05rem;font-weight:600;margin-bottom:0.2rem">Arjun Mehta</div>
+      <div style="font-size:0.78rem;color:var(--text-muted);margin-bottom:0.85rem">arjun@example.com · 2 days ago</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;margin-bottom:1rem">On nirodha in Patanjali — a practitioner's question</div>
+      <p style="font-size:0.9rem;line-height:1.8;color:var(--text);margin-bottom:1.25rem">Your piece on the witness touched something I've been circling for years. In my practice, nirodha keeps appearing as a kind of dissolving rather than a stopping. Is that consistent with how Patanjali uses the term, or is my reading coloured by Advaita? I find myself reading the <em>citta-vṛtti-nirodha</em> sūtra through a non-dual lens and I'm not sure if I'm seeing something real or importing a framework from a different darśana altogether. Would love to know your take.</p>
+      <div style="display:flex;gap:0.5rem;flex-wrap:wrap">
+        <button class="btn btn-primary">Reply publicly as footnote</button>
+        <button class="btn btn-secondary" onclick="navigate('board')">Inspire new post</button>
+        <button class="btn btn-ghost">Reply privately</button>
+        <button class="btn btn-ghost">Pin</button>
+        <button class="btn btn-ghost">Archive</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SUBSCRIBERS ═══ -->
+<div class="view" id="view-subscribers">
+  <div class="eyebrow">Email List</div>
+  <h1 class="page-title">Subscribers & Dispatch</h1>
+  <p class="page-lede">Your readers, segmented by tradition interest. Send a new piece only to those who've flagged that tradition — not everyone, every time.</p>
+  <div class="stat-grid" style="margin-bottom:1.25rem">
+    <div class="stat-card"><div class="stat-label">Total</div><div class="stat-value">312</div></div>
+    <div class="stat-card"><div class="stat-label">Active</div><div class="stat-value">289</div></div>
+    <div class="stat-card"><div class="stat-label">Kashmir Shaivism</div><div class="stat-value">94</div></div>
+    <div class="stat-card"><div class="stat-label">Kriya Yoga</div><div class="stat-value">67</div></div>
+    <div class="stat-card"><div class="stat-label">Vajrayana</div><div class="stat-value">58</div></div>
+    <div class="stat-card"><div class="stat-label">Avg open rate</div><div class="stat-value">54%</div></div>
+  </div>
+  <div style="display:flex;gap:0.5rem;margin-bottom:1.25rem">
+    <button class="btn btn-primary btn-sm" id="subTab1">Subscribers</button>
+    <button class="btn btn-ghost btn-sm" id="subTab2" onclick="showDispatch()">Write dispatch</button>
+  </div>
+  <div id="subList">
+    <div class="pills" style="margin-bottom:1rem">
+      <button class="pill active">All (312)</button><button class="pill">Kashmir Shaivism (94)</button><button class="pill">Kriya Yoga (67)</button><button class="pill">Vajrayana (58)</button><button class="pill">Patanjali (45)</button><button class="pill">Deep readers (38)</button>
+    </div>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Name</th><th>Email</th><th>Traditions</th><th>Posts read</th><th>Joined</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>Arjun Mehta</td><td>arjun@example.com</td><td>Patanjali, Advaita</td><td>12</td><td>Mar 1</td><td><span class="badge badge-green">Active</span></td></tr>
+        <tr><td>Sofia Reyes</td><td>sofia@example.com</td><td>Kashmir Shaivism, Tantra</td><td>8</td><td>Feb 15</td><td><span class="badge badge-green">Active</span></td></tr>
+        <tr><td>David Chen</td><td>david@example.com</td><td>Kriya Yoga, 84 Mahasiddhas</td><td>6</td><td>Mar 19</td><td><span class="badge badge-green">Active</span></td></tr>
+        <tr><td>Priya Nair</td><td>priya@example.com</td><td>Advaita, Taoism</td><td>15</td><td>Jan 30</td><td><span class="badge badge-green">Deep reader</span></td></tr>
+        <tr><td>Leila Hosseini</td><td>leila@example.com</td><td>Kashmir Shaivism</td><td>2</td><td>Nov 20</td><td><span class="badge badge-red">Unsubscribed</span></td></tr>
+      </tbody>
+    </table></div>
+  </div>
+  <div id="subDispatch" style="display:none">
+    <div class="dispatch-form">
+      <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.15rem">Compose dispatch</h3>
+      <div class="field"><label>Send to</label><select><option>All subscribers (289 active)</option><option selected>Kriya Yoga segment (67 readers)</option><option>Kashmir Shaivism (94 readers)</option><option>Deep readers 10+ posts (38 readers)</option></select></div>
+      <div class="field"><label>Personal note (before post link)</label><textarea rows="4" placeholder="A line or two in your own voice — what drew you to write this piece, or what you hope it opens for the reader…">Lahiri Mahasaya was a contradiction the tradition needed: a householder who practiced deeper than almost any monk of his era. I've wanted to write this for a long time.</textarea></div>
+      <div class="field"><label>Post link</label><input value="https://stillwater.netlify.app/?slug=lahiri-mahasaya-householder"/></div>
+      <div class="field"><label>Supplementary reading (optional)</label><input placeholder="Add related posts, reading path…"/></div>
+      <div style="display:flex;gap:0.5rem"><button class="btn btn-primary">Send dispatch</button><button class="btn btn-ghost">Preview</button><button class="btn btn-ghost">Save draft</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ COMMENTS ═══ -->
+<div class="view" id="view-comments">
+  <div class="eyebrow">Moderation</div>
+  <h1 class="page-title">Comments</h1>
+  <p class="page-lede">Approve, reply, pin, or convert to reader letter. Old posts auto-close after 6 months.</p>
+  <div style="display:flex;gap:0.5rem;margin-bottom:1.25rem"><button class="btn btn-primary btn-sm">Pending (3)</button><button class="btn btn-ghost btn-sm">Approved</button><button class="btn btn-ghost btn-sm">Dismissed</button></div>
+  <div style="display:flex;flex-direction:column;gap:0.75rem">
+    <div class="card"><div style="display:flex;justify-content:space-between;margin-bottom:0.5rem"><div><strong>Marcus Webb</strong> <span style="font-size:0.75rem;color:var(--text-muted)">on "We seldom can do the work" · 1 hour ago</span></div><span class="badge badge-gold">Pending</span></div><p style="font-size:0.88rem;line-height:1.7">The section on self-blame resonated deeply. I've been sitting with whether the "defined goal" Patanjali points to is different from the Western goal-setting tradition. The latter is strategic; the former seems more like a north star that orients without being reached.</p><div style="display:flex;gap:0.4rem;margin-top:0.65rem"><button class="btn btn-primary btn-sm">Approve</button><button class="btn btn-secondary btn-sm">Reply</button><button class="btn btn-ghost btn-sm">Convert to letter</button><button class="btn btn-ghost btn-sm">Pin</button><button class="btn btn-ghost btn-sm">Dismiss</button></div></div>
+    <div class="card"><div style="display:flex;justify-content:space-between;margin-bottom:0.5rem"><div><strong>Anonymous</strong> <span style="font-size:0.75rem;color:var(--text-muted)">on "Meeting yourself when no one is clapping" · 3 hours ago</span></div><span class="badge badge-gold">Pending</span></div><p style="font-size:0.88rem;line-height:1.7">This felt like it was written for me. Thank you.</p><div style="display:flex;gap:0.4rem;margin-top:0.65rem"><button class="btn btn-primary btn-sm">Approve</button><button class="btn btn-ghost btn-sm">Dismiss</button></div></div>
+  </div>
+</div>
+
+<!-- ═══ DEEP ANALYTICS ═══ -->
+<div class="view" id="view-analytics">
+  <div class="eyebrow">Depth Over Traffic</div>
+  <h1 class="page-title">Deep Analytics</h1>
+  <p class="page-lede">Scroll depth and drop-off by section — not just page views. Know exactly where attention breaks and where the next pull quote belongs.</p>
+
+  <div class="stat-grid">
+    <div class="stat-card"><div class="stat-label">Total reads</div><div class="stat-value">8,241</div><div class="stat-hint">↑ 14% this month</div></div>
+    <div class="stat-card"><div class="stat-label">Avg completion</div><div class="stat-value">71%</div><div class="stat-hint">Readers reaching the end</div></div>
+    <div class="stat-card"><div class="stat-label">Return reader rate</div><div class="stat-value">38%</div><div class="stat-hint">Back within 30 days</div></div>
+    <div class="stat-card"><div class="stat-label">Avg time on page</div><div class="stat-value">6.2m</div><div class="stat-hint">Across all posts</div></div>
+    <div class="stat-card"><div class="stat-label">Dispatch open rate</div><div class="stat-value">54%</div><div class="stat-hint">Industry avg: 28%</div></div>
+    <div class="stat-card"><div class="stat-label">Glossary hover rate</div><div class="stat-value">22%</div><div class="stat-hint">Readers engaging terms</div></div>
+  </div>
+
+  <div class="chart-grid">
+    <div class="chart-card"><div class="chart-title">Reads by tradition (30 days)</div><canvas id="tradChart" height="180"></canvas></div>
+    <div class="chart-card"><div class="chart-title">Subscriber growth</div><canvas id="subChart" height="180"></canvas></div>
+  </div>
+
+  <div class="chart-grid">
+    <div class="chart-card"><div class="chart-title">Glossary lookups by term</div><canvas id="glossChart" height="180"></canvas></div>
+    <div class="chart-card">
+      <div class="chart-title">Reading path completion</div>
+      <div style="display:flex;flex-direction:column;gap:0.65rem;margin-top:0.5rem">
+        <div><div style="font-size:0.8rem;font-weight:500;margin-bottom:0.3rem">New to non-dual teachings</div><div class="health-bar"><div class="health-fill" style="width:68%"></div></div><div style="font-size:0.7rem;color:var(--text-muted);margin-top:0.2rem">68% complete all 3 posts · Drop-off at step 2</div></div>
+        <div><div style="font-size:0.8rem;font-weight:500;margin-bottom:0.3rem">Kashmir Shaivism deep dive</div><div class="health-bar"><div class="health-fill" style="width:52%"></div></div><div style="font-size:0.7rem;color:var(--text-muted);margin-top:0.2rem">52% complete · Normal for advanced content</div></div>
+        <div><div style="font-size:0.8rem;font-weight:500;margin-bottom:0.3rem">Kriya lineage</div><div class="health-bar"><div class="health-fill" style="width:81%"></div></div><div style="font-size:0.7rem;color:var(--text-muted);margin-top:0.2rem">81% complete · Highest completion path</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:1.25rem">
+    <div class="card-title">Post health scores</div>
+    <div style="display:flex;flex-direction:column;gap:0.85rem">
+      <div><div style="display:flex;justify-content:space-between;margin-bottom:0.3rem"><span style="font-size:0.88rem;font-weight:500">We seldom can do the work we can in this world</span><span style="font-size:0.82rem;font-weight:600;color:var(--gold)">88/100</span></div><div class="health-bar" style="height:6px"><div class="health-fill" style="width:88%"></div></div><div style="font-size:0.72rem;color:var(--text-muted);margin-top:0.2rem">Read depth: excellent · 3 letters generated · Return visit rate: 41%</div></div>
+      <div><div style="display:flex;justify-content:space-between;margin-bottom:0.3rem"><span style="font-size:0.88rem;font-weight:500">Meeting yourself when no one is clapping</span><span style="font-size:0.82rem;font-weight:600;color:var(--gold)">72/100</span></div><div class="health-bar" style="height:6px"><div class="health-fill" style="width:72%"></div></div><div style="font-size:0.72rem;color:var(--text-muted);margin-top:0.2rem">Drop-off at section 2 — consider a pull quote before "The witness" section</div></div>
+      <div><div style="display:flex;justify-content:space-between;margin-bottom:0.3rem"><span style="font-size:0.88rem;font-weight:500">The breath as a homecoming</span><span style="font-size:0.82rem;font-weight:600;color:#c4892a)">61/100</span></div><div class="health-bar" style="height:6px"><div class="health-fill" style="width:61%;background:#c4892a"></div></div><div style="font-size:0.72rem;color:var(--text-muted);margin-top:0.2rem">High drop-off after 40% scroll · Shorter post may benefit from a divider break</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Scroll depth heatmap — "We seldom can do the work"</div>
+    <div style="margin-bottom:0.65rem;font-size:0.75rem;color:var(--text-muted)">% of readers who scroll to each 10% interval</div>
+    <div class="heatmap" id="heatmap"></div>
+    <div style="margin-top:0.5rem;font-size:0.72rem;color:var(--text-muted)">74% of readers reach the end — strong for long-form. Drop at 60% scroll: consider adding a divider or pull quote at that point.</div>
+  </div>
+</div>
+
+<!-- ═══ MEDIA LIBRARY ═══ -->
+<div class="view" id="view-media">
+  <div class="eyebrow">Assets</div>
+  <h1 class="page-title">Media Library</h1>
+  <p class="page-lede">Images, portraits, manuscript scans, thangkas. Organised by tradition and master. Alt text for accessibility and SEO.</p>
+  <div class="search-bar"><input class="search-input" placeholder="Search media, alt text, tradition…"/><button class="btn btn-primary btn-sm">Upload</button></div>
+  <div class="pills" style="margin-bottom:1.25rem"><button class="pill active">All</button><button class="pill">Sage portraits</button><button class="pill">Thangkas</button><button class="pill">Manuscripts</button><button class="pill">Kashmir Shaivism</button><button class="pill">Vajrayana</button></div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:0.75rem">
+    <div class="card" style="padding:0.75rem;text-align:center"><div style="width:100%;aspect-ratio:4/3;background:linear-gradient(135deg,#b8882a22,#8b602010);border-radius:6px;margin-bottom:0.5rem;display:flex;align-items:center;justify-content:center;font-size:2rem">🌄</div><div style="font-size:0.72rem;font-weight:500;margin-bottom:0.15rem">thangka-84-mahasiddhas.jpg</div><div style="font-size:0.65rem;color:var(--text-muted)">Tagged: Sage portrait</div></div>
+    <div class="card" style="padding:0.75rem;text-align:center"><div style="width:100%;aspect-ratio:4/3;background:linear-gradient(135deg,#2d5a8a22,#1a3a5510);border-radius:6px;margin-bottom:0.5rem;display:flex;align-items:center;justify-content:center;font-size:2rem">📜</div><div style="font-size:0.72rem;font-weight:500;margin-bottom:0.15rem">tantraloka-manuscript.jpg</div><div style="font-size:0.65rem;color:var(--text-muted)">Manuscript · Kashmir Shaivism</div></div>
+    <div class="card" style="padding:0.75rem;text-align:center"><div style="width:100%;aspect-ratio:4/3;background:linear-gradient(135deg,#2d6a4f22,#1a4a3010);border-radius:6px;margin-bottom:0.5rem;display:flex;align-items:center;justify-content:center;font-size:2rem">🧘</div><div style="font-size:0.72rem;font-weight:500;margin-bottom:0.15rem">lahiri-portrait.jpg</div><div style="font-size:0.65rem;color:var(--text-muted)">Sage portrait · Kriya Yoga</div></div>
+    <div class="card" style="padding:0.75rem;text-align:center;border:2px dashed var(--border);box-shadow:none;cursor:pointer"><div style="width:100%;aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;font-size:1.5rem;color:var(--text-faint)">+</div><div style="font-size:0.72rem;color:var(--text-muted)">Upload new</div></div>
+  </div>
+</div>
+
+<!-- ═══ SITE SETTINGS ═══ -->
+<div class="view" id="view-settings">
+  <div class="eyebrow">Configuration</div>
+  <h1 class="page-title">Site Settings</h1>
+  <div class="settings-grid">
+    <div class="settings-section">
+      <div class="card"><div class="card-title">Identity</div>
+        <div class="field"><label>Site name</label><input value="Stillwater"/></div>
+        <div class="field"><label>Tagline</label><input value="A journal of Eastern wisdom traditions"/></div>
+        <div class="field"><label>About (brief)</label><textarea rows="3">A space for the serious study of Advaita Vedanta, Kashmir Shaivism, Kriya Yoga, and the living transmission lineages of the Indian subcontinent.</textarea></div>
+      </div>
+      <div class="card"><div class="card-title">Visual Theme</div>
+        <div class="form-row">
+          <div class="field"><label>Accent colour</label><input type="color" value="#b8882a" style="height:36px"/></div>
+          <div class="field"><label>Background</label><input type="color" value="#f7f5f0" style="height:36px"/></div>
+        </div>
+        <div class="field"><label>Ornament glyph</label><input value="✦"/></div>
+        <div class="field"><label>Font preset</label><select><option>editorial (Cormorant + Jost)</option><option>serif-warm (Lora)</option><option>rounded (DM Sans)</option><option>mono (system)</option></select></div>
+      </div>
+    </div>
+    <div class="settings-section">
+      <div class="card"><div class="card-title">Tradition Taxonomy</div>
+        <div style="display:flex;flex-direction:column;gap:0.35rem">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:0.4rem;background:var(--bg);border-radius:6px;font-size:0.82rem">Advaita Vedanta <button class="btn btn-ghost btn-sm">Edit</button></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:0.4rem;background:var(--bg);border-radius:6px;font-size:0.82rem">Kashmir Shaivism <button class="btn btn-ghost btn-sm">Edit</button></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:0.4rem;background:var(--bg);border-radius:6px;font-size:0.82rem">Kriya Yoga <button class="btn btn-ghost btn-sm">Edit</button></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:0.4rem;background:var(--bg);border-radius:6px;font-size:0.82rem">Vajrayana <button class="btn btn-ghost btn-sm">Edit</button></div>
+          <button class="btn btn-ghost btn-sm" style="margin-top:0.25rem">+ Add tradition</button>
+        </div>
+      </div>
+      <div class="card"><div class="card-title">Backup & Export</div>
+        <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:0.75rem">Export all posts, settings, and media as a portable archive.</p>
+        <div style="display:flex;flex-direction:column;gap:0.4rem">
+          <button class="btn btn-secondary btn-sm">Export all posts as JSON</button>
+          <button class="btn btn-secondary btn-sm">Export as static HTML</button>
+          <button class="btn btn-secondary btn-sm">Download full bibliography (PDF)</button>
+        </div>
+      </div>
+      <div class="card"><div class="card-title">Custom CSS</div>
+        <textarea rows="5" style="font-family:monospace;font-size:0.75rem;width:100%;padding:0.5rem;border:1px solid var(--border);border-radius:8px;background:var(--bg)"/* Custom overrides */
+.sw-post-title {
+  letter-spacing: -0.02em;
+}</textarea>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /main-inner -->
+</main>
+</div><!-- /app -->
+
+<script>
+// Navigation
+function navigate(id) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  const v = document.getElementById('view-' + id);
+  if (v) v.classList.add('active');
+  document.querySelectorAll('.sidebar-item').forEach(b => {
+    b.classList.toggle('active', b.dataset.view === id);
+  });
+}
+
+document.querySelectorAll('.sidebar-item').forEach(btn => {
+  btn.addEventListener('click', () => navigate(btn.dataset.view));
+});
+
+// Editor modes
+let currentMode = 'default';
+function setMode(mode) {
+  currentMode = mode;
+  const content = document.getElementById('editorContent');
+  const sidebar = document.getElementById('editorSidebar');
+  const contentArea = document.getElementById('editorContentArea');
+  ['modeDefault','modeFocus','modeOutline','modePreview'].forEach(id => {
+    const b = document.getElementById(id);
+    if (b) b.className = 'btn btn-ghost btn-sm';
+  });
+  const activeBtn = document.getElementById('mode' + mode.charAt(0).toUpperCase() + mode.slice(1));
+  if (activeBtn) activeBtn.className = 'btn btn-primary btn-sm';
+  content.className = 'editor-content';
+  sidebar.style.display = 'flex';
+  contentArea.innerHTML = '';
+
+  if (mode === 'focus') {
+    content.classList.add('focus-mode');
+    sidebar.style.display = 'none';
+    contentArea.appendChild(content);
+    content.style.maxWidth = '560px';
+    content.style.margin = '0 auto';
+  } else if (mode === 'outline') {
+    const outline = document.createElement('div');
+    outline.className = 'editor-outline';
+    outline.innerHTML = `
+      <p style="font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.65rem">Post Outline</p>
+      <div class="outline-item h2">Abhinavagupta's Tantraloka: the aesthetics of recognition</div>
+      <div class="outline-item h3">Introduction — the peak of a long mountain</div>
+      <div class="outline-item h3">The question of pratyabhijñā</div>
+      <div class="outline-item h2">The question of spanda</div>
+      <div class="outline-item h3">Before Abhinavagupta: the Spanda Karikas</div>
+      <div class="outline-item h3">Vibration as awareness knowing itself</div>
+      <div class="outline-item h2">The Tantraloka as aesthetic theory</div>
+      <div class="outline-item h3">Rasa and liberation</div>
+      <div class="outline-item h3">Why Abhinavagupta chose the form of a tantra</div>
+    `;
+    contentArea.appendChild(outline);
+    sidebar.style.display = 'none';
+  } else if (mode === 'preview') {
+    const preview = document.createElement('div');
+    preview.style.cssText = 'padding:2.5rem;max-width:680px;margin:0 auto;font-family:"Cormorant Garamond",serif';
+    preview.innerHTML = `
+      <p style="font-size:0.62rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:0.75rem">Kashmir Shaivism · 4,000 words</p>
+      <h1 style="font-size:2.2rem;font-weight:400;line-height:1.15;margin-bottom:1.5rem">Abhinavagupta's Tantraloka: the aesthetics of recognition</h1>
+      <p style="font-size:1rem;line-height:1.85;margin-bottom:1rem"><span style="font-size:4rem;font-weight:600;float:left;line-height:0.78;margin:0.08em 0.1em 0 0;color:var(--gold)">A</span>bhinava­gupta stands at the peak of a long mountain — ten centuries of Trika Shaiva elaboration — and from that peak he looks not down but inward.</p>
+      <div style="border-left:3px solid var(--gold);padding:0.75rem 1.25rem;margin:1.5rem 0;background:var(--gold-light);border-radius:0 8px 8px 0"><p style="font-style:italic;font-size:1.15rem">"The entire universe is the self-recognition of Śiva."</p></div>
+    `;
+    contentArea.appendChild(preview);
+  } else {
+    content.style.maxWidth = '';
+    content.style.margin = '';
+    contentArea.appendChild(content);
+  }
+}
+setMode('default');
+
+// Panel toggle
+function togglePanel(el) {
+  const body = el.nextElementSibling;
+  const arrow = el.querySelector('span');
+  if (body.style.display === 'none') {
+    body.style.display = 'block';
+    arrow.textContent = '▸';
+  } else {
+    body.style.display = 'none';
+    arrow.textContent = '▾';
+  }
+}
+
+// Dispatch toggle
+function showDispatch() {
+  document.getElementById('subList').style.display = 'none';
+  document.getElementById('subDispatch').style.display = 'block';
+  document.getElementById('subTab1').className = 'btn btn-ghost btn-sm';
+  document.getElementById('subTab2').className = 'btn btn-primary btn-sm';
+}
+document.getElementById('subTab1').addEventListener('click', () => {
+  document.getElementById('subList').style.display = 'block';
+  document.getElementById('subDispatch').style.display = 'none';
+  document.getElementById('subTab1').className = 'btn btn-primary btn-sm';
+  document.getElementById('subTab2').className = 'btn btn-ghost btn-sm';
+});
+
+// Scroll depth heatmap
+const heatValues = [100,99,97,94,89,82,74,68,59,40];
+const heatColors = heatValues.map(v => {
+  const g = Math.round(184 * v/100);
+  return `rgb(184,${g},42,${0.15 + v/100*0.85})`;
+});
+const hm = document.getElementById('heatmap');
+heatValues.forEach((v,i) => {
+  const cell = document.createElement('div');
+  cell.className = 'heat-cell';
+  cell.style.background = `rgba(184,136,42,${0.1 + v/100*0.9})`;
+  cell.style.aspectRatio = '1';
+  cell.setAttribute('data-label', `${i*10+10}% scroll: ${v}% readers`);
+  const label = document.createElement('div');
+  label.style.cssText = 'font-size:0.62rem;text-align:center;padding-top:35%;color:#1c1a17;font-weight:600';
+  label.textContent = v + '%';
+  cell.appendChild(label);
+  hm.appendChild(cell);
+});
+
+// Charts
+const chartDefaults = {
+  plugins:{legend:{display:false}},
+  scales:{x:{grid:{display:false},ticks:{font:{size:10},color:'#6b6450'}},y:{grid:{color:'rgba(184,136,42,0.1)'},ticks:{font:{size:10},color:'#6b6450'}}}
+};
+
+// Tradition chart (dashboard)
+new Chart(document.getElementById('dashTradChart'),{
+  type:'bar',
+  data:{
+    labels:['Kashmir Shaivism','Kriya Yoga','Advaita','Vajrayana','Patanjali','Taoism'],
+    datasets:[{data:[2840,1920,1640,1120,880,440],backgroundColor:'rgba(184,136,42,0.7)',borderRadius:5,borderSkipped:false}]
+  },
+  options:{...chartDefaults,plugins:{legend:{display:false}}}
+});
+
+// Tradition chart (analytics)
+new Chart(document.getElementById('tradChart'),{
+  type:'bar',
+  data:{
+    labels:['Kashmir Shaivism','Kriya Yoga','Advaita','Vajrayana','Patanjali','Taoism','Navnath'],
+    datasets:[{data:[2840,1920,1640,1120,880,440,180],backgroundColor:'rgba(184,136,42,0.72)',borderRadius:5,borderSkipped:false}]
+  },
+  options:{...chartDefaults,plugins:{legend:{display:false}}}
+});
+
+// Subscriber growth chart
+new Chart(document.getElementById('subChart'),{
+  type:'line',
+  data:{
+    labels:['Oct','Nov','Dec','Jan','Feb','Mar','Apr'],
+    datasets:[{data:[180,198,215,239,267,295,312],borderColor:'#b8882a',backgroundColor:'rgba(184,136,42,0.08)',fill:true,tension:0.4,borderWidth:2,pointRadius:3,pointBackgroundColor:'#b8882a'}]
+  },
+  options:{...chartDefaults,plugins:{legend:{display:false}}}
+});
+
+// Glossary chart
+new Chart(document.getElementById('glossChart'),{
+  type:'bar',
+  data:{
+    labels:['rigpa','nirodha','pratyabhijñā','wúwéi','spanda','kriyā','śakti','dharma'],
+    datasets:[{data:[62,47,38,33,29,27,22,18],backgroundColor:'rgba(184,136,42,0.65)',borderRadius:5,borderSkipped:false}]
+  },
+  options:{...chartDefaults,indexAxis:'y',plugins:{legend:{display:false}}}
+});
+</script>
+</body>
+</html>

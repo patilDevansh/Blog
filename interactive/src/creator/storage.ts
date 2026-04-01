@@ -26,9 +26,21 @@ export function clearStudioUnlock(): void {
   }
 }
 
+const SIGNED_OUT_KEY = "stillwater-signed-out";
+
 export function lockCreatorSession(): void {
   clearStudioUnlock();
   clearSessionPassword();
+  // Mark as explicitly signed out so dev auto-unlock doesn't re-fire
+  try { sessionStorage.setItem(SIGNED_OUT_KEY, "1"); } catch { /* ignore */ }
+}
+
+export function hasExplicitlySignedOut(): boolean {
+  try { return sessionStorage.getItem(SIGNED_OUT_KEY) === "1"; } catch { return false; }
+}
+
+export function clearSignedOutFlag(): void {
+  try { sessionStorage.removeItem(SIGNED_OUT_KEY); } catch { /* ignore */ }
 }
 
 export type LocalDraft = {
