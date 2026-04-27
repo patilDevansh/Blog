@@ -1,4 +1,5 @@
 import { parseManifest, type PublishManifest } from "@schema/manifest";
+import { mergeFromRemoteManifestApis } from "./manifest-fetch";
 
 const manifestGlob = import.meta.glob<{ default: unknown }>(
   "../../content/publishes/*/manifest.json",
@@ -37,41 +38,42 @@ export function loadAllManifests(): Map<string, PublishManifest> {
   return new Map(postsManifests());
 }
 
-/**
- * Fetch from the public-manifests API (Neon DB on Netlify) and merge into
- * the provided map. DB entries overwrite same-slug bundled entries, and DB-only
- * posts (published since the last deploy) are added fresh.
- */
-export async function mergeFromDatabase(
+async function mergeBundleFallback(
   map: Map<string, PublishManifest>
 ): Promise<void> {
-  const url =
-    (import.meta.env.VITE_PUBLIC_MANIFESTS_URL as string | undefined) ??
-    "/.netlify/functions/public-manifests";
+  if (map.size > 0) return;
+  const base = (import.meta.env.BASE_URL ?? "/").replace(/\/?$/, "/");
+  const url = `${base}publishes-bundle.json`;
   try {
     const res = await fetch(url);
     if (!res.ok) return;
     const data: unknown = await res.json();
-    const arr: unknown[] | null = Array.isArray(data)
-      ? data
-      : data &&
-          typeof data === "object" &&
-          data !== null &&
-          "manifests" in data &&
-          Array.isArray((data as { manifests: unknown }).manifests)
-        ? (data as { manifests: unknown[] }).manifests
-        : null;
-    if (!arr?.length) return;
-    for (const item of arr) {
+    if (!Array.isArray(data)) return;
+    for (const item of data) {
       try {
         const m = parseManifest(item);
         map.set(m.slug, m);
       } catch {
-        // skip invalid entries
+        /* skip invalid */
       }
     }
   } catch {
-    // network unavailable (local dev without netlify dev) — fail silently
+    /* missing or unreachable bundle */
+  }
+}
+
+/**
+ * Fetch from manifest APIs (Vercel `/api/public-manifests`, then Netlify function)
+ * and merge into the map. Override order with `VITE_PUBLIC_MANIFESTS_URL`.
+ *
+ * If the map is still empty afterward, loads `publishes-bundle.json` when present.
+ */
+export async function mergeFromDatabase(
+  map: Map<string, PublishManifest>
+): Promise<void> {
+  await mergeFromRemoteManifestApis(map);
+  if (map.size === 0) {
+    await mergeBundleFallback(map);
   }
 }
 

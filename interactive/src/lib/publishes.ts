@@ -1,4 +1,5 @@
 import { parseManifest, type PublishManifest } from "@schema/manifest";
+import { mergeFromRemoteManifestApis } from "./manifest-fetch";
 
 const manifestGlob = import.meta.glob<{ default: unknown }>(
   "../../content/publishes/*/manifest.json",
@@ -31,52 +32,6 @@ export function loadAllManifestsFromGlob(): Map<string, PublishManifest> {
     }
   }
   return map;
-}
-
-function publicManifestsUrl(): string {
-  return (
-    import.meta.env.VITE_PUBLIC_MANIFESTS_URL ??
-    "/.netlify/functions/public-manifests"
-  );
-}
-
-/**
- * Merges manifests from the public API (Postgres-backed on Netlify).
- * Same slug as repo wins from API (database overwrites bundled files).
- */
-async function mergeRemoteManifests(
-  map: Map<string, PublishManifest>
-): Promise<void> {
-  const url = publicManifestsUrl();
-  try {
-    const res = await fetch(url);
-    if (!res.ok) {
-      console.warn("mergeRemoteManifests:", res.status, url);
-      return;
-    }
-    const data: unknown = await res.json();
-    const arr: unknown[] | null = Array.isArray(data)
-      ? data
-      : data &&
-          typeof data === "object" &&
-          data !== null &&
-          "manifests" in data &&
-          Array.isArray((data as { manifests: unknown }).manifests)
-        ? (data as { manifests: unknown[] }).manifests
-        : null;
-    if (!arr?.length) return;
-
-    for (const item of arr) {
-      try {
-        const m = parseManifest(item);
-        map.set(m.slug, m);
-      } catch (e) {
-        console.warn("mergeRemoteManifests: skip invalid manifest", e);
-      }
-    }
-  } catch (e) {
-    console.warn("mergeRemoteManifests: fetch error", e);
-  }
 }
 
 async function mergeBundleFallback(
@@ -118,7 +73,10 @@ export async function loadAllManifests(): Promise<
   Map<string, PublishManifest>
 > {
   const map = loadAllManifestsFromGlob();
-  await mergeRemoteManifests(map);
+  const ok = await mergeFromRemoteManifestApis(map);
+  if (!ok) {
+    console.warn("loadAllManifests: no manifest API responded");
+  }
   if (map.size === 0) {
     await mergeBundleFallback(map);
   }
