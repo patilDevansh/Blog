@@ -28,7 +28,22 @@ export const blockSchema = z.discriminatedUnion("type", [
   z.object({
     type: z.literal("image"),
     /** Unsplash CDN or other HTTPS image URL from a licensed source */
-    src: z.string().url(),
+    src: z
+      .string()
+      .min(1)
+      .refine(
+        (v) => {
+          if (v.startsWith("/")) return true;
+          try {
+            // Allow absolute URLs for remote assets.
+            new URL(v);
+            return true;
+          } catch {
+            return false;
+          }
+        },
+        { message: "image src must be an absolute URL or root-relative path" }
+      ),
     alt: z.string(),
     /** Photographer name (Unsplash attribution) */
     creditName: z.string().min(1),

@@ -381,6 +381,15 @@ body {
 /* Widgets */
 .widget {
   font-size: 0.95rem;
+  border: 1px solid color-mix(in srgb, var(--border) 70%, white 30%);
+  border-radius: 16px;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--sw-bg) 78%, white 22%) 0%,
+    color-mix(in srgb, var(--sw-bg) 92%, var(--teal-light) 8%) 100%
+  );
+  padding: 0.9rem;
+  box-shadow: 0 8px 18px rgba(31, 24, 64, 0.05);
 }
 
 .widget-reveal .reveal-row {
@@ -392,18 +401,23 @@ body {
   cursor: pointer;
   width: 100%;
   text-align: left;
-  padding: 0.65rem 0.9rem;
-  border-radius: 12px;
+  padding: 0.75rem 0.95rem;
+  border-radius: 14px;
   border: 1px solid rgba(80, 70, 140, 0.2);
-  background: var(--purple-light);
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--purple-light) 90%, white 10%) 0%,
+    color-mix(in srgb, var(--purple-light) 82%, var(--teal-light) 18%) 100%
+  );
   color: inherit;
 }
 
 .reveal-hidden {
   margin-top: 0.5rem;
-  padding: 0.65rem 0.9rem;
-  border-radius: 12px;
-  background: var(--teal-light);
+  padding: 0.75rem 0.95rem;
+  border-radius: 14px;
+  border-left: 4px solid var(--teal-mid);
+  background: color-mix(in srgb, var(--teal-light) 88%, white 12%);
 }
 
 .app-root[data-motion="playful"] .reveal-hidden {
@@ -452,20 +466,43 @@ body {
 .tabs-tab {
   font: inherit;
   cursor: pointer;
-  padding: 0.35rem 0.65rem;
-  border-radius: 8px;
+  padding: 0.42rem 0.75rem;
+  border-radius: 10px;
   border: 1px solid var(--border);
   background: var(--sw-bg);
   color: inherit;
 }
 
 .tabs-tab[aria-selected="true"] {
-  background: var(--purple-light);
-  border-color: var(--purple-mid);
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--purple-light) 88%, white 12%) 0%,
+    color-mix(in srgb, var(--amber-light) 75%, var(--purple-light) 25%) 100%
+  );
+  border-color: var(--amber-deep);
 }
 
 .tabs-panel {
   padding: 0.25rem 0;
+}
+
+.tabs-panel[data-tab-label="detached-lens"] p {
+  font-family: "Cormorant Garamond", "Lora", "Georgia", serif;
+  font-size: clamp(1.14rem, 1.8vw, 1.42rem);
+  font-weight: 500;
+  line-height: 1.55;
+  letter-spacing: 0.01em;
+  color: color-mix(in srgb, var(--purple-deep) 78%, #111 22%);
+  margin-top: 0.2rem;
+}
+
+.tabs-image {
+  display: block;
+  width: min(100%, 420px);
+  border-radius: 14px;
+  margin: 0 0 0.85rem;
+  border: 1px solid color-mix(in srgb, var(--border) 70%, white 30%);
+  box-shadow: 0 10px 24px rgba(28, 24, 52, 0.08);
 }
 
 .drag-prompt {
@@ -485,11 +522,11 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 0.5rem;
-  padding: 0.5rem 0.65rem;
+  padding: 0.6rem 0.75rem;
   margin-bottom: 0.4rem;
-  border-radius: 10px;
+  border-radius: 12px;
   border: 1px solid var(--border);
-  background: var(--sw-bg);
+  background: color-mix(in srgb, var(--sw-bg) 86%, white 14%);
   cursor: grab;
 }
 
@@ -507,7 +544,7 @@ body {
   cursor: pointer;
   border: none;
   background: var(--purple-light);
-  border-radius: 6px;
+  border-radius: 8px;
   padding: 0.15rem 0.4rem;
 }
 
@@ -553,10 +590,10 @@ body {
 .slider-nav button {
   font: inherit;
   cursor: pointer;
-  border-radius: 10px;
+  border-radius: 12px;
   border: 1px solid var(--border);
   padding: 0.35rem 0.75rem;
-  background: var(--sw-bg);
+  background: color-mix(in srgb, var(--sw-bg) 86%, white 14%);
 }
 
 .slider-indicator {

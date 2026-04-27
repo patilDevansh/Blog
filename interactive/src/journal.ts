@@ -43,7 +43,7 @@ function appendFeaturedCard(
 
   const eyebrow = document.createElement("p");
   eyebrow.className = "sw-journal-featured-eyebrow";
-  eyebrow.textContent = "Latest entry";
+  eyebrow.textContent = "Most recent entry";
 
   const h2 = document.createElement("h2");
   h2.className = "sw-journal-featured-title";
@@ -319,13 +319,12 @@ async function main(): Promise<void> {
     mountJournalArchive(app, manifests);
   }
 
-  // Merge DB posts in the background; re-render if anything changed
+  // Merge DB posts in the background and re-render with full set.
   await mergeFromDatabase(manifests);
   if (manifests.size > 0) {
     mountJournalArchive(app, manifests);
   } else {
-    app.innerHTML =
-      "<p class=\"sw-error\">No posts found.</p>";
+    app.innerHTML = "<p class=\"sw-error\">No posts found.</p>";
   }
 }
 

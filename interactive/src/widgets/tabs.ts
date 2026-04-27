@@ -31,13 +31,12 @@ export function mountTabs(
 
     const panel = document.createElement("div");
     panel.className = "tabs-panel";
+    panel.dataset.tabLabel = tab.label.toLowerCase().replace(/\s+/g, "-");
     panel.id = `${tid}-panel`;
     panel.setAttribute("role", "tabpanel");
     panel.setAttribute("aria-labelledby", `${tid}-tab`);
     panel.hidden = i !== 0;
-    const p = document.createElement("p");
-    p.textContent = tab.content;
-    panel.appendChild(p);
+    appendTabContent(panel, tab.content);
     panels.appendChild(panel);
 
     btn.addEventListener("click", () => {
@@ -58,4 +57,28 @@ export function mountTabs(
   wrap.appendChild(tablist);
   wrap.appendChild(panels);
   container.appendChild(wrap);
+}
+
+function appendTabContent(panel: HTMLElement, content: string): void {
+  const lines = content.split("\n").map((x) => x.trim()).filter(Boolean);
+  const imgLine = lines.find((line) => /^!\[[^\]]*\]\([^)]+\)$/.test(line));
+  const textLines = lines.filter((line) => line !== imgLine);
+
+  if (imgLine) {
+    const m = imgLine.match(/^!\[([^\]]*)\]\(([^)]+)\)$/);
+    if (m) {
+      const [, alt, src] = m;
+      const img = document.createElement("img");
+      img.className = "tabs-image";
+      img.src = src;
+      img.alt = alt || "Lens illustration";
+      img.loading = "lazy";
+      img.decoding = "async";
+      panel.appendChild(img);
+    }
+  }
+
+  const p = document.createElement("p");
+  p.textContent = textLines.join(" ");
+  panel.appendChild(p);
 }

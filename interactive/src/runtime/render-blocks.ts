@@ -24,7 +24,7 @@ function renderBlock(block: Block): HTMLElement {
       if (text.length < 90) {
         p.classList.add("block-paragraph--short");
       }
-      p.textContent = text;
+      appendInlineFormatting(p, text);
       return p;
     }
     case "list": {
@@ -41,7 +41,7 @@ function renderBlock(block: Block): HTMLElement {
       const q = document.createElement("blockquote");
       q.className = "block-quote";
       const inner = document.createElement("p");
-      inner.textContent = block.text;
+      appendInlineFormatting(inner, block.text);
       q.appendChild(inner);
       if (block.attribution) {
         const cite = document.createElement("cite");
@@ -98,6 +98,20 @@ function renderBlock(block: Block): HTMLElement {
       cap.appendChild(photoLink);
       figure.appendChild(cap);
       return figure;
+    }
+  }
+}
+
+function appendInlineFormatting(target: HTMLElement, text: string): void {
+  // Supports lightweight emphasis with **bold** markers in manifest text.
+  const parts = text.split(/(\*\*[^*]+\*\*)/g).filter(Boolean);
+  for (const part of parts) {
+    if (part.startsWith("**") && part.endsWith("**") && part.length > 4) {
+      const strong = document.createElement("strong");
+      strong.textContent = part.slice(2, -2);
+      target.appendChild(strong);
+    } else {
+      target.appendChild(document.createTextNode(part));
     }
   }
 }
