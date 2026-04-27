@@ -66,8 +66,9 @@ function appendTabContent(panel: HTMLElement, content: string): void {
 
   if (imgLine) {
     const m = imgLine.match(/^!\[([^\]]*)\]\(([^)]+)\)$/);
-    if (m) {
-      const [, alt, src] = m;
+    const src = m?.[2];
+    if (src) {
+      const alt = m[1] ?? "";
       const img = document.createElement("img");
       img.className = "tabs-image";
       img.src = src;
