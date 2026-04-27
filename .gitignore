@@ -6,6 +6,9 @@ dist/
 .env.*
 .tmp/
 
+# Root `public/` is a deploy mirror of `interactive/dist/` (see root package.json build)
+/public/
+
 # Posts live in Neon DB — not in git
 interactive/content/publishes/
 

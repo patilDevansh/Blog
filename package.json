@@ -2,7 +2,7 @@
   "name": "stillwater-blog",
   "private": true,
   "scripts": {
-    "build": "npm --prefix interactive install --no-audit --no-fund && npm --prefix interactive run build"
+    "build": "npm --prefix interactive install --no-audit --no-fund && npm --prefix interactive run build && rm -rf public && mkdir -p public && cp -R interactive/dist/. public/"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.0.2"
